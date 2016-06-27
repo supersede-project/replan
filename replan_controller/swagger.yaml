@@ -1,0 +1,906 @@
+swagger: '2.0'
+info:
+  title: SUPERSEDE ReleasePlanner API to UI
+  version: "1.0.0"
+# the domain of the service
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /api/ui/v1
+produces:
+  - application/json
+paths:
+  /projects/{projectId}:
+    get:
+      summary: Get Project info
+      description: |
+        bla, bla, bla.
+      operationId: getProject
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Project
+      responses:
+        200:
+          description: Project info
+          schema:
+            $ref: '#/definitions/Project'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    put:
+      summary: Modify Project
+      description: |
+        bla, bla, bla.
+      operationId: modifyProject 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Project'
+      tags:
+        - Project
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+  /projects/{projectId}/features:
+    get:
+      summary: Get features
+      description: |
+        bla, bla, bla.
+      operationId: getFeatures
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: status
+          in: query
+          description: any | pending | scheduled
+          required: false
+          type: string
+          enum:
+             - any
+             - pending
+             - scheduled
+      tags:
+        - Features
+      responses:
+        200:
+          description: An array of features
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Feature'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+  /projects/{projectId}/features/{featureId}:
+    get:
+      summary: Get a feature given its ID
+      description: |
+        bla, bla, bla.
+      operationId: getFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the feature
+          required: true
+      tags:
+        - Features
+      responses:
+        200:
+          description: An array of features
+          schema:
+            $ref: '#/definitions/Feature'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+    put:
+      summary: Modifies a given feature
+      description: |
+        bla, bla, bla.
+      operationId: modifyFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the feature
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Feature'
+      tags:
+        - Features
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+  /projects/{projectId}/releases:
+    get:
+      summary: Get releases
+      operationId: getReleases
+      description: |
+        bla, bla, bla.
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Releases
+      responses:
+        200:
+          description: An array of releases
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Release'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    post:
+      summary: Adds a new Release to the Project
+      description: |
+        bla, bla, bla.
+      operationId: addNewReleaseToProject 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewReleaseData'
+      tags:
+        - Releases
+      responses:
+        200:
+          description: A new release
+          schema:
+            $ref: '#/definitions/Release'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+  /projects/{projectId}/releases/{releaseId}:
+    put:
+      summary: Modify a given release. May trigger a replanning
+      operationId: modifyRelease 
+      description: |
+        bla, bla, bla.
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Release'
+      tags:
+        - Releases
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Status'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+    delete:
+      summary: Remove a given Release. Does it trigger a replanning?
+      operationId: deleteRelease 
+      description: |
+        bla, bla, bla.
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Releases
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Status'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+  /projects/{projectId}/releases/{releaseId}/features:
+    get:
+      summary: Get the features scheduled for a given release
+      description: |
+        bla, bla, bla.
+      operationId: getReleadeFeatures
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+      tags:
+        - Releases
+        - Features
+      responses:
+        200:
+          description: An array of features
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Feature'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+    post:
+      summary: Adds a feature to a release, triggering the re-planning of that release
+      description: |
+        bla, bla, bla.
+      operationId: addFeatureToRelease
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FeatureId'
+      tags:
+        - Releases
+        - Features
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Status'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+  /projects/{projectId}/releases/{releaseId}/features/{featureId}:
+    delete:
+      summary: Remove a feature from a relese
+      description: |
+        bla, bla, bla.
+      operationId: removeFeatureFromRelease 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the feature
+          required: true
+      tags:
+        - Releases
+        - Features
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project|Release|Feauture not found
+  /projects/{projectId}/releases/{releaseId}/plan:
+    get:
+      summary: Gets the current Release Plan
+      description: |
+        bla, bla, bla.
+      operationId: getReleasePlan
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+      tags:
+        - Releases
+        - Plan
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Plan'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+    delete:
+      summary: Cancels the last Release Plan
+      description: |
+        bla, bla, bla.
+      operationId: cancelLastReleasePlan
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+      tags:
+        - Releases
+        - Plan
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+  /projects/{projectId}/skills:
+    get:
+      summary: Get project skills
+      description: |
+        bla, bla, bla.
+      operationId: getProjectSkills
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Skills
+      responses:
+        200:
+          description: An array of skills
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Skill'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    post:
+      summary: Create a new Skill
+      description: |
+        bla, bla, bla.
+      operationId: addNewSkillToProject
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewSkillData'
+      tags:
+        - Skills
+      responses:
+        200:
+          description: A new Skill
+          schema:
+            $ref: '#/definitions/Skill'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+  /projects/{projectId}/skills/{skillId}:
+    put:
+      summary: Modify a given Skill
+      description: |
+        bla, bla, bla.
+      operationId: modifySkill
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: skillId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Skill'
+      tags:
+        - Skills
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Skill not found
+    delete:
+      summary: Remove a given Skill
+      description: |
+        bla, bla, bla.
+      operationId: deleteSkill 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: skillId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Skills
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Skill not found
+  /projects/{projectId}/resources:
+    get:
+      summary: Get project resources
+      description: |
+        bla, bla, bla.
+      operationId: getProjectResources
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Resources
+      responses:
+        200:
+          description: An array of resources
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Resource'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    post:
+      summary: Add a new resource to the project
+      description: |
+        bla, bla, bla.
+      operationId: addNewResourceToProject
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NewResourceData'
+      tags:
+        - Resources
+      responses:
+        200:
+          description: A new Resource
+          schema:
+            $ref: '#/definitions/Resource'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+  /projects/{projectId}/resources/{resourceId}:
+    put:
+      summary: Modify a given Resource
+      description: |
+        bla, bla, bla.
+      operationId: modifyResource
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: resourceId
+          in: path
+          type: number
+          format: int64
+          description: ID of the resource
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Resource'
+      tags:
+        - Resources
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Resource not found
+    delete:
+      summary: Remove a given Resource
+      description: |
+        bla, bla, bla.
+      operationId: deleteResource
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: resourceId
+          in: path
+          type: number
+          format: int64
+          description: ID of the resource
+          required: true
+      tags:
+        - Resources
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Resource not found
+definitions:
+  Skill:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of skill.
+      description:
+        type: string
+  NewSkillData:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Display name of skill.
+      description:
+        type: string
+  FeatureId:
+    type: object
+    properties:
+      feature_id:
+        type: integer
+        description: Unique identifier representing a feature
+  Feature:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique identifier representing a feature
+      code:
+        type: integer
+        description: Unique identifier from WP3.3
+      name:
+        type: string
+        description: Display name of feature.
+      description:
+        type: string
+        description: Description of feature.
+      effort:
+        type: number
+        description: Effort to implement the feature.
+      deadline:
+        type: string
+        format: date-time
+      priority:
+        type: integer
+        enum: [ 1, 2, 3, 4, 5 ]
+        description: It coms from Wp3.3
+      required_skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      depends_on:
+        type: array
+        description: array of features
+        items:
+          $ref: '#/definitions/Feature'
+  Resource:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of resource.
+      description:
+        type: string
+      availability:
+        type: number
+      skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+  NewResourceData:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Display name of resource.
+      description:
+        type: string
+      availability:
+        type: number
+      skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+  Release:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of release.
+      description:
+        type: string
+      deadline:
+        type: string
+        format: date-time
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  NewReleaseData:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Display name of release.
+      description:
+        type: string
+      deadline:
+        type: string
+        format: date-time
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Project:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of project.
+      description:
+        type: string
+      effort_unit:
+        type: string
+        description: e.g. "bin"
+      hours_per_effort_unit:
+        type: number
+      hours_per_week_and_full_time_resource:
+        type: number
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Status:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      description:
+        type: string
+  Job:
+    type: object
+    properties:
+      starts:
+        type: string
+        format: date-time
+      ends:
+        type: string
+        format: date-time
+      resource:
+        $ref: '#/definitions/Resource'
+      feature:
+        $ref: '#/definitions/Feature'
+      depends_on:
+        type: array
+        description: array of jobs
+        items:
+          $ref: '#/definitions/Job'
+  Plan:
+    type: object
+    properties:
+      id:
+        type: integer
+      created:
+        type: string
+        format: date-time
+      jobs:
+        type: array
+        description: array of jobs
+        items:
+          $ref: '#/definitions/Job'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string

@@ -6,5 +6,5 @@ This tool is composed by several components:
 - *RePlan_Controller*: Access point for the dashboard (UI) and the DM on soft. evol. (T3.3)
 - *RePlan_Optimizer*: Main functionality of the tool, to provide a optimized solution to the release problem
 
-Contact: David Ameller (dameller@essi.upc.edu)
+Contact: David Ameller <dameller@essi.upc.edu>
 
