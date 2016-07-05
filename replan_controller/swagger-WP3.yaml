@@ -1,0 +1,140 @@
+swagger: '2.0'
+info:
+  title: SUPERSEDE ReleasePlanner API to WP3
+  version: "1.0.0"
+# the domain of the service
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /api/wp3/v1
+produces:
+  - application/json
+paths:
+  /projects/{projectId}/features:
+    get:
+      summary: Get features
+      description: |
+        bla, bla, bla.
+      operationId: getFeatures
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureIds
+          in: query
+          description: Array of feature IDs
+          required: false
+          type: array
+          items: 
+            type: string
+        - name: status
+          in: query
+          description: any | pending | scheduled
+          required: false
+          type: string
+          enum:
+             - any
+             - pending
+             - scheduled
+      tags:
+        - Features
+      responses:
+        200:
+          description: An array of features
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Feature'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    post:
+      summary: Modifies a given feature
+      description: |
+        bla, bla, bla.
+      operationId: sendFeatures
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Feature'
+      tags:
+        - Features
+      responses:
+        200:
+          description: Success
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+definitions:
+  Skill:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of skill.
+      description:
+        type: string
+  Feature:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique identifier representing a feature
+      name:
+        type: string
+        description: Display name of feature.
+      description:
+        type: string
+        description: Description of feature.
+      effort:
+        type: number
+        description: Effort to implement the feature.
+      deadline:
+        type: string
+        format: date-time
+      priority:
+        type: integer
+        enum: [ 1, 2, 3, 4, 5 ]
+        description: It coms from Wp3.3
+      required_skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      depends_on:
+        type: array
+        description: array of features
+        items:
+          $ref: '#/definitions/Feature'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
