@@ -1,0 +1,199 @@
+swagger: '2.0'
+info:
+  title: SUPERSEDE Release Planner Optimizer API
+  version: "1.0.0"
+# the domain of the service
+host: localhost
+# array of all schemes that your API supports
+schemes:
+  - https
+# will be prefixed to all paths
+basePath: /api/core/v1
+produces:
+  - application/json
+paths:
+  /replan:
+    get:
+      summary: Get a release plan
+      description: |
+        This is the main functionality of the tool, the objective is to generate a release
+        planning as good as possible for the selected features with the available resources.
+      operationId: getRePlan
+      parameters:
+        - name: project
+          description: A project includes general parameters such as the weekly dedication and the units used (hours / bins)
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Project'
+        - name: release
+          description: A release includes the deadline of the release and the resources
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Release'
+        - name: features
+          description: A list of features to be scheduled in the release
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Features'
+      tags:
+        - Planning
+      responses:
+        200:
+          description: Release plan
+          schema:
+            $ref: '#/definitions/Plan'
+        400:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Skill:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of skill.
+      description:
+        type: string
+  Feature:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: Unique identifier representing a feature
+      code:
+        type: integer
+        description: Unique identifier from WP3.3
+      name:
+        type: string
+        description: Display name of feature.
+      description:
+        type: string
+        description: Description of feature.
+      effort:
+        type: number
+        description: Effort to implement the feature.
+      deadline:
+        type: string
+        format: date-time
+      priority:
+        type: integer
+        enum: [ 1, 2, 3, 4, 5 ]
+        description: It coms from Wp3.3
+      required_skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      depends_on:
+        type: array
+        description: array of features (DA. maybe it should be an array of id's)
+        items:
+          $ref: '#/definitions/Feature'
+  Features:
+    type: object
+    properties:
+      list:
+        type: array
+        description: array of features
+        items:
+          $ref: '#/definitions/Feature'
+  Resource:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of resource.
+      description:
+        type: string
+      availability:
+        type: number
+      skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+  Release:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of release.
+      description:
+        type: string
+      deadline:
+        type: string
+        format: date-time
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Project:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+        description: Display name of project.
+      description:
+        type: string
+      effort_unit:
+        type: string
+        description: e.g. "bin"
+      hours_per_effort_unit:
+        type: number
+      hours_per_week_and_full_time_resource:
+        type: number
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+  Job:
+    type: object
+    properties:
+      starts:
+        type: string
+        format: date-time
+      ends:
+        type: string
+        format: date-time
+      resource:
+        $ref: '#/definitions/Resource'
+      feature:
+        $ref: '#/definitions/Feature'
+      depends_on:
+        type: array
+        description: array of jobs
+        items:
+          $ref: '#/definitions/Job'
+  Plan:
+    type: object
+    properties:
+      id:
+        type: integer
+      created:
+        type: string
+        format: date-time
+      jobs:
+        type: array
+        description: array of jobs
+        items:
+          $ref: '#/definitions/Job'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
