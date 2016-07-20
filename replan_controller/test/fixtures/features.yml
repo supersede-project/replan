@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  code: 1
+  name: MyString
+  description: MyString
+  effort: 9.99
+  deadline: 2016-07-13
+  priority: 1
+  project: one
+
+two:
+  code: 1
+  name: MyString
+  description: MyString
+  effort: 9.99
+  deadline: 2016-07-13
+  priority: 1
+  project: two

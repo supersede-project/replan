@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  starts: 2016-07-18
+  ends: 2016-07-18
+  resource: one
+  feature: one
+
+two:
+  starts: 2016-07-18
+  ends: 2016-07-18
+  resource: two
+  feature: two

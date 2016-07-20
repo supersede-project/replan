@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: 
+  description: 
+  project: one
+  deadline: 2016-07-08
+
+two:
+  name: 
+  description: 
+  project: two
+  deadline: 2016-07-08

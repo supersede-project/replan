@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyString
+  effort_unit: MyString
+  hours_per_effort_unit: 9.99
+  hours_per_week_and_full_time_resource: 9.99
+
+two:
+  name: MyString
+  description: MyString
+  effort_unit: MyString
+  hours_per_effort_unit: 9.99
+  hours_per_week_and_full_time_resource: 9.99

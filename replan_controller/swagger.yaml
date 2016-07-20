@@ -1,9 +1,9 @@
 swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
-  version: "1.0.0"
+  version: "1.0.1"
 # the domain of the service
-host: localhost
+host: release-planner-ui-api.herokuapp.com
 # array of all schemes that your API supports
 schemes:
   - https
@@ -32,8 +32,8 @@ paths:
           description: Project info
           schema:
             $ref: '#/definitions/Project'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -54,14 +54,16 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Project'
+            $ref: '#/definitions/ProjectData'
       tags:
         - Project
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Project'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -97,8 +99,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Feature'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -129,8 +131,8 @@ paths:
           description: An array of features
           schema:
             $ref: '#/definitions/Feature'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -157,18 +159,178 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Feature'
+            $ref: '#/definitions/FeatureData'
       tags:
         - Features
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
           description: Project or Feature not found
+  /projects/{projectId}/features/{featureId}/skills:
+    post:
+      summary: Adds required skills to a feature
+      description: |
+        bla, bla, bla.
+      operationId: addSkillsToFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SkillId'
+      tags:
+        - Features
+        - Skills
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+    delete:
+      summary: Delete required skills from a feature
+      description: |
+        bla, bla, bla.
+      operationId: deleteSkillsFromFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: skill_id
+          in: query
+          description: IDs of the skills to remove
+          required: true
+          type: array
+          items:
+            type: number
+            format: int64
+      tags:
+        - Features
+        - Skills
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+  /projects/{projectId}/features/{featureId}/dependencies:
+    post:
+      summary: Adds dependencies (to other features) to a feature
+      description: |
+        bla, bla, bla.
+      operationId: addDependenciesToFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/FeatureId'
+      tags:
+        - Features
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+    delete:
+      summary: Delete dependencies (to other features) from a feature
+      description: |
+        bla, bla, bla.
+      operationId: deleteDependenciesFromFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the feature
+          required: true
+        - name: feature_id
+          in: query
+          description: IDs of the features to remove as dependencies
+          required: true
+          type: array
+          items:
+            type: number
+            format: int64
+      tags:
+        - Features
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
   /projects/{projectId}/releases:
     get:
       summary: Get releases
@@ -191,8 +353,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Release'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -213,7 +375,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/NewReleaseData'
+            $ref: '#/definitions/ReleaseData'
       tags:
         - Releases
       responses:
@@ -221,15 +383,15 @@ paths:
           description: A new release
           schema:
             $ref: '#/definitions/Release'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
           description: Project not found
   /projects/{projectId}/releases/{releaseId}:
     put:
-      summary: Modify a given release. May trigger a replanning
+      summary: Modify a given release
       operationId: modifyRelease 
       description: |
         bla, bla, bla.
@@ -250,16 +412,16 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Release'
+            $ref: '#/definitions/ReleaseData'
       tags:
         - Releases
       responses:
         200:
           description: Success
           schema:
-            $ref: '#/definitions/Status'
-        400:
-          description: Unexpected error
+            $ref: '#/definitions/Release'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -286,11 +448,89 @@ paths:
         - Releases
       responses:
         200:
+          description: Succes
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+  /projects/{projectId}/releases/{releaseId}/resources:
+    post:
+      summary: Adds resources to a release
+      description: |
+        bla, bla, bla.
+      operationId: addResourcesToRelease
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ResourceId'
+      tags:
+        - Releases
+        - Resources
+      responses:
+        200:
           description: Success
           schema:
-            $ref: '#/definitions/Status'
-        400:
-          description: Unexpected error
+            $ref: '#/definitions/Release'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
+    delete:
+      summary: Delete resources from a release
+      description: |
+        bla, bla, bla.
+      operationId: deleteResourcesFromRelease
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: ResourceId
+          in: query
+          description: IDs of the resources to remove
+          required: true
+          type: array
+          items:
+            type: number
+            format: int64
+      tags:
+        - Releases
+        - Resources
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Release'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -300,7 +540,7 @@ paths:
       summary: Get the features scheduled for a given release
       description: |
         bla, bla, bla.
-      operationId: getReleadeFeatures
+      operationId: getReleaseFeatures
       parameters:
         - name: projectId
           in: path
@@ -324,17 +564,17 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Feature'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
           description: Project or Release not found
     post:
-      summary: Adds a feature to a release, triggering the re-planning of that release
+      summary: Adds features to a release
       description: |
         bla, bla, bla.
-      operationId: addFeatureToRelease
+      operationId: addFeaturesToRelease
       parameters:
         - name: projectId
           in: path
@@ -352,27 +592,26 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/FeatureId'
+            type: array
+            items:
+              $ref: '#/definitions/FeatureId'
       tags:
         - Releases
         - Features
       responses:
         200:
           description: Success
-          schema:
-            $ref: '#/definitions/Status'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
           description: Project or Release not found
-  /projects/{projectId}/releases/{releaseId}/features/{featureId}:
     delete:
-      summary: Remove a feature from a relese
+      summary: Remove features from a relese
       description: |
         bla, bla, bla.
-      operationId: removeFeatureFromRelease 
+      operationId: removeFeaturesFromRelease 
       parameters:
         - name: projectId
           in: path
@@ -387,19 +626,21 @@ paths:
           description: ID of the realese
           required: true
         - name: featureId
-          in: path
-          type: number
-          format: int64
-          description: ID of the feature
+          in: query
+          description: IDs of the features to remove
           required: true
+          type: array
+          items:
+            type: number
+            format: int64
       tags:
         - Releases
         - Features
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -431,8 +672,8 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/Plan'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -461,8 +702,8 @@ paths:
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -489,8 +730,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Skill'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -511,7 +752,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/NewSkillData'
+            $ref: '#/definitions/SkillData'
       tags:
         - Skills
       responses:
@@ -519,8 +760,8 @@ paths:
           description: A new Skill
           schema:
             $ref: '#/definitions/Skill'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -548,14 +789,14 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Skill'
+            $ref: '#/definitions/SkillData'
       tags:
         - Skills
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -583,8 +824,8 @@ paths:
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -611,8 +852,8 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Resource'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -633,7 +874,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/NewResourceData'
+            $ref: '#/definitions/ResourceData'
       tags:
         - Resources
       responses:
@@ -641,8 +882,8 @@ paths:
           description: A new Resource
           schema:
             $ref: '#/definitions/Resource'
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -670,14 +911,16 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/Resource'
+            $ref: '#/definitions/ResourceData'
       tags:
         - Resources
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Resource'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -705,8 +948,88 @@ paths:
       responses:
         200:
           description: Success
-        400:
-          description: Unexpected error
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Resource not found
+  /projects/{projectId}/resources/{resourceId}/skills:
+    post:
+      summary: Add skills to a resource
+      description: |
+        bla, bla, bla.
+      operationId: addSkillsToResource
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: resourceId
+          in: path
+          type: number
+          format: int64
+          description: ID of the resource
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SkillId'
+      tags:
+        - Resources
+        - Skills
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Resource not found
+    delete:
+      summary: Remove skills from a resource
+      description: |
+        bla, bla, bla.
+      operationId: deleteSkillsFromResource
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: resourceId
+          in: path
+          type: number
+          format: int64
+          description: ID of the resource
+          required: true
+        - name: skillId
+          in: query
+          description: IDs of the skills to remove
+          required: true
+          type: array
+          items:
+            type: number
+            format: int64
+      tags:
+        - Resources
+        - Skills
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Resource'
+        422:
+          description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
         404:
@@ -722,7 +1045,7 @@ definitions:
         description: Display name of skill.
       description:
         type: string
-  NewSkillData:
+  SkillData:
     type: object
     properties:
       name:
@@ -730,6 +1053,12 @@ definitions:
         description: Display name of skill.
       description:
         type: string
+  SkillId:
+    type: object
+    properties:
+      skill_id:
+        type: integer
+        description: Unique identifier representing a skill
   FeatureId:
     type: object
     properties:
@@ -770,6 +1099,25 @@ definitions:
         description: array of features
         items:
           $ref: '#/definitions/Feature'
+  FeatureData:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Display name of feature.
+      description:
+        type: string
+        description: Description of feature.
+      effort:
+        type: number
+        description: Effort to implement the feature.
+      deadline:
+        type: string
+        format: date-time
+      priority:
+        type: integer
+        enum: [ 1, 2, 3, 4, 5 ]
+        description: It coms from Wp3.3
   Resource:
     type: object
     properties:
@@ -786,7 +1134,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Skill'
-  NewResourceData:
+  ResourceData:
     type: object
     properties:
       name:
@@ -796,10 +1144,12 @@ definitions:
         type: string
       availability:
         type: number
-      skills:
-        type: array
-        items:
-          $ref: '#/definitions/Skill'
+  ResourceId:
+    type: object
+    properties:
+      resource_id:
+        type: integer
+        description: Unique identifier representing a resource
   Release:
     type: object
     properties:
@@ -817,7 +1167,7 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Resource'
-  NewReleaseData:
+  ReleaseData:
     type: object
     properties:
       name:
@@ -828,10 +1178,6 @@ definitions:
       deadline:
         type: string
         format: date-time
-      resources:
-        type: array
-        items:
-          $ref: '#/definitions/Resource'
   Project:
     type: object
     properties:
@@ -853,16 +1199,16 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Resource'
-  Status:
+  ProjectData:
     type: object
     properties:
-      code:
-        type: integer
-        format: int32
-      message:
+      effort_unit:
         type: string
-      description:
-        type: string
+        description: e.g. "bin"
+      hours_per_effort_unit:
+        type: number
+      hours_per_week_and_full_time_resource:
+        type: number
   Job:
     type: object
     properties:
@@ -886,9 +1232,11 @@ definitions:
     properties:
       id:
         type: integer
-      created:
+      created_at:
         type: string
-        format: date-time
+        format: date
+      release_id:
+        type: integer
       jobs:
         type: array
         description: array of jobs
