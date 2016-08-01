@@ -1,0 +1,47 @@
+<!-- <script src="release-planner-app/js/main_screen.js"></script> -->
+<style type="text/css">
+.draggable-demo-cart
+{
+    border: 2px dashed #aaa;
+   
+    width: "100%";
+    height: 100px;
+}
+
+</style>
+<!--                 style='margin-left: 15px;' -->
+<div class="well" ng-controller="main-screen-utilities">
+ 
+   <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-6">
+                <jqx-list-box id ="listBoxA" jqx-settings="settings" jqx-on-select="selectItem(event)"></jqx-list-box>
+                {{log}}
+            </div>
+            <div class="col-xs-6" >
+                <div ng-repeat="release in releases">
+                	<div class="col-xs-10" >
+            			<div ng-attr-id="{{'release_' + release.id}}" class="draggable-demo-cart">{{release.description}}</div>
+               		</div>
+					<div class="col-xs-2" >
+						<div>
+                			<input style='margin-top: 20px;' value="<span style='font-weight: bold;'><i class='fa fa-camera-retro fa-lg'></i>HTML Button</span>" type="button" id="{{'release_qxHTMLButton_' + release.id}}"/>
+                 		</div>	
+					</div>
+                	<div class="col-xs-12">count - {{release.count}}</div>
+                </div>
+                <div class="col-xs-6 col-xs-offset-6">
+                    <a href="#/release-planner-app/add_release" id='jqxButtonAddRelease' >Add release</a>
+                </div>
+                
+                <div class="col-xs-6 col-xs-offset-6">
+                    <a href="#/release-planner-app/edit_project_conf" id='jqxButtonEditProjectConfig'>Edit Project config.</a>
+                </div>
+                    
+                
+            </div>    
+        </div>
+    </div>
+    
+    			
+</div>
