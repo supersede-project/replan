@@ -9,7 +9,7 @@ app.controllerProvider.register('edit_user', function($scope, $http, $location) 
 	
 	$http({
 		method: 'get',
-		url: 'admin-user-manager-app/user'
+		url: 'release-planner-app/user'
 	}).success(function (data, status) {
 		 
 		var localData = [];
@@ -52,7 +52,7 @@ app.controllerProvider.register('edit_user', function($scope, $http, $location) 
 					var datarow = $('#jqxGrid').jqxGrid('getrowdata', current_index);
 					
 					$http({
-						url: "admin-user-manager-app/user/" + datarow.userId,
+						url: "release-planner-app/user/" + datarow.userId,
 						method: 'GET'
 					}).success(function(data){
 						var tmp = data.profiles.splice(0, data.profiles.length);
@@ -74,7 +74,7 @@ app.controllerProvider.register('edit_user', function($scope, $http, $location) 
 		alert(status);
 	});
 	
-	$http.get('admin-user-manager-app/profile')
+	$http.get('release-planner-app/profile')
 		.success(function(data) {
 			$scope.profiles.length = 0;
 			for(var i = 0; i < data.length; i++)
@@ -101,11 +101,11 @@ app.controllerProvider.register('edit_user', function($scope, $http, $location) 
 		}
 		
 		$http({
-				url: "admin-user-manager-app/user/" + $scope.user.userId,
+				url: "release-planner-app/user/" + $scope.user.userId,
 				data: $scope.user,
 				method: 'PUT'
 			}).success(function(data){
-				$location.url('admin-user-manager-app/edit_user');
+				$location.url('release-planner-app/edit_user');
 			}).error(function(err){
 				console.log(err);
 			});

@@ -6,7 +6,8 @@ app.controllerProvider.register('list_users', function($scope, $http) {
 	
 	$http({
 		method: 'get',
-		url: 'admin-user-manager-app/user'
+		//url: 'release-planner-app/user'
+		url: 'http://localhost:90/release-planner-app/user'
 	}).success(function (data, status) {
 		var localData = [];
 		
@@ -26,6 +27,9 @@ app.controllerProvider.register('list_users', function($scope, $http) {
 			}
 			localData.push(tmp);
 		}
+		console.log("-------------");
+		console.log(localData);
+		console.log("-------------");
 		
 		// prepare the data
 		var source =

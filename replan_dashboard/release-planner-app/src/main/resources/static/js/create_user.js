@@ -1,3 +1,4 @@
+debugger;
 var app = angular.module('w5app');
 
 app.controllerProvider.register('create_user', function($scope, $http, $location) {
@@ -19,17 +20,17 @@ app.controllerProvider.register('create_user', function($scope, $http, $location
 		}
 		
 		$http({
-				url: "admin-user-manager-app/user",
+				url: "release-planner-app/user",
 				data: $scope.user,
 				method: 'POST'
 			}).success(function(data){
-				$location.url('admin-user-manager-app/list_users');
+				$location.url('release-planner-app/list_users');
 			}).error(function(err){
 				$scope.errorMessage = err.message;
 			});
 	};
 	
-	$http.get('admin-user-manager-app/profile')
+	$http.get('release-planner-app/profile')
 		.success(function(data) {
 			$scope.profiles.length = 0;
 			for(var i = 0; i < data.length; i++)
