@@ -1,0 +1,106 @@
+#hoursBinInput input, #hoursWeekInput input{
+	width: 100% !important;
+	background-color: #5cb85c;
+	color: #ffffff;
+}
+.padding-bottom-5px{
+	padding-bottom: 5px;
+}
+.margin-bottom-5px{
+	margin-bottom: 5px;
+}
+.margin-left-5px{
+	margin-left: 5px;
+}
+.margin-top-5px{
+	margin-top: 5px;
+}
+.margin-right-minus15px{
+	margin-right: -15px;
+}
+.border{
+	border: 2px solid #e3e3e3;
+    border-radius: 5px;
+    padding: 10px;
+}
+.form-group.required .control-label:after { 
+   content:"*";
+   color:red;
+}
+.my-input-width
+{
+   width: 100% !important;
+}
+.my-label {
+	font-weight: normal !important;
+}
+.my-button {
+    width: 175px !important;
+}
+.my-button2 {
+    width: 100px !important;
+}
+.my-input-success{
+	color: #ffffff !important;
+/*     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25) !important; */
+/*     background-color: #5cb85c !important; */
+/*     border-left-color: #4cae4c !important; */
+/*     border-right-color: #4cae4c !important; */
+/*     border-top-color: #4cae4c !important; */
+/*     border-bottom-color: #4cae4c !important; */
+ background-color: #5cb85c;
+}
+.myHeight{
+	height: 25px;
+}
+.myHeight2{
+	height: 38px;
+}
+.draggable-demo-cart
+{
+    border: 2px dashed #aaa;
+    width: "100%";
+    height: 100px;
+}
+
+/*release_details.html*/
+.graph .graph-labels.x-graph-labels {
+  text-anchor: middle;
+  
+}
+
+.graph .graph-labels.y-graph-labels {
+  text-anchor: end;
+/*   font-size: 1.0vw;  */
+}
+.graph {
+/*   height: 600px; */
+/*   width: 860px; */
+   height: 100%;
+   width: 100%;
+  min-height: 522px;
+/*   min-width: 100px; */
+  border: 1px dotted #555;
+}
+
+.graph .grid {
+  stroke: #ccc;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+
+.grid-dead-line {
+  stroke: red;
+  stroke-dasharray: 0;
+  stroke-width: 1;
+}
+.graph-labels {
+  font-size: 13px;
+}
+
+.graph-data {
+  fill: #337ab7;
+  stroke-width: 1; 
+/*   cursor: move; */
+font-size: 0.8vw;
+}

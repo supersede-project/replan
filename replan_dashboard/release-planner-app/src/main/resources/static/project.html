@@ -1,0 +1,46 @@
+<script src="release-planner-app/js/project.js"></script>
+<link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
+<div class="well" ng-controller="project-utilities"> 
+	<div class="container-fluid">
+<!--        	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
+<!-- 			<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
+<!-- 		</a> -->
+       <div class="row">
+           <h4>{{project.name}} - {{project.id}}</h4>
+           <h5>Resources:</h5>
+           <div class="col-xs-10">
+           	<div id="projectJqxgrid"></div>
+           </div>
+           <div class="col-xs-2">
+        		  <div class="text-right">
+        		    <jqx-button type="reset" class="my-button2 myHeight2"><i class="fa fa-plus fa-lg"></i>Add new resource</jqx-button>
+					<jqx-button template="submit" class="my-button2 myHeight2 margin-top-5px"><i class="fa fa-pencil fa-lg"></i>Manage topics</jqx-button>
+        		  </div>
+        	</div>
+        	
+        	<div class="col-xs-8 margin-top-5px">
+        		<table>
+					<tr>
+						<td class="padding-bottom-5px">Hours/bin:</td>
+						<td class="padding-bottom-5px">
+			  				<jqx-number-input id="hoursBinInput" class ="myHeight" type="text" ng-model="project.hours_per_effort_unit" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
+			  			</td>
+					</tr>
+					<tr>
+						<td class="padding-bottom-5px">Hours/week of a full-time resources:</td>
+						<td class="padding-bottom-5px">
+							<jqx-number-input id="hoursWeekInput" class ="myHeight" type="text" ng-model="project.hours_per_week_and_full_time_resource" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
+						</td>
+					</tr>
+				</table>
+        	</div>
+        	<div class="col-xs-12 margin-top-5px">
+        		  <div class="text-right">
+        		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
+					<jqx-button template="submit" class="my-button myHeight" ng-click="add()" ng-show="!update"><i class="fa fa-plus fa-lg"></i>{{typeLabel}}</jqx-button>
+					<jqx-button template="submit" class="my-button myHeight" ng-click="update()" ng-show="update"><i class="fa fa-pencil fa-lg"></i>{{typeLabel}}</jqx-button>
+        		  </div>
+        	</div>
+        	</div>
+     </div>
+</div>
