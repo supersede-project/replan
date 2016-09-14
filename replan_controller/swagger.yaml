@@ -3,10 +3,11 @@ info:
   title: SUPERSEDE ReleasePlanner API to UI
   version: "1.0.1"
 # the domain of the service
-host: release-planner-ui-api.herokuapp.com
+host: 62.14.219.13:3000
+#release-planner-ui-api.herokuapp.com
 # array of all schemes that your API supports
 schemes:
-  - https
+  - http
 # will be prefixed to all paths
 basePath: /api/ui/v1
 produces:
