@@ -105,7 +105,7 @@ class ReleasesController < ApplicationController
   end
 
   def remove_features_from_release
-    params[:featureId].each do |i|
+    params[:featureId].split(',').each do |i|
         feature = @release.features.find_by(id: i)
           if feature
             @release.features.delete(feature)

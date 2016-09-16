@@ -101,15 +101,6 @@ ActiveRecord::Schema.define(version: 20160719082225) do
     t.integer "resource_id", null: false
   end
 
-  create_table "skill_resources", force: :cascade do |t|
-    t.integer  "skill_id"
-    t.integer  "resource_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.index ["resource_id"], name: "index_skill_resources_on_resource_id"
-    t.index ["skill_id"], name: "index_skill_resources_on_skill_id"
-  end
-
   create_table "skills", force: :cascade do |t|
     t.string   "name"
     t.string   "description"
