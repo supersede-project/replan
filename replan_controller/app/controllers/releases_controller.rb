@@ -79,7 +79,7 @@ class ReleasesController < ApplicationController
   end
 
   def delete_resources_from_release
-    params[:ResourceId].each do |i|
+    params[:ResourceId].split(',').each do |i|
         resource = @release.resources.find_by(id: i)
           if resource
             @release.resources.delete(resource)
