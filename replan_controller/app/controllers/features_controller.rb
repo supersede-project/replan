@@ -89,7 +89,7 @@ class FeaturesController < ApplicationController
   end
 
   def delete_dependencies_from_feature
-    params[:feature_id].each do |i|
+    params[:feature_id].split(",").each do |i|
         feature = @feature.depends_on.find_by(id: i)
           if feature
             @feature.depends_on.delete(feature)
