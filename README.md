@@ -1,4 +1,4 @@
-# Replan tool of ![SUPERSEDE](images/SUPERSEDE-logo.png) project
+# Replan tool of [![SUPERSEDE](images/SUPERSEDE-logo.png)](https://www.supersede.eu/) project
 
 The main functionality of the Replan tool is to give support to the software release planning. To provide this functionality the tool uses problem optimization algorithms.
 
