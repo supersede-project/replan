@@ -1,6 +1,6 @@
 {
   "name": "Replan",
   "tagline": "Replan tool of SUPERSEDE project",
-  "body": "# RePlan tool of SUPERSEDE project\r\n\r\nThis tool is composed by several components:\r\n\r\n- *RePlan_Dashboard*: UI / front end ([README.md](./replan_dashboard/README.md))\r\n- *RePlan_Controller*: Access point the components that communicate with the Replan tool ([README.md](./replan_controller/README.md))\r\n- *RePlan_Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem ([README.md](./replan_optimizer/README.md))\r\n\r\nPlease check the README.md of each component for compile and install instructions.\r\n\r\nContact: David Ameller <dameller@essi.upc.edu>\r\n\r\n",
+  "body": "# RePlan tool of ![SUPERSEDE](./images/SUPERSEDE-logo.png) project\r\n\r\nThis tool is composed by several components:\r\n\r\n- *RePlan_Dashboard*: UI / front end ([README.md](./replan_dashboard/README.md))\r\n- *RePlan_Controller*: Access point the components that communicate with the Replan tool ([README.md](./replan_controller/README.md))\r\n- *RePlan_Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem ([README.md](./replan_optimizer/README.md))\r\n\r\nPlease check the README.md of each component for compile and install instructions.\r\n\r\nContact: David Ameller <dameller@essi.upc.edu>\r\n\r\n<center>![Project funded by the European Union](./images/european.union.logo.png)</center>\r\n",
   "note": "Don't delete this file! It's used internally to help with page regeneration."
 }
