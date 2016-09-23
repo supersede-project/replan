@@ -1,4 +1,4 @@
-# RePlan tool of SUPERSEDE project
+# RePlan tool of ![SUPERSEDE](./images/SUPERSEDE-logo.png) project
 
 This tool is composed by several components:
 
@@ -10,3 +10,4 @@ Please check the README.md of each component for compile and install instruction
 
 Contact: David Ameller <dameller@essi.upc.edu>
 
+<center>![Project funded by the European Union](./images/european.union.logo.png)</center>
