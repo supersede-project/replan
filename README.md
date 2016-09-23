@@ -8,9 +8,9 @@ Replan tool is **not** intended to substitute the project leader/manager, but to
 
 Replan tool is composed by three components:
 
-- *RePlan_Dashboard*: UI / front end ([README.md](https://github.com/supersede-project/replan/blob/master/replan_dashboard/README.md))
-- *RePlan_Controller*: Access point the components that communicate with the Replan tool ([README.md](https://github.com/supersede-project/replan/blob/master/replan_controller/README.md))
-- *RePlan_Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem ([README.md](https://github.com/supersede-project/replan/blob/master/replan_optimizer/README.md))
+- *Replan Dashboard*: UI / front end ([README.md](https://github.com/supersede-project/replan/blob/master/replan_dashboard/README.md))
+- *Replan Controller*: Access point the components that communicate with the Replan tool ([README.md](https://github.com/supersede-project/replan/blob/master/replan_controller/README.md))
+- *Replan Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem ([README.md](https://github.com/supersede-project/replan/blob/master/replan_optimizer/README.md))
 
 *Please check the respective README.md for install instructions.*
 
