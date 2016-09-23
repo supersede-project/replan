@@ -12,7 +12,7 @@ Replan tool is composed by three components:
 - *Replan Controller*: Access point the components that communicate with the Replan tool ([README.md](https://github.com/supersede-project/replan/blob/master/replan_controller/README.md))
 - *Replan Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem ([README.md](https://github.com/supersede-project/replan/blob/master/replan_optimizer/README.md))
 
-*Please check the respective README.md for install instructions.*
+*Please check the respective README.md for details.*
 
 Main contact: David Ameller <dameller@essi.upc.edu>
 
