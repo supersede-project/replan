@@ -18,3 +18,9 @@ $ rake db:migrate
 $ rake db:seed
 ```
 The last instruction populates the DB with sample data. There is just one Project with id = 1.
+
+## API reference documents
+
+[API to be consumed by the dashboard (UI)](https://supersede-project.github.io/replan/replan_controller/API-UI.html)
+
+[API to be consumed by decision making (WP3)](https://supersede-project.github.io/replan/replan_controller/API-WP3.html)
