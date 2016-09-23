@@ -1,0 +1,6 @@
+{
+  "name": "Replan",
+  "tagline": "Replan tool of SUPERSEDE project",
+  "body": "# Replan tool of SUPERSEDE project\r\n\r\nThis tool is composed by several components:\r\n\r\n- *RePlan_Dashboard*: UI / front end\r\n- *RePlan_Controller*: Access point for the dashboard (UI) and the DM on software evolution (T3.3)\r\n- *RePlan_Optimizer*: Main functionality of the tool, to provide an optimized solution to the release problem\r\n\r\nPlease check the README.md of each component for compile and install instructions.\r\n\r\nContact: David Ameller <dameller@essi.upc.edu>\r\n\r\n",
+  "note": "Don't delete this file! It's used internally to help with page regeneration."
+}
