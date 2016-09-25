@@ -1,6 +1,7 @@
 swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
+  description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
   version: "1.0.1"
 # the domain of the service
 host: 62.14.219.13:3000
@@ -17,7 +18,7 @@ paths:
     get:
       summary: Get Project info
       description: |
-        bla, bla, bla.
+        This operation returns the main info for a given Project: name, resources, effort unit, etc.
       operationId: getProject
       parameters:
         - name: projectId
@@ -42,7 +43,7 @@ paths:
     put:
       summary: Modify Project
       description: |
-        bla, bla, bla.
+        This operation allows modyfing some parameters of a given Project: effort unit, number of hours per effor unit and number of hours per week for a full time resource.
       operationId: modifyProject 
       parameters:
         - name: projectId
@@ -53,6 +54,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Project's parameters that can be modified
           required: true
           schema:
             $ref: '#/definitions/ProjectData'
@@ -73,7 +75,7 @@ paths:
     get:
       summary: Get features
       description: |
-        bla, bla, bla.
+        This operation returns a list of Features for a given Project. This list can be filtered by Feature status: pending or scheduled.
       operationId: getFeatures
       parameters:
         - name: projectId
@@ -110,7 +112,7 @@ paths:
     get:
       summary: Get a feature given its ID
       description: |
-        bla, bla, bla.
+        This operation returns the main info of a Feature given its featureID.
       operationId: getFeature
       parameters:
         - name: projectId
@@ -141,7 +143,7 @@ paths:
     put:
       summary: Modifies a given feature
       description: |
-        bla, bla, bla.
+        This operation allows modifying some parameters of a given Feature: name, description, effort, deadline and priority.
       operationId: modifyFeature
       parameters:
         - name: projectId
@@ -158,6 +160,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Feature parameters that can be modified
           required: true
           schema:
             $ref: '#/definitions/FeatureData'
@@ -178,7 +181,7 @@ paths:
     post:
       summary: Adds required skills to a feature
       description: |
-        bla, bla, bla.
+        This operation allows adding more required skills to a given Feature by providing a list of the Skill ids.
       operationId: addSkillsToFeature
       parameters:
         - name: projectId
@@ -195,6 +198,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Array of Skill ids
           required: true
           schema:
             type: array
@@ -217,7 +221,7 @@ paths:
     delete:
       summary: Delete required skills from a feature
       description: |
-        bla, bla, bla.
+        This operation allows deleting required skills from a given Feature by providing the Skill ids.
       operationId: deleteSkillsFromFeature
       parameters:
         - name: projectId
@@ -258,7 +262,7 @@ paths:
     post:
       summary: Adds dependencies (to other features) to a feature
       description: |
-        bla, bla, bla.
+        This operation allows adding more dependencies on other features by providing a list with the ids of those features
       operationId: addDependenciesToFeature
       parameters:
         - name: projectId
@@ -275,6 +279,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Array of Feature ids
           required: true
           schema:
             type: array
@@ -296,7 +301,7 @@ paths:
     delete:
       summary: Delete dependencies (to other features) from a feature
       description: |
-        bla, bla, bla.
+        This operation allows deleting dependencies on other features by providing the ids of those features
       operationId: deleteDependenciesFromFeature
       parameters:
         - name: projectId
@@ -337,7 +342,7 @@ paths:
       summary: Get releases
       operationId: getReleases
       description: |
-        bla, bla, bla.
+        This operation returns a list with the Releases in a given Project.
       parameters:
         - name: projectId
           in: path
@@ -363,7 +368,7 @@ paths:
     post:
       summary: Adds a new Release to the Project
       description: |
-        bla, bla, bla.
+        This operation allows adding a new Release to a given Project by providing the following parameters: name, description and deadline
       operationId: addNewReleaseToProject 
       parameters:
         - name: projectId
@@ -374,6 +379,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Parameters of the new Release
           required: true
           schema:
             $ref: '#/definitions/ReleaseData'
@@ -395,7 +401,7 @@ paths:
       summary: Modify a given release
       operationId: modifyRelease 
       description: |
-        bla, bla, bla.
+        This operation allows modifying a given Release providing new values for the following parameters: name, description and deadline
       parameters:
         - name: projectId
           in: path
@@ -411,6 +417,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Release parameters that can be modified
           required: true
           schema:
             $ref: '#/definitions/ReleaseData'
@@ -428,10 +435,10 @@ paths:
         404:
           description: Project or Release not found
     delete:
-      summary: Remove a given Release. Does it trigger a replanning?
+      summary: Remove a given Release.
       operationId: deleteRelease 
       description: |
-        bla, bla, bla.
+        This operation allows removing a given Release from the Project.
       parameters:
         - name: projectId
           in: path
@@ -460,7 +467,7 @@ paths:
     post:
       summary: Adds resources to a release
       description: |
-        bla, bla, bla.
+        This operation allows assigning more resources to a given Release by providing a list with the Resource ids.
       operationId: addResourcesToRelease
       parameters:
         - name: projectId
@@ -477,6 +484,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Array of Resource ids
           required: true
           schema:
             type: array
@@ -499,7 +507,7 @@ paths:
     delete:
       summary: Delete resources from a release
       description: |
-        bla, bla, bla.
+        This operation allows deallocating resources from a given Release by providing the ids of those resources.
       operationId: deleteResourcesFromRelease
       parameters:
         - name: projectId
@@ -540,7 +548,7 @@ paths:
     get:
       summary: Get the features scheduled for a given release
       description: |
-        bla, bla, bla.
+        This operation returns a list of the features scheduled for the given Release.
       operationId: getReleaseFeatures
       parameters:
         - name: projectId
@@ -574,7 +582,7 @@ paths:
     post:
       summary: Adds features to a release
       description: |
-        bla, bla, bla.
+        This operation allows adding more features to a given Release by providing the list of the feature ids.
       operationId: addFeaturesToRelease
       parameters:
         - name: projectId
@@ -591,6 +599,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Array of Feature ids
           required: true
           schema:
             type: array
@@ -611,7 +620,7 @@ paths:
     delete:
       summary: Remove features from a relese
       description: |
-        bla, bla, bla.
+        This operation allows removing features from a given Release by providing the Feature ids.
       operationId: removeFeaturesFromRelease 
       parameters:
         - name: projectId
@@ -650,7 +659,7 @@ paths:
     get:
       summary: Gets the current Release Plan
       description: |
-        bla, bla, bla.
+        This operation calculates and then returns a new Release Plan for a given Release.
       operationId: getReleasePlan
       parameters:
         - name: projectId
@@ -680,9 +689,9 @@ paths:
         404:
           description: Project or Release not found
     delete:
-      summary: Cancels the last Release Plan
+      summary: Cancels the Release Plan
       description: |
-        bla, bla, bla.
+        This operation cancels the Release Plan of the given Release.
       operationId: cancelLastReleasePlan
       parameters:
         - name: projectId
@@ -713,7 +722,7 @@ paths:
     get:
       summary: Get project skills
       description: |
-        bla, bla, bla.
+        This operation retrieves a list of the possible skills required in the given Project.
       operationId: getProjectSkills
       parameters:
         - name: projectId
@@ -740,7 +749,7 @@ paths:
     post:
       summary: Create a new Skill
       description: |
-        bla, bla, bla.
+        This operation allows defining a new Skill in the context of the given Project.
       operationId: addNewSkillToProject
       parameters:
         - name: projectId
@@ -751,6 +760,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Skill parameters
           required: true
           schema:
             $ref: '#/definitions/SkillData'
@@ -771,7 +781,7 @@ paths:
     put:
       summary: Modify a given Skill
       description: |
-        bla, bla, bla.
+        This operation allows modifying the parameters of a given Skill, namely name and description.
       operationId: modifySkill
       parameters:
         - name: projectId
@@ -788,6 +798,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Skill parameters that can be modified
           required: true
           schema:
             $ref: '#/definitions/SkillData'
@@ -805,7 +816,7 @@ paths:
     delete:
       summary: Remove a given Skill
       description: |
-        bla, bla, bla.
+        This operation allows removing a given Skill from the Project settings.
       operationId: deleteSkill 
       parameters:
         - name: projectId
@@ -835,7 +846,7 @@ paths:
     get:
       summary: Get project resources
       description: |
-        bla, bla, bla.
+        This operation returns a list of the resources allocated to a given Project.
       operationId: getProjectResources
       parameters:
         - name: projectId
@@ -862,7 +873,7 @@ paths:
     post:
       summary: Add a new resource to the project
       description: |
-        bla, bla, bla.
+        This operation allows defining a new Resource to be allocated to the given Project.
       operationId: addNewResourceToProject
       parameters:
         - name: projectId
@@ -873,6 +884,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Resource parameters
           required: true
           schema:
             $ref: '#/definitions/ResourceData'
@@ -893,7 +905,7 @@ paths:
     put:
       summary: Modify a given Resource
       description: |
-        bla, bla, bla.
+        This operation allows modifying the parameters of a given Resource, namely name, description, and availability.
       operationId: modifyResource
       parameters:
         - name: projectId
@@ -910,6 +922,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Resource parameters that can be modified
           required: true
           schema:
             $ref: '#/definitions/ResourceData'
@@ -929,7 +942,7 @@ paths:
     delete:
       summary: Remove a given Resource
       description: |
-        bla, bla, bla.
+        This operation removes and deallocates a given Resource from the Project.
       operationId: deleteResource
       parameters:
         - name: projectId
@@ -959,7 +972,7 @@ paths:
     post:
       summary: Add skills to a resource
       description: |
-        bla, bla, bla.
+        This operation allows assigning more skills to a given Resource by providing a list of the Skill ids.
       operationId: addSkillsToResource
       parameters:
         - name: projectId
@@ -976,6 +989,7 @@ paths:
           required: true
         - name: body
           in: body
+          description: Array of Skill ids
           required: true
           schema:
             type: array
@@ -998,7 +1012,7 @@ paths:
     delete:
       summary: Remove skills from a resource
       description: |
-        bla, bla, bla.
+        This operation allows removing skills from a given Resource by providing the Skill ids.
       operationId: deleteSkillsFromResource
       parameters:
         - name: projectId
