@@ -4,13 +4,13 @@ info:
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
   version: "1.0.1"
 # the domain of the service
-host: 62.14.219.13:3000
+host: 62.14.219.13:8280
 #release-planner-ui-api.herokuapp.com
 # array of all schemes that your API supports
 schemes:
   - http
 # will be prefixed to all paths
-basePath: /api/ui/v1
+basePath: /replan
 produces:
   - application/json
 paths:
