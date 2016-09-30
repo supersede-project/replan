@@ -4,7 +4,8 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 	/*
  	* REST methods
  	*/
-	var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
+	var baseURL = "http://62.14.219.13:8280/replan/projects/1";
+	//var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
 	
  	$scope.getPendingFeature = function () {
  		return $http({

@@ -1,4 +1,4 @@
-<script src="release-planner-app/js/release.js"></script>
+<!-- <script src="release-planner-app/js/release.js"></script> -->
 <link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
 <!-- <div class="well" ng-controller="release-utilities" data-ng-init="init()"> -->
 <div class="well" ng-controller="release-utilities"> 
@@ -7,10 +7,12 @@
 <!-- 				<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
 <!-- 			</a> -->
         <div class="row">
-           <h4>{{release.name}} - {{release.id}}</h4>
-           <h5>Resources:</h5>
+           <h4 ng-show="isUpdate">{{release.name}} - {{release.id}}</h4>
+	       <h5>Resources:</h5>
            <div class="col-xs-4">
-	       	   	<jqx-list-box id ="resourcesListBox" jqx-settings="settingsResourcesListBox" jqx-on-select="selectItemResourcesListBox(event)" ></jqx-list-box>
+	       	   	<jqx-list-box id ="resourcesListBox" jqx-settings="settingsResourcesListBox"  jqx-on-select="selectItemResourcesListBox(event)" ng-class="addClassHasErrorResourcesAreRequired"></jqx-list-box>
+	       	   	<span ng-show="showResourcesAreRequired" class="help-block" ng-class="addClassHasErrorResourcesAreRequired">Resources are required.</span>
+	           	
 	           	{{log}}
 		   </div>
 	       <div class="col-xs-4">
@@ -23,20 +25,64 @@
 				<jqx-list-box id ="resourcesAddListBox" jqx-settings="settingsResourcesAddListBox" jqx-on-select="selectItemResourcesAddListBox(event)" ></jqx-list-box>
 	           	{{log1}}
            </div>
-        	<div class="col-xs-12 margin-top-5px" >
-        	<div class="text-right">
-				Release deadline: 
-				<jqx-input id="deadlineInput" class ="my-input-success myHeight" type="text" value = "{{release.deadline}}" jqx-disabled="true"/></jqx-input>
-        		<jqx-toggle-button id="3monthsToggleBtn" class="my-button myHeight" ng-click="toogleMonthsToggleBtns($event)" >1 months</jqx-toggle-button>
-        		<jqx-toggle-button id="6monthsToggleBtn" class="my-button myHeight" ng-click="toogleMonthsToggleBtns($event)">3 months</jqx-toggle-button>
-       		</div>
+           <div class="col-xs-12 margin-top-5px" ng-show="isUpdate">
+	        	<div class="text-right">
+					Release deadline: 
+					<jqx-input id="deadlineInput" class ="myHeight" ng-class="deadlineStyle" type="text" value = "{{release.deadline}}" jqx-disabled="isUpdate"/></jqx-input>
+	        		<jqx-toggle-button id="3monthsToggleBtn" class="my-button myHeight" ng-click="toogleMonthsToggleBtns($event)" jqx-disabled="!isUpdate">1 months</jqx-toggle-button>
+	        		<jqx-toggle-button id="6monthsToggleBtn" class="my-button myHeight" ng-click="toogleMonthsToggleBtns($event)" jqx-disabled="!isUpdate">3 months</jqx-toggle-button>
+	       		</div>
         	</div>
-        	<div class="col-xs-12 margin-top-5px">
-        		  <div class="text-right">
-        		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
-					<jqx-button template="submit" class="my-button myHeight" ng-click="addUpdate()"ng-show="!update"><i class="fa fa-plus fa-lg"></i>{{typeLabel}}</jqx-button>
-					<jqx-button template="submit" class="my-button myHeight" ng-click="addUpdate()" ng-show="update"><i class="fa fa-pencil fa-lg"></i>{{typeLabel}}</jqx-button>
-        		  </div>
+ 	        <div class="col-xs-12 margin-top-5px">
+       		  <div class="text-right" ng-show="isUpdate">
+       		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
+<!-- 					<jqx-button template="submit" class="my-button myHeight" ng-click="addUpdate()" ng-show="!isUpdate" data-ng-disabled="checkQuestions()"><i class="fa fa-plus fa-lg"></i>Add</jqx-button> -->
+				<jqx-button template="submit" class="my-button myHeight" ng-click="update()"><i class="fa fa-pencil fa-lg"></i>Update</jqx-button>
+       		  </div>
         	</div>
-    </div>
+        <div class="row">
+			<div class="col-xs-12">	
+	        	
+	        	<form ng-show="!isUpdate" id="releaseForm" name="releaseForm" class="form-horizontal margin-top-5px" ng-submit="pippo()" novalidate>
+				    
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseName.$error.required && !releaseForm.releaseName.$pristine}">
+				      <label class="control-label col-sm-4 my-label" for="releaseName">Release name:</label>
+				      <div class="col-sm-8">
+				        <jqx-input id="releaseNameInput" name="releaseName" class="form-control myHeight" ng-model="release.name" required></jqx-input>
+				        <span ng-show="releaseForm.releaseName.$error.required && !releaseForm.releaseName.$pristine" class="help-block">Release name is required.</span>
+				      </div>
+				    </div>
+				    
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseDescription.$error.required && !releaseForm.releaseDescription.$pristine}">
+				      <label class="control-label col-sm-4 my-label" for="releaseDescription">Release description:</label>
+				      <div class="col-sm-8">
+				        <jqx-input id="releaseDescriptionInput" name="releaseDescription" class="form-control myHeight" ng-model="release.description" required></jqx-input>
+				        <span ng-show="releaseForm.releaseDescription.$error.required && !releaseForm.releaseDescription.$pristine" class="help-block">Release description is required.</span>
+				      </div>
+				    </div>
+				    
+				   <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine}">
+				      <label class="control-label col-sm-4 my-label" for="releaseDeadline">Release deadline:</label>
+				      <div class="col-sm-8">
+<!-- 				        <jqx-date-input id="releaseNameInput" name="releaseDeadline" class="form-control myHeight" ng-model="release.deadline" required></jqx-date-input> -->
+							<div id='dateInput'>
+							</div>
+				        <span ng-show="releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
+				      </div>
+				    </div>
+				     <!-- button -->
+	                <div class="form-group">
+	                
+	                    <div class="col-sm-offset-2 col-sm-10">
+	                   		<div class="text-right">
+		                   		<jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
+		                        <jqx-button template="submit" class="my-button myHeight" ng-click="add()" ng-show="!isUpdate" ng-disabled="releaseForm.$invalid || showResourcesAreRequired"><i class="fa fa-plus fa-lg"></i>Add</jqx-button>
+	                    	</div>
+	                    </div>
+	                    
+	                </div>
+			    </form>
+	        </div>
+	     </div>	     	
+      </div>
 </div>

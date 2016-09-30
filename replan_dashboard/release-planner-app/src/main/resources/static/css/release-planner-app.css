@@ -15,8 +15,18 @@
 .margin-top-5px{
 	margin-top: 5px;
 }
+.margin-top-15px{
+	margin-top: 15px;
+}
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
 .margin-right-minus15px{
 	margin-right: -15px;
+}
+.margin-right-minus30px{
+	margin-right: -30px;
 }
 .border{
 	border: 2px solid #e3e3e3;
@@ -49,6 +59,14 @@
 /*     border-top-color: #4cae4c !important; */
 /*     border-bottom-color: #4cae4c !important; */
  background-color: #5cb85c;
+}
+
+.my-error-border-color{
+	border-color: #a94442;
+	color: #a94442;
+}
+.widht100perc{
+	width: 100%;
 }
 .myHeight{
 	height: 25px;

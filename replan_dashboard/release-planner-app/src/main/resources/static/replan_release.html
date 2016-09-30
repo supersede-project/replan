@@ -1,4 +1,4 @@
-<script src="release-planner-app/js/replan_release.js"></script>
+<!-- <script src="release-planner-app/js/replan_release.js"></script> -->
 <link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
 <div class="well" ng-controller="replan-release">
 	  <div class="container-fluid">
@@ -30,7 +30,7 @@
 				    <div class="form-group margin-bottom-5px" ng-class="{ 'has-error' : featureForm.dependency.$error.required}">
 				      <label class="control-label col-sm-2 my-label" for="deadline">Dependencies:</label>
 				      <div class="col-sm-10">
-							<jqx-combo-box id="dependency" name="dependency" class="my-input-width" jqx-height="25"  ng-model="selectedDependency"  jqx-source="feature.depends_on"></jqx-combo-box>
+							<jqx-combo-box id="dependency" name="dependency" class="my-input-width" jqx-height="25"  ng-model="selectedDependency"  ng-disabled="true" jqx-source="feature.depends_on"></jqx-combo-box>
 							<span ng-show="featureForm.dependency.$error.required" class="help-block">Dependency is required.</span>
 				      </div>
 				    </div>

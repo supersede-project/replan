@@ -1,4 +1,4 @@
-<script src="release-planner-app/js/project.js"></script>
+<!-- <script src="release-planner-app/js/project.js"></script> -->
 <link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
 <div class="well" ng-controller="project-utilities"> 
 	<div class="container-fluid">
@@ -13,12 +13,56 @@
            </div>
            <div class="col-xs-2">
         		  <div class="text-right">
-        		    <jqx-button type="reset" class="my-button2 myHeight2"><i class="fa fa-plus fa-lg"></i>Add new resource</jqx-button>
-					<jqx-button template="submit" class="my-button2 myHeight2 margin-top-5px"><i class="fa fa-pencil fa-lg"></i>Manage topics</jqx-button>
+        		   <jqx-button class="my-button2 myHeight2" ng-click="resetFormAddUpdateResouceForm()"><i class="fa fa-plus fa-lg"></i>Add new resource</jqx-button>
+        		   <jqx-button class="my-button2 myHeight2 margin-top-5px" ng-click="editFormAddUpdateResouceForm()"><i class="fa fa-pencil fa-lg"></i>Edit resource</jqx-button>
+        		   <jqx-button class="my-button2 myHeight2 margin-top-5px" ng-click="removeResource()"><i class="fa fa-trash fa-lg" aria-hidden="true"></i>Remove resource</jqx-button>
+        		 
+        		   <jqx-button template="submit" class="my-button2 myHeight2 margin-top-15px"><i class="fa fa-pencil fa-lg"></i>Manage topics</jqx-button>
         		  </div>
         	</div>
-        	
-        	<div class="col-xs-8 margin-top-5px">
+            <div class="col-xs-10" ng-show="showAddUpdateResouceForm">	
+		           	<form id="addUpdateResouceForm" name="addUpdateResouceForm" class="form-horizontal margin-top-5px" ng-submit="addUpdateResource()" novalidate>
+					    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : addUpdateResouceForm.resourceName.$error.required && !addUpdateResouceForm.resourceName.$pristine}">
+					      <label class="control-label col-sm-4 my-label" for="resourceName">Resource name:</label>
+					      <div class="col-sm-8">
+					        <jqx-input id="resourceNameInput" name="resourceName" class="form-control myHeight" ng-model="resource.name" required></jqx-input>
+					        <span ng-show="addUpdateResouceForm.resourceName.$error.required && !addUpdateResouceForm.resourceName.$pristine" class="help-block">Resource name is required.</span>
+					      </div>
+					    </div>
+			
+					    <div class="form-group margin-bottom-5px required" ng-class="resourceTopicRequired">
+					      <label class="control-label col-sm-4 my-label" for="resourceTopics">Resource topics:</label>
+					      <div class="col-sm-8">
+					        <jqx-drop-down-list  id="skillsListBoxId" name="resourceTopics" class="form-control" jqx-settings="dropDownListSettings" required></jqx-drop-down-list>
+							
+					        
+					        <span ng-show="resourceTopicRequiredBln" class="help-block">Resource topics are required.</span>
+					      </div>
+					    </div>
+					    
+					    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : resourceAvailabilityRequiredBln}">
+					      <label class="control-label col-sm-4 my-label" for="resoureAvailability">Resource availability:</label>
+					      <div class="col-sm-8">
+					        
+					        <jqx-number-input id="resoureAvailabilityInput" name="resoureAvailability" class ="form-control myHeight widht100perc" type="text" ng-model="resource.availability"  jqx-input-mode="simple" jqx-text-align="left" jqx-min="0" jqx-max="100"/></jqx-number-input>
+<!-- 					        && !addUpdateResouceForm.resoureAvailability.$pristine -->
+					        <span ng-show="resourceAvailabilityRequiredBln" class="help-block">Resource availability is required.</span>
+					      </div>
+					    </div>
+					    
+					     <!-- button -->
+		                <div class="form-group">
+		                    <div class="col-sm-offset-2 col-sm-10">
+		                   		<div class="text-right">
+			                   		<jqx-button type="reset" class="my-button" ng-click="hideAddUpdateResouceForm()">Cancel</jqx-button>
+			                        <jqx-button template="submit" class="my-button myHeight"  ng-disabled="addUpdateResouceForm.$invalid || resourceTopicRequiredBln || resourceAvailabilityRequiredBln">{{typeLabel}}</jqx-button>
+		                    	</div>
+		                    </div>
+		                </div>
+				    </form>
+		       	</div>
+       		
+        	 	<div class="col-xs-8 margin-top-5px">
         		<table>
 					<tr>
 						<td class="padding-bottom-5px">Hours/bin:</td>
@@ -37,8 +81,7 @@
         	<div class="col-xs-12 margin-top-5px">
         		  <div class="text-right">
         		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
-					<jqx-button template="submit" class="my-button myHeight" ng-click="add()" ng-show="!update"><i class="fa fa-plus fa-lg"></i>{{typeLabel}}</jqx-button>
-					<jqx-button template="submit" class="my-button myHeight" ng-click="update()" ng-show="update"><i class="fa fa-pencil fa-lg"></i>{{typeLabel}}</jqx-button>
+					<jqx-button template="submit" class="my-button myHeight" ng-click="update()"><i class="fa fa-pencil fa-lg"></i>Modify</jqx-button>
         		  </div>
         	</div>
         	</div>

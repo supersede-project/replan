@@ -1,0 +1,11 @@
+HOW TO kill process
+
+In windows
+
+netstat -ano oppure netstat -noa
+will list all the protocols, ports and processes listening . Use
+
+taskkill -pid "proces to kill" /f
+to kill the process listening to the port. e.g
+
+ taskkill -pid 431 /f
