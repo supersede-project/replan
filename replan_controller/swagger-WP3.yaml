@@ -1,7 +1,8 @@
 swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to WP3
-  version: "1.0.0"
+  description: This API defines the operation that the Replan Controller component exposes to the WP3 components.
+  version: "1.1.0"
 # the domain of the service
 host: localhost
 # array of all schemes that your API supports
@@ -13,53 +14,10 @@ produces:
   - application/json
 paths:
   /projects/{projectId}/features:
-    get:
-      summary: Get features
-      description: |
-        bla, bla, bla.
-      operationId: getFeatures
-      parameters:
-        - name: projectId
-          in: path
-          type: number
-          format: int64
-          description: ID of the project
-          required: true
-        - name: featureIds
-          in: query
-          description: Array of feature IDs
-          required: false
-          type: array
-          items: 
-            type: string
-        - name: status
-          in: query
-          description: any | pending | scheduled
-          required: false
-          type: string
-          enum:
-             - any
-             - pending
-             - scheduled
-      tags:
-        - Features
-      responses:
-        200:
-          description: An array of features
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Feature'
-        400:
-          description: Unexpected error
-          schema:
-            $ref: '#/definitions/Error'
-        404:
-          description: Project not found
     post:
-      summary: Modifies a given feature
+      summary: Add new features to project
       description: |
-        bla, bla, bla.
+        This operation allows sending new features to the Replan Controller component.
       operationId: sendFeatures
       parameters:
         - name: projectId
@@ -70,13 +28,10 @@ paths:
           required: true
         - name: body
           in: body
+          description: An array of Features
           required: true
           schema:
-            type: array
-            items:
-              $ref: '#/definitions/Feature'
-      tags:
-        - Features
+            $ref: '#/definitions/FeatureData'
       responses:
         200:
           description: Success
@@ -87,43 +42,60 @@ paths:
         404:
           description: Project or Feature not found
 definitions:
-  Skill:
+  SoftDependency:
     type: object
+    required:
+      - id
+      - type
     properties:
       id:
         type: integer
-      name:
+        description: Id of the feature with which there is a dependency
+      type:
         type: string
-        description: Display name of skill.
-      description:
-        type: string
+        enum: [functional, cost, value]
+      value:
+        type: number
   Feature:
     type: object
+    required:
+      - id
+      - priority
     properties:
       id:
         type: integer
-        description: Unique identifier representing a feature
+        description: Unique WP3 identifier representing a feature
       name:
         type: string
         description: Display name of feature.
-      description:
-        type: string
-        description: Description of feature.
       effort:
         type: number
         description: Effort to implement the feature.
-      deadline:
-        type: string
-        format: date-time
       priority:
         type: integer
         enum: [ 1, 2, 3, 4, 5 ]
-        description: It coms from Wp3.3
-      required_skills:
+        description: It comes from Wp3.3
+      hard_dependencies:
         type: array
+        description: array of Feature ids
         items:
-          $ref: '#/definitions/Skill'
-      depends_on:
+          type: integer
+          description: Feature id
+      soft_dependencies:
+        type: array
+        description: array of Soft-dependencies
+        items:
+          $ref: '#/definitions/SoftDependency'
+  FeatureData:
+    type: object
+    required:
+      - evaluation_time
+      - features
+    properties:
+      evaluation_time:
+        type: string
+        format: date-time
+      features: 
         type: array
         description: array of features
         items:
