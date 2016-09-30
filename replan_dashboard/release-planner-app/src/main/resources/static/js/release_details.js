@@ -1,7 +1,6 @@
 var app = angular.module('w5app');
-app.controller('release-details', ['$scope', '$location', '$http', '$compile',
+app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile',
 	                            function ($scope, $location, $http,  $compile) {
-    
 	/*
  	* REST methods
  	*/
