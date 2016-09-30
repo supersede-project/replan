@@ -4,6 +4,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	/*
  	* REST methods
  	*/
+	//grazie Romana
 	var baseURL = "http://62.14.219.13:3000/api/ui/v1/projects/1";
 	$scope.getReleasePlan = function (releaseId) {
 		
