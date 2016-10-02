@@ -36,11 +36,11 @@ paths:
         200:
           description: Success
         400:
-          description: Unexpected error
+          description: Bad request
           schema:
             $ref: '#/definitions/Error'
         404:
-          description: Project or Feature not found
+          description: Project not found
 definitions:
   SoftDependency:
     type: object
@@ -54,6 +54,20 @@ definitions:
       type:
         type: string
         enum: [functional, cost, value]
+      value:
+        type: number
+  Constraint:
+    type: object
+    required:
+      - variable
+      - operator
+      - value
+    properties:
+      variable:
+        type: string
+      operator:
+        type: string
+        description: <, >, and the like
       value:
         type: number
   Feature:
@@ -86,6 +100,9 @@ definitions:
         description: array of Soft-dependencies
         items:
           $ref: '#/definitions/SoftDependency'
+      arguments:
+        type: string
+        description: Some explanatory/justification info
   FeatureData:
     type: object
     required:
@@ -100,6 +117,11 @@ definitions:
         description: array of features
         items:
           $ref: '#/definitions/Feature'
+      constraints: 
+        type: array
+        description: array of constraints
+        items:
+          $ref: '#/definitions/Constraint'
   Error:
     type: object
     properties:
