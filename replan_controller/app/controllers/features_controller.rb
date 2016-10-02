@@ -29,9 +29,13 @@ class FeaturesController < ApplicationController
   
   # WP3 API method
   def receive_wp3_features
-    # Your code here
 
-    render json: {"message" => "yes, it worked"}
+    params[:features].each do |f|
+        @project.features.create(feature_params(f))
+    end
+
+    render json: @project.features
+
   end
   
   # ---------------------------------------------------------------------------
@@ -114,8 +118,7 @@ class FeaturesController < ApplicationController
       @feature = @project.features.find(params[:featureId])
     end
     
-    def feature_params
-      params.require(:feature).permit(:name, :description, :effort, :deadline,
-                                      :priority)
+    def feature_params(jf)
+      jf.permit(:name, :effort, :priority)
     end
 end
