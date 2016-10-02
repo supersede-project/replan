@@ -26,6 +26,16 @@ class FeaturesController < ApplicationController
                                      :add_dependencies_to_feature,
                                      :delete_dependencies_from_feature]
 
+  
+  # WP3 API method
+  def receive_wp3_features
+    # Your code here
+
+    render json: {"message" => "yes, it worked"}
+  end
+  
+  # ---------------------------------------------------------------------------
+  # UI API methods
   def get_feature
     render json: @feature
   end
