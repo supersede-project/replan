@@ -31,9 +31,28 @@ class FeaturesController < ApplicationController
   def receive_wp3_features
 
     params[:features].each do |f|
+      begin
         @project.features.create(feature_params(f))
+      rescue ActiveRecord::RecordNotUnique
+        error = Error.new(code:400,
+                message: "Already exists a feature with code = #{f[:code]}", 
+                fields: "feature.code")
+        render json: error, status: 400 and return
+        exit
+      end
     end
-
+    test = Array.new
+    params[:features].each do |f|
+      feature = @project.features.find_by(code: f[:code])
+      test.push(feature)
+        f[:hard_dependencies].each do |d|
+          f2 = @project.features.find_by(code: d)
+          if f2 and not feature.depends_on.exists?(code: d) \
+                     and feature.code != d
+            feature.depends_on << f2
+          end
+        end
+    end
     render json: @project.features
 
   end
@@ -77,7 +96,7 @@ class FeaturesController < ApplicationController
           if skill and not @feature.required_skills.exists?(id: s[:skill_id])
             @feature.required_skills << skill
           end
-      end
+    end
     render json: @feature
   end
 
@@ -98,7 +117,7 @@ class FeaturesController < ApplicationController
                      and @feature.id != feature.id
             @feature.depends_on << feature
           end
-      end
+    end
     render json: @feature
   end
 
@@ -119,8 +138,15 @@ class FeaturesController < ApplicationController
     end
     
     def feature_params(jf)
+      # The 'id' from WP3 becomes 'code'
       jf[:code] = jf.delete :id
-      jf[:description] = jf[:properties].find{|tl| tl[:key] == 'description'}[:value]
-      jf.permit(:code, :name, :effort, :priority, :description)
+      
+      # Only two properties are taken into accound: 'description' & 'deadline'
+      if jf[:properties].any?
+        jf[:description] = jf[:properties].find{|tl| tl[:key] == 'description'}[:value]
+        jf[:deadline] = jf[:properties].find{|tl| tl[:key] == 'deadline'}[:value]
+      end
+      
+      jf.permit(:code, :name, :effort, :priority, :description, :deadline)
     end
 end

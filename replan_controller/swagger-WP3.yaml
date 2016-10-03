@@ -4,7 +4,7 @@ info:
   description: This API defines the operation that the Replan Controller component exposes to the WP3 components.
   version: "1.1.0"
 # the domain of the service
-host: replan-project-carlesf.c9users.io
+host: localhost
 # array of all schemes that your API supports
 schemes:
   - https
@@ -65,7 +65,7 @@ definitions:
     properties:
       key:
         type: string
-        description: name of the property, deadline, description, etc.
+        description: name of the property. Currently, only 'deadline' and 'description' are supported.
       value:
         type: string
         description: value of the property as string

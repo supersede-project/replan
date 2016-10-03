@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160719082225) do
+ActiveRecord::Schema.define(version: 20161003214906) do
 
   create_table "dependencies", id: false, force: :cascade do |t|
     t.integer "feature_id"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20160719082225) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "release_id"
+    t.index ["code"], name: "index_features_on_code", unique: true
     t.index ["project_id"], name: "index_features_on_project_id"
     t.index ["release_id"], name: "index_features_on_release_id"
   end
