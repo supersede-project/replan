@@ -12,7 +12,8 @@ Rails.application.routes.draw do
     full_path = path.gsub(/{(.*?)}/, ':\1')
     match full_path, to: "#{opts.fetch(:controller_name)}##{opts[:action_name]}", via: http_method
   end
-
+  
+  add_swagger_route 'POST', '/api/wp3/v1/projects/{projectId}/features', controller_name: 'features', action_name: 'receive_wp3_features'
   add_swagger_route 'POST', '/api/ui/v1/projects/{projectId}/releases/{releaseId}/features', controller_name: 'releases', action_name: 'add_features_to_release'
   add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/features/{featureId}', controller_name: 'features', action_name: 'get_feature'
   add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/features', controller_name: 'features', action_name: 'get_features'
