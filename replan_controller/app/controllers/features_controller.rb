@@ -119,6 +119,8 @@ class FeaturesController < ApplicationController
     end
     
     def feature_params(jf)
-      jf.permit(:name, :effort, :priority)
+      jf[:code] = jf.delete :id
+      jf[:description] = jf[:properties].find{|tl| tl[:key] == 'description'}[:value]
+      jf.permit(:code, :name, :effort, :priority, :description)
     end
 end
