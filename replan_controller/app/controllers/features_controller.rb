@@ -83,7 +83,7 @@ class FeaturesController < ApplicationController
   end
 
   def modify_feature
-    if @feature.update(feature_params)
+    if @feature.update(feature_params2)
       render json: @feature
     else
       render json: @feature.errors, status: :unprocessable_entity
@@ -148,5 +148,10 @@ class FeaturesController < ApplicationController
       end
       
       jf.permit(:code, :name, :effort, :priority, :description, :deadline)
+    end
+    
+    def feature_params2
+      params.require(:feature).permit(:name, :description, :effort, :deadline,
+                                      :priority)
     end
 end
