@@ -38,7 +38,10 @@ f6 = p.features.create(code: 666, name: "Fix user display", description: "Bla, b
                        deadline: Date.today + 23, priority: 4)
 f7 = p.features.create(code: 701, name: "Profile picture", description: "Bla, bla, bla", \
                        deadline: Date.today + 30, priority: 5)
-                       
+
+f3.depends_on << f1
+f3.depends_on << f2
+
 f1.required_skills << s1
 f1.required_skills << s3
 f2.required_skills << s1
