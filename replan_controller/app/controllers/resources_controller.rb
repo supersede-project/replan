@@ -62,7 +62,7 @@ class ResourcesController < ApplicationController
   end
 
   def delete_skills_from_resource
-    params[:skillId].each do |i|
+    params[:skillId].split(',').each do |i|
         skill = @resource.skills.find_by(id: i)
           if skill
             @resource.skills.delete(skill)
