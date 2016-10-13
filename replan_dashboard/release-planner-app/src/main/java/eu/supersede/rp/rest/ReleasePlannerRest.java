@@ -1,224 +1,222 @@
 package eu.supersede.rp.rest;
 
-import java.util.Map;
-import java.util.SortedSet;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.util.Enumeration;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import eu.supersede.rp.dto.Feature;
-import eu.supersede.rp.dto.NewReleaseData;
-import eu.supersede.rp.dto.NewResourceData;
-import eu.supersede.rp.dto.NewSkillData;
-import eu.supersede.rp.dto.Plan;
-import eu.supersede.rp.dto.Project;
-import eu.supersede.rp.dto.Release;
-import eu.supersede.rp.dto.Resource;
-import eu.supersede.rp.dto.Skill;
-import eu.supersede.rp.dto.Status;
-import eu.supersede.rp.main.ReleasePlanner;
 /**
+ * The ReleasePlannerRest invoke the rest API service provides by Ruby on Rails
  * 
- * @author z002z80a
- * Questions
- * 
- * 
- * JAVA
- * 1.Where do I declare the variables?
- * 2.How to clear cache in  eclipse?
- * 3.How to mapping  /projects/:project_id/features?status=pending
- * 
- * GENERAL
- * 1. application.unsecured.urls=/user/count,/test
- * 2. how to debug?
- * 3. wp5_application.properties - posso scriver dentro anche costanti?
- * 4. ADMIN in wp5_application.properties
- * 5. devo usare http://www.jqwidgets.com/?
+ * @author antonino.cassarino@siemens.com
  * 
  * 
  */
+//http://62.14.219.13:8280/replan/projects/1/releases
+//http://localhost:8083/replan/projects/1/features
 @RestController
-@RequestMapping("/projects")
-public class ReleasePlannerRest /*implements ReleasePlanner*/{
-
-	@Autowired
-	ReleasePlanner manager;
-
-	@RequestMapping( method = {RequestMethod.GET, RequestMethod.HEAD})
-	@ResponseBody
-	public String hello() {
-
-		return "projects says hello ;-)";
-	}
-	//rails
-	//http://localhost:3000/replan_controller/1/features
-
-	// Main
-	// GET /projects/:project_id/features?status=pending
-	//http://localhost:8083/projects/1/features?status=pending		
-	@RequestMapping(value = "/{project_id}/features", method = RequestMethod.GET)
-	public SortedSet<Feature> getPendingFeatures(@PathVariable("project_id") long project_id, @RequestParam Map<String, String> uriParameters) {
-
-		return manager.getPendingFeatures(project_id);
-	}
-
-	// GET /projects/:project_id/releases
-	//http://localhost:8083/projects/1/releases
-	@RequestMapping(value = "/{project_id}/releases", method = RequestMethod.GET)
-	public SortedSet<Release> getReleases(@PathVariable("project_id") long project_id) {
-		
-		return manager.getReleases(project_id);
+@RequestMapping("/replan/projects/1")
+public class ReleasePlannerRest{
 	
+	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+		
+		CloseableHttpResponse response = null;
+		
+		//append host
+		StringBuilder sb = new StringBuilder("http://62.14.219.13:8280");
+		//append uri
+		String uri = request.getRequestURI();
+		if(request.getRequestURI().startsWith("//")){
+			uri = uri.substring(1, uri.length());
+		}	
+		sb.append(uri);
+		//append query string
+		if(request.getQueryString() != null && !request.getQueryString().isEmpty()){
+			sb.append("?");
+			sb.append(request.getQueryString());
+		}
+
+ 		try {
+			int code = 500;
+			
+			
+			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
+			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
+
+			HttpClientBuilder builder = HttpClientBuilder.create();     
+			builder.setDefaultRequestConfig(requestBuilder.build());
+			CloseableHttpClient httpclient = builder.build();
+			
+			
+			if("GET".equals(request.getMethod())){
+				//create
+				HttpGet httpGet = new HttpGet(sb.toString());			
+
+				//execute
+				response = httpclient.execute(httpGet);
+			}
+			else if("POST".equals(request.getMethod())){
+				//create
+				HttpPost httpPost = new HttpPost(sb.toString());
+				//add headers
+				// add only content-type header from request
+				@SuppressWarnings("rawtypes")
+				Enumeration headerNames = request.getHeaderNames();
+				while (headerNames.hasMoreElements()) {
+					String key = (String) headerNames.nextElement();
+					String value = request.getHeader(key);
+					if("content-type".equals(key)){
+						httpPost.setHeader(key, value);
+					}
+				}
+				//add body request
+				String body = getBodyRequest(request);
+				StringEntity bodyStringEntity = new StringEntity(body);
+				httpPost.setEntity(bodyStringEntity);
+				
+				//execute
+				response = httpclient.execute(httpPost);
+			}
+			else if("PUT".equals(request.getMethod())){
+				//create
+				HttpPut httpPut = new HttpPut(sb.toString());
+				//add headers
+				// add only content-type header from request
+				@SuppressWarnings("rawtypes")
+				Enumeration headerNames = request.getHeaderNames();
+				while (headerNames.hasMoreElements()) {
+					String key = (String) headerNames.nextElement();
+					String value = request.getHeader(key);
+					if("content-type".equals(key)){
+						httpPut.setHeader(key, value);
+					}
+				}
+				//add body request
+				String body = getBodyRequest(request);
+				StringEntity bodyStringEntity = new StringEntity(body);
+				httpPut.setEntity(bodyStringEntity);
+				
+				//execute
+				response = httpclient.execute(httpPut);
+			}
+			else if("DELETE".equals(request.getMethod())){
+				//create
+				HttpDelete httpDelete = new HttpDelete(sb.toString());
+				//execute
+				response = httpclient.execute(httpDelete);			
+			}
+			else{
+				return new ResponseEntity<> ("request method  not implemented", org.springframework.http.HttpStatus.NOT_IMPLEMENTED);
+			} 
+			
+			if(response != null && response.getStatusLine() != null){
+				code = response.getStatusLine().getStatusCode();
+			}
+			
+			if(	code == 200){
+
+				Header[] headers = response.getAllHeaders();
+
+				for (Header header : headers) {
+					if("Content-Type".equals(header.getName())){
+						httpServletResponse.setHeader(header.getName(), header.getValue());
+						continue;
+					}
+				}
+
+				try (InputStream inputStream = response.getEntity().getContent();
+						OutputStream outputStream = httpServletResponse.getOutputStream();
+						)
+						{
+					IOUtils.copyLarge(inputStream, outputStream);
+						}
+				return new ResponseEntity<>(HttpStatus.OK);
+
+
+			}
+			else{
+				String bodyResponse = getBodyResponse(response);
+				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
+			}
+		} finally {
+			if(response != null){
+				response.close();	
+			}
+		}
 	}
+	
+	//help methods
+	public static String getBodyRequest(HttpServletRequest request) throws IOException {
 
-	// Re-plan a release (1)
-	// GET /projects/:project_id/features/:feature_id
+		String body = null;
+		StringBuilder stringBuilder = new StringBuilder();
+		BufferedReader bufferedReader = null;
 
-	public Feature getFeature(long project_id, long feature_id) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			InputStream inputStream = request.getInputStream();
+			if (inputStream != null) {
+				bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+				char[] charBuffer = new char[128];
+				int bytesRead = -1;
+				while ((bytesRead = bufferedReader.read(charBuffer)) > 0) {
+					stringBuilder.append(charBuffer, 0, bytesRead);
+				}
+			} else {
+				stringBuilder.append("");
+			}
+		} catch (IOException ex) {
+			throw ex;
+		} finally {
+			if (bufferedReader != null) {
+				try {
+					bufferedReader.close();
+				} catch (IOException ex) {
+					throw ex;
+				}
+			}
+		}
+
+		body = stringBuilder.toString();
+		return body;
 	}
-
-	// GET /projects/:project_id/skills
-
-	public SortedSet<Skill> getProjectSkills(long project_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// GET /projects/:project_id/releases/:release_id/features
-
-	public SortedSet<Feature> getReleaseFeatures(long project_id, long release_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// PUT /projects/:project_id/features/:feature_id
-
-	public void modifyFeature(long project_id, Feature feature) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// POST /projects/:project_id/releases/:release_id/features
-
-	public Status addFeatureToRelease(long project_id, long feature_id, long release_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// Re-plan a release (2)
-	// DELETE /projects/:project_id/releases/:release_id/plan
-
-	public void cancelLastReleasePlan(long project_id, long release_id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// Release details
-	// GET /projects/:project_id/releases/:release_id/plan
-
-	public Plan getReleasePlan(long project_id, long release_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// DELETE /projects/:project_id/releases/:release_id/features/:feature_id
-
-	public void removeFeatureFromRelease(long project_id, long feature_id, long release_id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	//New release / release configuration
-	// GET /projects/:project_id/resources
-
-	public SortedSet<Resource> getProjectResources(long project_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// PUT /projects/:project_id/releases/:release_id
-
-	public Status modifyRelease(long project_id, Release release) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// POST /projects/:project_id/releases
-
-	public Release addNewReleaseToProject(long project_id, NewReleaseData nrd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// DELETE /projects/:project_id/releases/:release_id
-
-	public Status deleteRelease(long project_id, long release_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	//Project configuration
-	// GET /projects/:project_id
-
-	public Project getProject(long project_id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// PUT /projects/:project_id
-
-	public void modifyProject(long project_id, Project project) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// PUT /projects/:project_id/resources/:resource_id
-
-	public void modifyResource(long project_id, Resource resource) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// POST /projects/:project_id/resources
-
-	public Resource addNewResourceToProject(long project_id, NewResourceData nrd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// DELETE /projects/:project_id/resources/:resource_id
-
-	public void deleteResource(long project_id, long resource_id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// POST /projects/:project_id/skills
-
-	public Skill addNewSkillToProject(long project_id, NewSkillData nsd) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	// PUT //projects/:project_id/skills/:skill_id
-
-	public void modifySkill(long project_id, Skill skill) {
-		// TODO Auto-generated method stub
-
-	}
-
-	// DELETE //projects/:project_id/skills/:skill_id
-
-	public void deleteSkill(long project_id, long skill_id) {
-		// TODO Auto-generated method stub
-
+	
+	public static String getBodyResponse(CloseableHttpResponse response) throws IllegalStateException, IOException{
+		StringBuilder sbResponseBody = new StringBuilder();
+		BufferedReader d;
+		if(response.getEntity() != null){
+			if(response.getEntity().getContent() != null){
+				d = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				sbResponseBody = new StringBuilder();
+				String line = null;
+				while ((line = d.readLine()) != null) {
+					sbResponseBody.append(line);
+				}
+			}
+		}
+		return sbResponseBody.toString();
 	}
 
 }

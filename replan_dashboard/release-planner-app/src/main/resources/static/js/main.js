@@ -1,12 +1,21 @@
 var app = angular.module('w5app');
+//app.controllerProvider.register(
 app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http',
                             function ($scope, $location, $http) {
 	/*
  	* REST methods
  	*/
-	
-	var baseURL = "http://62.14.219.13:8280/replan/projects/1";
 	//var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:8280/replan/projects/1";
+	var baseURL = "release-planner-app/replan/projects/1";
+	
+	$scope.getReleaseFeatures = function (releaseId, i) {
+ 		return $http({
+			method: 'GET',
+			url: baseURL + '/releases/'+ releaseId +'/features'
+		});
+ 	}
 	
  	$scope.getPendingFeature = function () {
  		return $http({
@@ -58,8 +67,8 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 
 				//var img = '<span class="glyphicon glyphicon-wrench" style="font-size:30px;color:red;"></span>';
 				var glyphicon = '<span class="glyphicon glyphicon-wrench" style="font-size:15px;"></span>';
-
-				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '-' + value +  '</td></tr></table>';
+				//var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '-' + value +  '</td></tr></table>';
+				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '</td></tr></table>';
 				return table;
 			}
 
@@ -92,6 +101,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 		
 		for(var i = 0; i < $scope.releases.length; i++)
 		{
+			var idRelease = $scope.releases[i].id;
 			var id = "#release_" + $scope.releases[i].id;
 			var offset = $(id).offset();
 			var width = $(id).width();
@@ -100,6 +110,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 			var bottom = parseInt(offset.top) + height;
 			if (x >= parseInt(offset.left) && x <= right) {
 				if (y >= parseInt(offset.top) && y <= bottom) {
+					
 					//add to release
 					$scope.releases[i].count ++;
 					
@@ -134,15 +145,17 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 
 						$scope.dataAdapter = new $.jqx.dataAdapter(source);
 					}
-					 $location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: ''+$scope.releases[i].id });
+					
+					 $location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
 					 //$location.path("/release-planner-app/replan_release");
+					 break;
 				}
 			}
 		}
 	}
 	
 	/**
-	 * start point method
+	 * start point feature method
 	 */
 	$scope.getPendingFeature()
     .then(
@@ -194,24 +207,70 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
         $location.path("/release-planner-app/release").search({releaseId: ''+release.id});
     }
  	
+ 	
  	/**
-	 * start point method
+	 * start point release method
 	 */
  	$scope.getReleases()
     .then(
         function(response) {
-        		
+       
         	    $scope.showReleases = true;
-            	$scope.releases.length =0;
+            	$scope.releases.length = 0;
         	    for(var i = 0; i < response.data.length; i++)
      			{
      				response.data[i]["count"] = 0;
-     				$scope.releases.push(response.data[i]);
-     				//console.log(data[i].count);
+     				$scope.releases.push( response.data[i] ); 
+     		     				
      			}
                 $scope.releases.length = response.data.length;
      			
-   
+                //I try to add features into release but I run into problem :-(
+                
+//                for (var i = 0; i < $scope.releases.length-1; i++) {
+//           
+//                	$scope.getReleaseFeatures($scope.releases[i].id, i)
+//     			    .then(
+//     			        function(response1) {
+//     			        	
+//     			        	$scope.releases[i]["features"] = [];
+//     			        	
+//     			        	for (var y = 0; y < response1.data.length-1; y++) {
+//     			        		$scope.releases[i].features.push(response1.data[y]);
+//     	     			   }
+//     			        	
+//     			        	console.log("");
+//     			        	
+//     			        	
+//     			        },
+//     			        
+//     			        function(response1) {
+//     			        	$scope.showReleases = false;
+//     			            $scope.messageReleases = "Error: "+response1.status + " " + response1.statusText;
+//     			        }
+//     			    );
+//				}
+                
+//                for(var i = 0; i< $scope.releases.length; i++){
+//            		
+//               	 // prepare the data
+//                   var source =
+//                   {
+//                       datatype: "json",
+//                       datafields: [
+//                           { name: 'id' },
+//                           { name: 'name' }
+//                       ],
+//                       id: 'id',
+//                       localdata:$scope.releases[i].features
+//                   };
+//                   var dataAdapter = new $.jqx.dataAdapter(source);
+//                	
+//       			var listBoxId = "listBoxId_" + $scope.releases[i].id;
+//       			
+//       			$('#'+listBoxId).jqxDropDownList({ source: dataAdapter , displayMember: "name", valueMember: "id", selectedIndex: 0, disabled: true, checkboxes: true, enableSelection:false, width: '100%', height: '25'});
+//       			//$('#'+listBoxId).jqxDropDownList('checkAll'); 
+//       		}
         },
         
         function(response) {

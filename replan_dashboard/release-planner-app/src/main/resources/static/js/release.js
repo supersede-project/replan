@@ -4,8 +4,11 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	/*
  	* REST methods
  	*/
-	var baseURL = "http://62.14.219.13:8280/replan/projects/1";
 	//var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:8280/replan/projects/1";
+	var baseURL = "release-planner-app/replan/projects/1";
+
 	
 	$scope.getReleases = function () {
 		return $http({
@@ -24,7 +27,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			data: release
 		});	 
 	};
-
 	
 	$scope.addReleaseToProject = function (release){
 
@@ -51,10 +53,12 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		for(var i=0 ; i< resourceIds.length; i++){
 
 			if(i == 0){
-				url = url + "?ResourceId[" + i + "]=" + resourceIds[i];
+				url = url + "?ResourceId=" + resourceIds[i];
+				//url = url + "?ResourceId[" + i + "]=" + resourceIds[i];
 			}
 			else{
-				url = url + "&ResourceId[" + i + "]=" + resourceIds[i];
+				url = url + "," + resourceIds[i];
+				//url = url + "&ResourceId[" + i + "]=" + resourceIds[i];
 			}
 		}  
 
@@ -88,7 +92,9 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	/*
  	* All methods
  	*/
-	
+	$scope.showRelease = false;
+    $scope.messageRelease = "Loading ...";
+    
 	$scope.isUpdate = false;
 	$scope.deadlineStyle = '';
 	$scope.releasesTORemove = [];
@@ -103,8 +109,10 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		$scope.getReleases()
 		.then(
 				function(response) {
-
-					for(var i =0; i< response.data.length; i++){
+					
+					$scope.showRelease = true;
+					
+					for(var i = 0; i< response.data.length; i++){
 						if(response.data[i].id == parseInt(releaseId)){
 							$scope.release = response.data[i];
 							$scope.isUpdate = true;
@@ -132,11 +140,13 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 					$scope.dataAdapterResourcesListBox = new $.jqx.dataAdapter(source);
 					
+					//data input
+					$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
 				},
 
 				function(response) {
-					$scope.showReleasePlan = false;
-					$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
+					$scope.showRelease = false;
+					$scope.messageRelease = "Error: "+response.status + " " + response.statusText;
 				}
 		);
 
@@ -173,7 +183,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '-' + value +  '</td></tr></table>';
 				return table;
 			}
-
 	};
 	
 	$scope.selectItemResourcesListBox = function (event) {
@@ -204,8 +213,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			var right = parseInt(offset.left) + width;
 
 			if (x >= parseInt(offset.left) && x > right) {
-
-				
 				
 				//new logic 07.09.2016
 				if(containsObject(event.args.value, $scope.releasesTOAdd)){
@@ -250,8 +257,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 					$scope.addClassHasErrorResourcesAreRequired = '';
 					$scope.showResourcesAreRequired = false;	
 				}
-				
-				
 				//refresh the ResourcesAddListBox
 				refreshResourcesAddListBox();
 			}
@@ -287,7 +292,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			allowDrag: true,
 			allowDrop: false,
 			renderer: function (index, label, value) {
-
 				var glyphicon = '<span class="glyphicon glyphicon-user" style="font-size:15px;"></span>';
 				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '-' + value +  '</td></tr></table>';
 				return table;
@@ -325,9 +329,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			var bottom = parseInt(offset.top) + height;
 			if (x >= parseInt(offset.left) && x <= right) {
 				if (y >= parseInt(offset.top) && y <= bottom) {
-			
-					//console.log(event.args.value);
-					
+
 					//new logic 07.09.2016
 					if(!containsObject(event.args.value, $scope.releasesOnLoad)){
 						$scope.releasesTOAdd.push(event.args.value);	
@@ -342,12 +344,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 					
 					$scope.addClassHasErrorResourcesAreRequired = '';
 					$scope.showResourcesAreRequired = false;
-					
-					
-					
-					
-					
-					
 				}
 			}
 		}
@@ -468,23 +464,33 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 		refreshResourcesAddListBox();
 	};
-
-	/*
-	 * deadline buttons
-	 */
-	$scope.toogleMonthsToggleBtns = function(event){
-
-		var toggled = $("#"+ event.target.id).jqxToggleButton('toggled');
-
-		//reset all toggle buttons
-		//layout
-		$("#3monthsToggleBtn").jqxToggleButton({toggled: false });
-		$("#6monthsToggleBtn").jqxToggleButton({toggled: false });
-
-		//set again
-		$("#"+ event.target.id).jqxToggleButton({toggled: toggled});
-
-	}
+	
+	
+	$("#dateInputUpdate").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
+	$('#dateInputUpdate').on('change', function (event) {
+		//$("#1monthsToggleBtn").jqxToggleButton({toggled: false });
+		//$("#3monthsToggleBtn").jqxToggleButton({toggled: false });
+	    
+	}); 
+	
+//	/*
+//	 * deadline buttons
+//	 */
+//	$scope.toogleMonthsToggleBtns = function(event){
+//
+//		var toggled = $("#"+ event.target.id).jqxToggleButton('toggled');
+//
+//		//reset all toggle buttons
+//		//layout
+//		$("#1monthsToggleBtn").jqxToggleButton({toggled: false });
+//		$("#3monthsToggleBtn").jqxToggleButton({toggled: false });
+//
+//		//set again
+//		$("#"+ event.target.id).jqxToggleButton({toggled: toggled});
+//
+//		//on click in toggle buttons set date in dateInput
+//		$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
+//	}
 
 	addRemoveResourcesToFromReleaseDate = function(){
 
@@ -545,16 +551,15 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 			$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
 		}
-
 	};
+	
 	var now = new Date();
 	var year = now.getFullYear();
 	var month = now.getMonth();
 	month = month + 1;
 	var day = now.getDate();
-	
 	//new Date(year, month, day);
-	$("#dateInput").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yy-MM-dd', min: new Date(year, month, day)});
+	$("#dateInput").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd', min: new Date(year, month, day)});
 	
 	var nowPlusOneMonth = new Date();
 	nowPlusOneMonth.setMonth(nowPlusOneMonth.getMonth() + 1);
@@ -564,7 +569,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		var date = $("#dateInput").jqxDateTimeInput('getDate');
 		var strDate = getStringSUPERSEDEDate(date.getTime());
 		$scope.release.deadline = strDate;
-		console.log("date:"+strDate);
+		//console.log("date:"+strDate);
 		if($scope.release.resources.length  == 0){
 			$scope.addClassHasErrorResourcesAreRequired = 'my-error-border-color';
 			$scope.showResourcesAreRequired = true;
@@ -588,20 +593,29 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	
 	$scope.update = function(){
 
-		if($("#3monthsToggleBtn").jqxToggleButton('toggled')){
-			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 1);
-		}
-		else if($("#6monthsToggleBtn").jqxToggleButton('toggled')){
-			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 3);
-		}
+//		if($("#1monthsToggleBtn").jqxToggleButton('toggled')){
+//			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 1);
+//		}
+//		else if($("#3monthsToggleBtn").jqxToggleButton('toggled')){
+//			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 3);
+//		}
+//		else{
+//			
+//			var date = $("#dateInputUpdate").jqxDateTimeInput('getDate');
+		//var strDate = getStringSUPERSEDEDate(date.getTime());
+		//$scope.release.deadline = strDate;
+//		}
 
+		var date = $("#dateInputUpdate").jqxDateTimeInput('getDate');
+		var strDate = getStringSUPERSEDEDate(date.getTime());
+		$scope.release.deadline = strDate;
+		
 		$scope.updateRelease($scope.release)
 		.then(
 				function(response) {
 				
 					$scope.releasesTORemove;
 					$scope.releasesTOAdd;
-					//console.log("pippo");
 					addRemoveResourcesToFromReleaseDate();	
 				},
 				function(response) {

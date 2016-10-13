@@ -106,6 +106,9 @@ dependencies {
     compile files('../../../integration/IF/API/eu.supersede.if.api.test/lib/org.wso2.carbon.user.core_4.2.0.jar')
     compile files('../../../integration/IF/API/eu.supersede.if.api.test/lib/org.wso2.carbon.utils_4.2.0.jar')
     compile ("ca.juliusdavies:not-yet-commons-ssl:0.3.9")
+    
+    compile ("org.apache.httpcomponents:httpclient:4.5.2")
+    compile ("commons-io:commons-io:2.5")
 }
 
 
