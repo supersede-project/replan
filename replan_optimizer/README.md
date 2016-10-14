@@ -13,7 +13,7 @@ gradlew build
 ### Install instructions
 To deploy the service you only need to execute the jar file generated
 ```
-java -jar /build/libs/optimizer-SNAPSHOT-1.0.jar
+java -jar /build/libs/optimizer-1.0-SNAPSHOT.jar
 ```
 
 ## API reference documents
