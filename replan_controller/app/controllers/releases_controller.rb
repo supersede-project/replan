@@ -44,13 +44,7 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
-    @plan = Plan.create(release: @release)
-    date = Date.tomorrow
-    @release.features.each do |f|
-      r = @project.resources.order("RANDOM()").limit(1).first
-      Job.create(starts: date, ends: date+2, feature: f, resource: r, plan: @plan)
-      date = date+3
-    end
+    @plan = FakePlanner.plan(@release, @project.resources)
     render json: @plan
   end
 
