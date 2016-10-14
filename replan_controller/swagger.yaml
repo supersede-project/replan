@@ -397,6 +397,37 @@ paths:
         404:
           description: Project not found
   /projects/{projectId}/releases/{releaseId}:
+    get:
+      summary: Get a release given its ID
+      description: |
+        This operation returns the main info of a Release given its releaseID.
+      operationId: getRelease
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the release
+          required: true
+      tags:
+        - Releases
+      responses:
+        200:
+          description: A Release
+          schema:
+            $ref: '#/definitions/Release'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
     put:
       summary: Modify a given release
       operationId: modifyRelease 

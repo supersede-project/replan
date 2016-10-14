@@ -50,6 +50,9 @@
 .my-button2 {
     width: 100px !important;
 }
+.my-button3 {
+    width: 150px !important;
+}
 .my-input-success{
 	color: #ffffff !important;
 /*     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25) !important; */
@@ -69,10 +72,14 @@
 	width: 100%;
 }
 .myHeight{
-	height: 25px;
+	height: 25px !important;
 }
 .myHeight2{
-	height: 38px;
+	height: 38px !important;
+}
+.myHeightSmall{
+	height: 14px !important;
+	width: 93% !important;
 }
 .draggable-demo-cart
 {

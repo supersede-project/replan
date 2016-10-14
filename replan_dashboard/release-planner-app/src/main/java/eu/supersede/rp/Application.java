@@ -20,7 +20,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
@@ -29,7 +28,7 @@ import eu.supersede.fe.configuration.ApplicationConfiguration;
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class) 
 @ComponentScan(basePackages = {"eu.supersede.rp", "eu.supersede.fe"})
 @EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
-@EnableJpaRepositories(basePackages={"eu.supersede.rp.jpa"})
+//@EnableJpaRepositories(basePackages={"eu.supersede.rp.jpa"})
 @EnableRedisHttpSession
 public class Application extends SpringBootServletInitializer {
 

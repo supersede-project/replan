@@ -60,6 +60,10 @@ class ReleasesController < ApplicationController
     render json: @releases
   end
 
+  def get_release
+    render json: @release
+  end
+
   def modify_release
     if @release.update(release_params)
       render json: @release

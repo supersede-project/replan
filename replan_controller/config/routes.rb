@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/releases/{releaseId}/features', controller_name: 'releases', action_name: 'get_release_features'
   add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/releases/{releaseId}/plan', controller_name: 'releases', action_name: 'get_release_plan'
   add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/releases', controller_name: 'releases', action_name: 'get_releases'
+  add_swagger_route 'GET', '/api/ui/v1/projects/{projectId}/releases/{releaseId}', controller_name: 'releases', action_name: 'get_release'
   add_swagger_route 'PUT', '/api/ui/v1/projects/{projectId}/releases/{releaseId}', controller_name: 'releases', action_name: 'modify_release'
   add_swagger_route 'DELETE', '/api/ui/v1/projects/{projectId}/releases/{releaseId}/features/{featureId}', controller_name: 'releases', action_name: 'remove_feature_from_release'
   add_swagger_route 'POST', '/api/ui/v1/projects/{projectId}/resources', controller_name: 'resources', action_name: 'add_new_resource_to_project'

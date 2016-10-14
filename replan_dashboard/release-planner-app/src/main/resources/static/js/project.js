@@ -4,8 +4,11 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	/*
  	* REST methods
  	*/
-	var baseURL = "http://62.14.219.13:8280/replan/projects/1";
 	//var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:3000/api/ui/v1/projects/1";
+	//var baseURL = "http://62.14.219.13:8280/replan/projects/1";
+	var baseURL = "release-planner-app/replan/projects/1";
+
 	
 	$scope.getProject = function(){
 
@@ -25,7 +28,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			data: project
 		});	 
 	};
-	
+	//add only name, description and availability
 	$scope.addNewResourceToProject = function (resource){
 
 		return $http({
@@ -37,6 +40,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	};	
 	
 	//Modifies a given resource 
+	//modify only name, description and availability
 	$scope.updateResourceForProject = function (resource){
 
 		return $http({
@@ -52,8 +56,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		return $http({
 			method: 'DELETE',
 			url: baseURL +'/resources/' + resource.id,
-			headers: {"Content-Type": "application/json;charset=UTF-8"},
-			data: resource
+			headers: {"Content-Type": "application/json;charset=UTF-8"}
 		});	 
 	};
 	
@@ -87,26 +90,45 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	
 	};
 	
+	$scope.deleteSkillsToResource = function (resource){
+
+		var url =  baseURL + '/resources/'+ resource.id + '/skills';
+
+		for(var i=0 ; i< resource.skills.length; i++){
+
+			if(i == 0){
+				//url = url + "?skillId=" + resource.skills[i].id;
+				url = url + "?skillId[" + i + "]=" + resource.skills[i].id;
+			}
+			else{
+				//url = url + "," + resource.skills[i].id;
+				url = url + "&skillId[" + i + "]=" + resource.skills[i].id;
+			}
+		}  
+
+		return $http({
+			method: 'DELETE',
+			url: url
+		}); 
+	};
+	
+	
 	/*
  	* All methods Top down
  	*/
 	$scope.showProject = false;
 	$scope.messageProject = "Loading ...";
 	$scope.project = {resources: []};
-	$scope.update = true;
+	//$scope.update = true;
 	$scope.resource = { availability:"", description:"", id: -1, name:""};
 	$scope.resource["skills"] = [];
 	$scope.typeLabel = "Add";
 	$scope.skills = [];
 	$scope.showAddUpdateResouceForm = false;
-
-	
-	
 	
 	
 	$scope.initTable = function(response){
 		$scope.project = response.data;
-		$scope.showProject = true;
 		
 		// Create a jqxGrid
 	 	// prepare the data for jqxListBox
@@ -145,9 +167,6 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 					var rightcolumn = '<div style="float: left; width: 70%;">';
 					var listBoxId = "listBox_" + row;
 					var listBox = "<div id='"+ listBoxId +"'></div>";
-
-					//var description = "<div style='margin: 10px;'><b>Description:</b> " + rowData.description + "</div>";
-					//rightcolumn += description;
 					rightcolumn += listBox;
 
 					rightcolumn += "</div>";
@@ -197,8 +216,14 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			$('#'+listBoxId).jqxDropDownList('checkAll'); 
 		}
 		
-
+		//on cellclick in the projectJqxgrid
 		$("#projectJqxgrid").on('cellclick', function (event) {
+			
+			//to solve update problem in skillDropDownListId
+			$scope.showAddUpdateResouceForm = false;
+			
+			$('#editResoureJqxButton').jqxButton({disabled: false });
+			$('#removeResoureJqxButton').jqxButton({disabled: false });
 			
 			// get the column's text.
 			var column = $("#projectJqxgrid").jqxGrid('getcolumn', event.args.datafield).text;
@@ -219,31 +244,6 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			
 			$scope.resource = $scope.project.resources[event.args.rowindex];
 			$scope.typeLabel = "Update Resource";
-			
-			
-			//jqxDropDownList in FORM
-			
-			// prepare the data
-		    var sourceSkillsListBoxId =
-		    {
-		        datatype: "json",
-		        datafields: [
-		            { name: 'id' },
-		            { name: 'name' }
-		        ],
-		        id: 'id',
-		        localdata: $scope.resource.skills
-		    };
-		    $scope.dataAdapterSkillsListBoxId = new $.jqx.dataAdapter(sourceSkillsListBoxId);
-		    //$scope.dataAdapterSkillsListBoxId.dataBind();
-		    
-//		    var items = $("#skillsListBoxId").jqxDropDownList('getItems'); 
-//		    for(var i=0; i< items.lenght; i++){
-//		    	var index = i+1;
-//		    	$("#skillsListBoxId").jqxDropDownList({selectedIndex: index });
-//		    }
-//		    $("#skillsListBoxId").jqxDropDownList('clearSelection'); 
-//		    $('#skillsListBoxId').jqxDropDownList('checkAll'); 
 
 		
 		});		
@@ -252,13 +252,16 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	/**
 	 * FORM methods
 	 */
+	//logic addResoureJqxButton is always enabled
+	$('#editResoureJqxButton').jqxButton({disabled: true });
+	$('#removeResoureJqxButton').jqxButton({disabled: true });
 	
-	//skillsListBoxId
+	//skillDropDownListId
 	$scope.resourceTopicRequired = '';
 	$scope.resourceTopicRequiredBln = false;
 	
 	// prepare the data
-    var sourceSkillsListBoxId =
+    var sourceskillDropDownListId =
     {
         datatype: "json",
         datafields: [
@@ -268,25 +271,23 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
         id: 'id',
         localdata: $scope.skills
     };
-    $scope.dataAdapterSkillsListBoxId = new $.jqx.dataAdapter(sourceSkillsListBoxId);
-	
+    $scope.dataAdapterskillDropDownListId = new $.jqx.dataAdapter(sourceskillDropDownListId);
+	 
     //settings
 	$scope.dropDownListSettings = { 
-			source: $scope.dataAdapterSkillsListBoxId,
+			source: $scope.dataAdapterskillDropDownListId,
 			displayMember: "name",
 			valueMember: "id",
-			//selectedIndex: 0,
 			checkboxes: true,
 			enableSelection: true,
 			width: '93%',
 			height: '15'
-
 	};
 	
-	$('#skillsListBoxId').on('checkChange', function (event){
+	$('#skillDropDownListId').on('checkChange', function (event){
 	    var args = event.args;
 	    if (args) {
-	        var items = $("#skillsListBoxId").jqxDropDownList('getCheckedItems'); 
+	        var items = $("#skillDropDownListId").jqxDropDownList('getCheckedItems'); 
 		    if(items.length == 0){
 		    	$scope.resourceTopicRequired = 'has-error';
 		    	$scope.resourceTopicRequiredBln = true;
@@ -298,11 +299,6 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	    }
 	    		
 	});
-	$('#skillsListBoxId').on('open', function (event){
-		$('#skillsListBoxId').jqxDropDownList('checkAll'); 
-	    		
-	});
-	
 	
 	//resoureAvailabilityInput
 	$scope.resourceAvailabilityRequired = '';
@@ -321,63 +317,46 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	    }
 	});
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	$scope.resetFormAddUpdateResouceForm = function(){
 	
+		//logic addResoureJqxButton is always enabled
+		$('#editResoureJqxButton').jqxButton({disabled: true });
+		$('#removeResoureJqxButton').jqxButton({disabled: true });
+		   		
 		$scope.addUpdateResouceForm.$setPristine();
 		 
 		$scope.typeLabel = "Add";
 		$scope.resource = { availability:"", description:"", name:""};
 		$scope.resource["skills"] = [];
-		$("#skillsListBoxId").jqxDropDownList('uncheckAll'); 
 
 		$scope.showAddUpdateResouceForm = true;
 		
-		$scope.getProjectSkills()
-		.then(
-				function(response) {
-					
-					//skillsListBoxId
-					$scope.skills = response.data;
-					// prepare the data
-				    var sourceSkillsListBoxId =
-				    {
-				        datatype: "json",
-				        datafields: [
-				            { name: 'id' },
-				            { name: 'name' }
-				        ],
-				        id: 'id',
-				        localdata: $scope.skills
-				    };
-				    $scope.dataAdapterSkillsListBoxId = new $.jqx.dataAdapter(sourceSkillsListBoxId);
-				    
-				    $scope.resourceTopicRequired = '';
-			    	$scope.resourceTopicRequiredBln = false;
-				   
-				},
-
-				function(response) {
-					$scope.showProject = false;
-					$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
-				}
-		);
+		$('#skillDropDownListId').jqxDropDownList('uncheckAll');
 	};
 	
 	$scope.editFormAddUpdateResouceForm = function(){
-		//$scope.addUpdateResouceForm.$setPristine();
-		if($scope.resource.id != -1){
+		
+		$scope.typeLabel = "Update Resource";
+		
+		
+		//initialize jqxDropDownList in FORM
+		$('#skillDropDownListId').jqxDropDownList('uncheckAll');
+		
+		//select all items in skillDropDownListId
+	    var items = $("#skillDropDownListId").jqxDropDownList('getItems');
+	    
+	    for(var i = 0; i< items.length; i++){
+	    	var item = items[i];
+	    	for (var y = 0; y < $scope.resource.skills.length; y++) {
+				var skill = $scope.resource.skills[y];
+				if(skill.id == item.value){
+					$("#skillDropDownListId").jqxDropDownList('checkIndex', i); 
+				}
+			}
+	    }
+	    
+	    //2. set showAddUpdateResouceForm to true
+	    if($scope.resource.id != -1){
 			$scope.showAddUpdateResouceForm = true;
 		}
 	};
@@ -392,6 +371,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		        	$scope.getProject()
 		        	.then(
 		        			function(response) {
+		        				$scope.showProject = true;
 		        				$scope.initTable(response);
 		        				$scope.showAddUpdateResouceForm = false;
 		        			},
@@ -405,15 +385,13 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		        },
 		        
 		        function(response) {
-		        	$scope.showReleases = false;
-		            $scope.messageReleases = "Error: "+response.status + " " + response.statusText;
+		        	$scope.showProject = false;
+		            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 		        }
 		    );
 	};
 	
 	$scope.addUpdateResource = function(){
-		
-		
 		
 		var value = $('#resoureAvailabilityInput').val();
 		if(value <= 0 || value >100){
@@ -422,7 +400,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	    	return;
 		}
 	
-		var items = $("#skillsListBoxId").jqxDropDownList('getCheckedItems'); 
+		var items = $("#skillDropDownListId").jqxDropDownList('getCheckedItems'); 
 	    if(items.length == 0){
 	    	$scope.resourceTopicRequired = 'has-error';
 	    	$scope.resourceTopicRequiredBln = true;
@@ -431,12 +409,13 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	   
 	    var arraySkillIds = []; 
 	    
-	    for(var i=0; i< items.length ; i++){
+	    for(var i = 0; i< items.length ; i++){
 	    	arraySkillIds[i] = items[i].value;
 	    }
 		
-		if($scope.typeLabel = "Add"){
+		if($scope.typeLabel == "Add"){
 			
+			//add only name, description and availability
 			$scope.addNewResourceToProject($scope.resource)
 		    .then(
 		        function(response) {
@@ -449,6 +428,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 				        	$scope.getProject()
 				        	.then(
 				        			function(response) {
+				        				$scope.showProject = true;
 				        				$scope.initTable(response);
 				        				$scope.showAddUpdateResouceForm = false;
 				        			},
@@ -462,16 +442,16 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 				        },
 				        
 				        function(response) {
-				        	$scope.showReleases = false;
-				            $scope.messageReleases = "Error: "+response.status + " " + response.statusText;
+				        	$scope.showProject = false;
+				            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 				        }
 				    );
 	
 		        },
 		        
 		        function(response) {
-		        	$scope.showReleases = false;
-		            $scope.messageReleases = "Error: "+response.status + " " + response.statusText;
+		        	$scope.showProject = false;
+		            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 		        }
 		    );
 			
@@ -480,24 +460,54 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			$scope.updateResourceForProject($scope.resource)
 		    .then(
 		        function(response) {
-		        	//$location.path("/release-planner-app/project");
-		        	$scope.getProject()
-		        	.then(
-		        			function(response) {
-		        				$scope.initTable(response);
-		        				$scope.showAddUpdateResouceForm = false;
-		        			},
+		        	
+		        	//remove all skills
+		        	$scope.deleteSkillsToResource($scope.resource)
+				    .then(
+				        function(response) {
+				          	$scope.addSkillsToResource(response.data, arraySkillIds)
+						    .then(
+						        function(response) {
+						       
+						         	//update the table
+						        	$scope.getProject()
+						        	.then(
+						        			function(response) {
+						        				$scope.showProject = true;
+						        				$scope.initTable(response);
+						        				$scope.showAddUpdateResouceForm = false;
+						        			},
 
-		        			function(response) {
-		        				$scope.showProject = false;
-		        				$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
-		        			}
-		        	);
+						        			function(response) {
+						        				$scope.showProject = false;
+						        				$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
+						        			}
+						        	);
+						        	
+						        },
+						        
+						        function(response) {
+						        	$scope.showProject = false;
+						            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
+						        }
+						    );
+				        
+				        	
+				        },
+				        
+				        function(response) {
+				        	$scope.showProject = false;
+				            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
+				        }
+				    );	
+		        	
+		        	
+		        
 		        },
 		        
 		        function(response) {
-		        	$scope.showReleases = false;
-		            $scope.messageReleases = "Error: "+response.status + " " + response.statusText;
+		        	$scope.showProject = false;
+		            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 		        }
 		    );
 		}
@@ -512,8 +522,8 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	        },
 	        
 	        function(response) {
-	        	$scope.showReleases = false;
-	            $scope.messageReleases = "Error: "+response.status + " " + response.statusText;
+	        	$scope.showProject = false;
+	            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 	        }
 	    );
 	};
@@ -525,12 +535,39 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 
 	
 	/**
-	 * start point method
+	 * start points method
 	 */
-	$scope.getProject()
+	$scope.getProjectSkills()
 	.then(
 			function(response) {
-				$scope.initTable(response);
+				//skillDropDownListId
+				$scope.skills = response.data;
+				
+				// prepare the data
+			    var sourceskillDropDownListId =
+			    {
+			        datatype: "json",
+			        datafields: [
+			            { name: 'id' },
+			            { name: 'name' }
+			        ],
+			        id: 'id',
+			        localdata: $scope.skills
+			    };
+			    $scope.dataAdapterskillDropDownListId = new $.jqx.dataAdapter(sourceskillDropDownListId);
+			   
+				$scope.getProject()
+				.then(
+						function(response) {
+							$scope.showProject = true;
+							$scope.initTable(response);
+						},
+
+						function(response) {
+							$scope.showProject = false;
+							$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
+						}
+				);
 			},
 
 			function(response) {
@@ -538,5 +575,6 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 				$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
 			}
 	);
+
 
 }]);

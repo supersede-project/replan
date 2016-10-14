@@ -1,11 +1,11 @@
-HOW TO kill process
-
-In windows
-
-netstat -ano oppure netstat -noa
-will list all the protocols, ports and processes listening . Use
-
-taskkill -pid "proces to kill" /f
-to kill the process listening to the port. e.g
-
- taskkill -pid 431 /f
+•	Clone the repository
+git clone https://github.com/supersede-project/replan/tree/master/replan_dashboard
+•	Build the project.
+cd release-planner-app
+./gradle build
+To deploy the dashboard, you need to perform these additional steps:
+•	Copy the dashboard war file to the Tomcat directory
+cp build/libs/release-planner-app -0.0.1-SNAPSHOT.war.original <CATALINA_HOME>/webapps/ release-planner-app.war
+•	Run Tomcat from its bin directory. 
+cd <CATALINA_HOME>/bin/
+./start_up.sh
