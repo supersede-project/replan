@@ -44,7 +44,8 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
-    @plan = FakePlanner.plan(@release, @project)
+    #@plan = FakePlanner.plan(@release, @project)
+    @plan = ValentinPlanner.plan(@release, @project)
     render json: @plan
   end
 
