@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161003214906) do
+ActiveRecord::Schema.define(version: 20161015150455) do
 
   create_table "dependencies", id: false, force: :cascade do |t|
     t.integer "feature_id"
@@ -41,8 +41,8 @@ ActiveRecord::Schema.define(version: 20161003214906) do
   end
 
   create_table "jobs", force: :cascade do |t|
-    t.date     "starts"
-    t.date     "ends"
+    t.datetime "starts"
+    t.datetime "ends"
     t.integer  "resource_id"
     t.integer  "feature_id"
     t.datetime "created_at",  null: false
@@ -74,9 +74,10 @@ ActiveRecord::Schema.define(version: 20161003214906) do
     t.string   "name"
     t.string   "description"
     t.integer  "project_id"
-    t.date     "deadline"
+    t.datetime "deadline"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.datetime "starts_at"
     t.index ["project_id"], name: "index_releases_on_project_id"
   end
 

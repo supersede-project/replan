@@ -12,8 +12,8 @@ class ValentinPlanner
   
   def self.build_payload(release, project)
     nrp = Hash.new
-    nrp[:nbWeeks] = 5 # to change
-    nrp[:hoursPerWeek] = 40 # to change
+    nrp[:nbWeeks] = ((release.deadline - release.starts_at)/(7*24*60*60)).round
+    nrp[:hoursPerWeek] = project.hours_per_week_and_full_time_resource
     nrp[:features] = release.features.map do |f|
       { name: f.id.to_s,
         duration: f.effort * project.hours_per_effort_unit,
@@ -31,10 +31,9 @@ class ValentinPlanner
   
   def self.build_plan(release, vjobs)
     plan = Plan.create(release: release)
-    date = Date.tomorrow
     vjobs.each do |j|
-      Job.create(starts: date.advance(hours: j["beginHour"].to_d), 
-                 ends: date.advance(hours: j["endHour"].to_d),
+      Job.create(starts: j["beginHour"].to_i.business_hours.after(release.starts_at), 
+                 ends: j["endHour"].to_i.business_hours.after(release.starts_at),
                  feature: Feature.find(j["feature"]["name"]), 
                  resource: Resource.find(j["resource"]["name"]),
                  plan: plan)
