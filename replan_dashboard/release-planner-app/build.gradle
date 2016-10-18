@@ -69,6 +69,22 @@ repositories {
     mavenCentral()
 	maven {url 'http://repo.spring.io/milestone' }
 	maven {url 'http://172.28.16.213:8082/artifactory/libs-snapshot-local/'}
+	maven {
+           url 'http://supersede.es.atos.net:10080/artifactory/libs-snapshot'
+           name = 'maven-supersede-snapshot'
+   		   credentials {
+               username = "${artifactory_user}"
+               password = "${artifactory_password}"
+   			}
+       }
+	 maven {
+           url 'http://supersede.es.atos.net:10080/artifactory/libs-release'
+           name = 'maven-supersede-release'
+		   credentials {
+		               username = "${artifactory_user}"
+		               password = "${artifactory_password}"
+		   	}
+      }
 }
 
 configurations {
@@ -92,8 +108,11 @@ dependencies {
 	compile("org.springframework.session:spring-session:1.2.0.RELEASE")
 	compile("org.springframework.boot:spring-boot-starter-redis")
 	
-	compile files('../../../frontend/applications/supersede-client/build/libs/supersede-client-0.0.1-SNAPSHOT.jar')
-	//compile("eu.supersede:supersede-client:0.0.1-SNAPSHOT")
+	//compile files('../../../frontend/applications/supersede-client/build/libs/supersede-client-0.0.3-SNAPSHOT.jar')
+	
+	compile("eu.supersede:supersede-client:0.0.3-SNAPSHOT")
+	compile("eu.supersede:supersede-frontend-core:0.0.3-SNAPSHOT")
+	
 	
 	//required by integration
 	compile files('../../../integration/IF/API/eu.supersede.if.api/build/libs/eu.supersede.if.api.jar')
@@ -122,4 +141,3 @@ eclipse {
 task wrapper(type: Wrapper) {
     gradleVersion = '2.7'
 }
-
