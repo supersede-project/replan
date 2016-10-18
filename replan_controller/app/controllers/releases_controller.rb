@@ -125,6 +125,6 @@ class ReleasesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def release_params
-      params.require(:release).permit(:name, :description, :deadline)
+      params.require(:release).permit(:name, :description, :starts_at, :deadline)
     end
 end

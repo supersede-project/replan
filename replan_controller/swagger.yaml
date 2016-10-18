@@ -1206,6 +1206,9 @@ definitions:
         description: Display name of release.
       description:
         type: string
+      starts_at:
+        type: string
+        format: date-time
       deadline:
         type: string
         format: date-time
@@ -1221,6 +1224,9 @@ definitions:
         description: Display name of release.
       description:
         type: string
+      starts_at:
+        type: string
+        format: date-time
       deadline:
         type: string
         format: date-time
