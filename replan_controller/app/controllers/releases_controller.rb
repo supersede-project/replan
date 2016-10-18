@@ -46,9 +46,9 @@ class ReleasesController < ApplicationController
     # Your code here
     #@plan = FakePlanner.plan(@release, @project)
     if @release.starts_at.nil?
-      @plan = FakePlanner.plan(@release, @project)
+      @plan = FakePlanner.plan(@release)
     else
-      @plan = ValentinPlanner.plan(@release, @project)
+      @plan = ValentinPlanner.plan(@release)
     end
     render json: @plan
   end

@@ -1,8 +1,9 @@
 class FakePlanner
     include ActiveModel::Model
     
-  def self.plan(release, project)
+  def self.plan(release)
     # Your code here
+    project = release.project
     plan = Plan.create(release: release)
     date = Date.tomorrow
     release.features.each do |f|

@@ -1,15 +1,16 @@
 class ValentinPlanner
     include ActiveModel::Model
     
-  def self.plan(release, project)
+  def self.plan(release)
     # Your code here
     uri = "http://ec2-52-57-161-221.eu-central-1.compute.amazonaws.com:8080/api/v1/replan"
   # uri = "https://elena-mock-carlesf.c9users.io/api/v1/replan"
-    response = RestClient.post uri, self.build_payload(release, project),  {content_type: :json, accept: :json}
+    response = RestClient.post uri, self.build_payload(release),  {content_type: :json, accept: :json}
     self.build_plan(release, JSON.parse(response.body)["jobs"])
   end
   
-  def self.build_payload(release, project)
+  def self.build_payload(release)
+    project = release.project
     nrp = Hash.new
     nrp[:nbWeeks] = ((release.deadline - release.starts_at)/(7*24*60*60)).round
     nrp[:hoursPerWeek] = project.hours_per_week_and_full_time_resource
@@ -20,7 +21,7 @@ class ValentinPlanner
         requiredSkills: f.required_skills.map {|s| {name: s.id.to_s} },
         depends_on: f.depends_on.map {|d| d.id.to_s } }
     end
-    nrp[:resources] = project.resources.map do |r|
+    nrp[:resources] = release.resources.map do |r|
       { name: r.id.to_s, 
         weekAvailability: r.availability,
         skills: r.skills.map {|s| {name: s.id.to_s} } }
