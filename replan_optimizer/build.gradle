@@ -2,13 +2,21 @@ group 'SUPERSEDE'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+
+war {
+    baseName = 'replan_optimizer'
+    version =  '0.0.1'
+}
 
 sourceCompatibility = 1.8
 
 repositories {
 	maven { url "http://repo.spring.io/snapshot" }
 	maven { url "http://repo.spring.io/milestone" }
-	maven {url "https://repo.spring.io/release" }
+	maven { url "https://repo.spring.io/release" }
+	maven { url "http://repo.spring.io/libs-snapshot" }
 	mavenCentral()
 }
 
@@ -33,7 +41,8 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-context', version: '4.3.2.RELEASE'
     compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '1.4.1.RELEASE'
     compile 'org.springframework.boot:spring-boot-starter-web:1.4.1.RELEASE'
-    compile 'org.springframework.boot:spring-boot-starter-tomcat:1.2.4.RELEASE'
+//    compile 'org.springframework.boot:spring-boot-starter-tomcat:1.2.4.RELEASE'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.4.0.RELEASE'
     compile group: 'org.uma.jmetal', name: 'jmetal-core', version: '5.0'
     compile group: 'org.uma.jmetal', name: 'jmetal-algorithm', version: '5.0'
