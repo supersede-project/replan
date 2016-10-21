@@ -4,11 +4,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	/*
  	* REST methods
  	*/
-	//var baseURL = "http://localhost:3000/api/ui/v1/projects/1";
-	//var baseURL = "http://62.14.219.13:3000/api/ui/v1/projects/1";
-	//var baseURL = "http://62.14.219.13:8280/replan/projects/1";
 	var baseURL = "release-planner-app/replan/projects/1";
-
 	
 	$scope.getReleases = function () {
 		return $http({

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpHost;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
@@ -21,6 +22,7 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,11 +35,18 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  * 
  */
-//http://62.14.219.13:8280/replan/projects/1/releases
-//http://localhost:8083/replan/projects/1/features
 @RestController
 @RequestMapping("/replan/projects/1")
 public class ReleasePlannerRest{
+	
+	@Value("${rest.server.url}")
+	private String restServerUrl;
+	
+	@Value("${rest.server.proxy}")
+	private String restServerProxy;
+	
+	@Value("${rest.server.port}")
+	private String restServerPort;
 	
 	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
@@ -45,7 +54,7 @@ public class ReleasePlannerRest{
 		CloseableHttpResponse response = null;
 		
 		//append host
-		StringBuilder sb = new StringBuilder("http://62.14.219.13:8280");
+		StringBuilder sb = new StringBuilder(restServerUrl);
 		//append uri
 		String uri = request.getRequestURI();
 		if(request.getRequestURI().startsWith("//")){
@@ -59,13 +68,16 @@ public class ReleasePlannerRest{
 		}
 
  		try {
-			int code = 500;
-			
-			
+ 			
+ 			int code = 500;
 			RequestConfig.Builder requestBuilder = RequestConfig.custom();
 			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
 			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
-
+			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
+				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
+				requestBuilder = requestBuilder.setProxy(proxy);
+	       }
+		   
 			HttpClientBuilder builder = HttpClientBuilder.create();     
 			builder.setDefaultRequestConfig(requestBuilder.build());
 			CloseableHttpClient httpclient = builder.build();
