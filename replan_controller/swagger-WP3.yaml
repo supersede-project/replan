@@ -31,10 +31,15 @@ paths:
           description: An array of Features
           required: true
           schema:
-            $ref: '#/definitions/FeatureData'
+            $ref: '#/definitions/Payload'
       responses:
         200:
           description: Success
+          schema:
+            type: object
+            properties: 
+              message:
+                type: string
         400:
           description: Bad request
           schema:
@@ -87,7 +92,7 @@ definitions:
         description: <, >, and the like
       value:
         type: number
-  Feature:
+  FeatureForWP3:
     type: object
     required:
       - id
@@ -125,7 +130,7 @@ definitions:
       arguments:
         type: string
         description: Some explanatory/justification info
-  FeatureData:
+  Payload:
     type: object
     required:
       - evaluation_time
@@ -138,7 +143,7 @@ definitions:
         type: array
         description: array of features
         items:
-          $ref: '#/definitions/Feature'
+          $ref: '#/definitions/FeatureForWP3'
       constraints: 
         type: array
         description: array of constraints
