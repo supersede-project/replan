@@ -5,10 +5,16 @@ The optimizer has the sole purpose of generating a release plan. It has been dev
 ## Installation
 
 ### Compile instructions
-TBD
+To compile you only need to execute the gradle build script
+```
+gradlew build
+```
 
 ### Install instructions
-TBD
+To deploy the service you only need to execute the jar file generated
+```
+java -jar /build/libs/optimizer-1.0-SNAPSHOT.jar
+```
 
 ## API reference documents
 
