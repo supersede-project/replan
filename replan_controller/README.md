@@ -6,7 +6,7 @@ This the Replan controller component, this component provides several REST inter
 The following steps describe the installation procedure for the Replan controller
 
 ### Installation instructions
-1. Install Ruby on Rails.
+1. Install Ruby on Rails (in some cases, you will also need to install Ruby).
  * `gem install rails -v 5.0.0`
 1. Clone the SUPERSEDE Replan Git repository.
  * `git clone https://github.com/supersede-project/replan`
