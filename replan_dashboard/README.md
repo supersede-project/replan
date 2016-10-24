@@ -12,6 +12,8 @@ The following steps describe the installation procedure for the Replan dashboard
  * `cd replan_dashboard/release-planner-app/`
  * `./gradlew build`
 
+*Note: in step 2, you will need credentials to access to some of the dependencies specified in the Gradle project. Please contact with the SUPERSEDE Technical Integrator for more details: <jesus.gorronogoitia@atos.net>*
+
 ### Install instructions
 1. Copy the dashboard war file to the Tomcat directory.
  * `cp <generated WAR> <CATALINA_HOME>/webapps/`
