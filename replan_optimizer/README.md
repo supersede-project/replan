@@ -3,18 +3,22 @@
 The optimizer has the sole purpose of generating a release plan. It has been developed as a stateless web service that given all the required information generates a release plan that preserving the stated constraints optimizes the use of the company resources to develop the next release. This web service is powered by the use of a problem optimization algorithm customized for this objective.
 
 ## Installation
+The following steps describe the installation procedure for the Release planner optimizer
 
-### Compile instructions
-To compile you only need to execute the gradle build script
-```
-gradlew build
-```
+### Compilation instructions
 
-### Install instructions
-To deploy the service you only need to execute the jar file generated
-```
-java -jar /build/libs/optimizer-1.0-SNAPSHOT.jar
-```
+1. Clone the SUPERSEDE Replan Git repository.
+ * `git clone https://github.com/supersede-project/replan`
+1. Build the project.
+ * `cd replan_optimizer`
+ * `./gradlew build`
+
+### Installation instructions
+1. Copy the dashboard war file to the Tomcat directory.
+ * `cp <generated WAR> <CATALINA_HOME>/webapps/`
+1. Run Tomcat. 
+ * `cd <CATALINA_HOME>/bin/`
+ * `./start_up.sh`
 
 ## API reference documents
 
