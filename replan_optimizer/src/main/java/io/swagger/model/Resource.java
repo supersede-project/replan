@@ -1,11 +1,9 @@
 package io.swagger.model;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.Skill;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,7 @@ import java.util.List;
 public class Resource   {
   private String name = null;
 
-  private Double weekAvailability = null;
+  private Double availability = null;
 
   private List<Skill> skills = new ArrayList<Skill>();
 
@@ -43,21 +41,21 @@ public class Resource   {
   }
 
   public Resource weekAvailability(Double weekAvailability) {
-    this.weekAvailability = weekAvailability;
+    this.availability = weekAvailability;
     return this;
   }
 
    /**
-   * Get weekAvailability
-   * @return weekAvailability
+   * Get availability
+   * @return availability
   **/
   @ApiModelProperty(value = "")
-  public Double getWeekAvailability() {
-    return weekAvailability;
+  public Double getAvailability() {
+    return availability;
   }
 
-  public void setWeekAvailability(Double weekAvailability) {
-    this.weekAvailability = weekAvailability;
+  public void setAvailability(Double availability) {
+    this.availability = availability;
   }
 
   public Resource skills(List<Skill> skills) {
@@ -94,13 +92,13 @@ public class Resource   {
     }
     Resource resource = (Resource) o;
     return Objects.equals(this.name, resource.name) &&
-        Objects.equals(this.weekAvailability, resource.weekAvailability) &&
+        Objects.equals(this.availability, resource.availability) &&
         Objects.equals(this.skills, resource.skills);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, weekAvailability, skills);
+    return Objects.hash(name, availability, skills);
   }
 
   @Override
@@ -109,7 +107,7 @@ public class Resource   {
     sb.append("class Resource {\n");
     
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
-    sb.append("    weekAvailability: ").append(toIndentedString(weekAvailability)).append("\n");
+    sb.append("    availability: ").append(toIndentedString(availability)).append("\n");
     sb.append("    skills: ").append(toIndentedString(skills)).append("\n");
     sb.append("}");
     return sb.toString();
