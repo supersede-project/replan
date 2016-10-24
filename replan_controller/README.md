@@ -3,7 +3,7 @@
 This the Replan controller component, this component provides several REST interfaces for the other components (and external WPs) to interact with the Replan tool.
 
 ## Installation
-The following steps describe the installation procedure for the Release planner controller
+The following steps describe the installation procedure for the Replan controller
 
 ### Installation instructions
 1. Install Ruby on Rails.
