@@ -1,0 +1,17 @@
+#logging.level.org.springframework.security=DEBUG
+server.port=8083
+
+logging.level.eu.supersede.fe=DEBUG
+
+spring.jpa.database=POSTGRESQL
+spring.jpa.show-sql=false
+spring.jpa.hibernate.ddl-auto=none
+
+spring.redis.host=localhost
+spring.redis.port=6379
+
+security.sessions=NEVER
+
+rest.server.url=http://localhost:8280
+rest.server.proxy=
+rest.server.port=
