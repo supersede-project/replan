@@ -6,15 +6,16 @@ The following steps describe the installation procedure for the Release planner 
 
 ### Compile instructions
 
-1. Clone the SUPERSEDE replan_dashboard Git repository. The directory where you extracted the distribution will be indicated in the following as `<dashboard_dir>`
-1. If you cloned the Git repository, build the project: 
- * `cd <dashboard_dir>/release-planner-app/`
- * `./gradle build`
+1. Clone the SUPERSEDE Replan Git repository.
+ * `git clone https://github.com/supersede-project/replan`
+1. Build the project.
+ * `cd replan_dashboard/release-planner-app/`
+ * `./gradlew build`
 
 ### Install instructions
-1. Copy and rename the SUPERSEDE replan_dashboard war file you generated to their destination Tomcat directory:
- * `cp <dashboard_dir>/release-planner-app/build/libs/release-planner-app -0.0.1-SNAPSHOT.war.original <CATALINA_HOME>/webapps/ release-planner-app.war`
-1. Run Tomcat from its bin directory. 
+1. Copy the dashboard war file to the Tomcat directory.
+ * `cp <generated WAR> <CATALINA_HOME>/webapps/`
+1. Run Tomcat. 
  * `cd <CATALINA_HOME>/bin/`
  * `./start_up.sh`
 
