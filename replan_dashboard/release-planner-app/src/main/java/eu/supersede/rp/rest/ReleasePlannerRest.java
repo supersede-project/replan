@@ -22,6 +22,8 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +50,8 @@ public class ReleasePlannerRest{
 	@Value("${rest.server.port}")
 	private String restServerPort;
 	
+	private final Logger log = LoggerFactory.getLogger(this.getClass());	
+	
 	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
@@ -67,9 +71,10 @@ public class ReleasePlannerRest{
 			sb.append(request.getQueryString());
 		}
 
- 		try {
+		int code = 500;
+ 		
+		try {
  			
- 			int code = 500;
 			RequestConfig.Builder requestBuilder = RequestConfig.custom();
 			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
 			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
@@ -171,9 +176,15 @@ public class ReleasePlannerRest{
 			}
 			else{
 				String bodyResponse = getBodyResponse(response);
+				log.debug("Error 500 in my rest client(body response): " + bodyResponse);
 				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
 			}
-		} finally {
+		}catch (Exception e) {
+			log.debug("Error Exception in my rest client: " + e.getMessage());
+			log.error("Error Exception in my rest client", e);
+			return new ResponseEntity<> (e.getMessage(), org.springframework.http.HttpStatus.valueOf(code));
+		} 
+ 		finally {
 			if(response != null){
 				response.close();	
 			}
