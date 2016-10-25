@@ -51,7 +51,7 @@ public class Transform2SwaggerModel {
         feature.setDuration(f.getDuration());
         feature.setName(f.getName());
         feature.setPriority(Priority2Swagger(f.getPriority()));
-        feature.setDependsOn(FeatureList2Swagger(f.getPreviousFeatures()));
+        feature.setDepends_on(FeatureList2Swagger(f.getPreviousFeatures()));
         feature.setRequired_skills(SkillList2Swagger(f.getRequiredSkills()));
 
         return feature;
