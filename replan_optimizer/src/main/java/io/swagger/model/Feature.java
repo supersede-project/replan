@@ -24,7 +24,7 @@ public class Feature   {
 
   private List<Skill> required_skills = new ArrayList<Skill>();
 
-  private List<Feature> dependsOn = new ArrayList<Feature>();
+  private List<Feature> depends_on = new ArrayList<Feature>();
 
   public Feature name(String name) {
     this.name = name;
@@ -104,26 +104,26 @@ public class Feature   {
   }
 
   public Feature dependsOn(List<Feature> dependsOn) {
-    this.dependsOn = dependsOn;
+    this.depends_on = dependsOn;
     return this;
   }
 
   public Feature addDependsOnItem(Feature dependsOnItem) {
-    this.dependsOn.add(dependsOnItem);
+    this.depends_on.add(dependsOnItem);
     return this;
   }
 
    /**
    * array of features
-   * @return dependsOn
+   * @return depends_on
   **/
   @ApiModelProperty(value = "array of features")
-  public List<Feature> getDependsOn() {
-    return dependsOn;
+  public List<Feature> getDepends_on() {
+    return depends_on;
   }
 
-  public void setDependsOn(List<Feature> dependsOn) {
-    this.dependsOn = dependsOn;
+  public void setDepends_on(List<Feature> depends_on) {
+    this.depends_on = depends_on;
   }
 
 
@@ -140,12 +140,12 @@ public class Feature   {
         Objects.equals(this.duration, feature.duration) &&
         Objects.equals(this.priority, feature.priority) &&
         Objects.equals(this.required_skills, feature.required_skills) &&
-        Objects.equals(this.dependsOn, feature.dependsOn);
+        Objects.equals(this.depends_on, feature.depends_on);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, duration, priority, required_skills, dependsOn);
+    return Objects.hash(name, duration, priority, required_skills, depends_on);
   }
 
   @Override
@@ -157,7 +157,7 @@ public class Feature   {
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    priority: ").append(toIndentedString(priority)).append("\n");
     sb.append("    required_skills: ").append(toIndentedString(required_skills)).append("\n");
-    sb.append("    dependsOn: ").append(toIndentedString(dependsOn)).append("\n");
+    sb.append("    depends_on: ").append(toIndentedString(depends_on)).append("\n");
     sb.append("}");
     return sb.toString();
   }

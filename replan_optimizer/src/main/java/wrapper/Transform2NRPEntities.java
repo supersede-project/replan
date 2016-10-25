@@ -66,7 +66,7 @@ public class Transform2NRPEntities {
         Feature feature = new Feature(f.getName(),
                                       PriorityLevel2Entities(f.getPriority()),
                                       f.getDuration(),
-                                      FeatureList2Entities(f.getDependsOn()),
+                                      FeatureList2Entities(f.getDepends_on()),
                                       SkillList2Entities(f.getRequired_skills()));
         return feature;
     }
