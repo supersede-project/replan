@@ -52,6 +52,11 @@ public class ReleasePlannerRest{
 	
 	private final Logger log = LoggerFactory.getLogger(this.getClass());	
 	
+	@RequestMapping(value = "/hello", method = {RequestMethod.GET})
+	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+		 return "hello from Release Planner Rest Controller"; 
+	}
+	
 	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
