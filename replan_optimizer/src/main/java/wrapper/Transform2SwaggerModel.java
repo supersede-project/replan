@@ -52,7 +52,7 @@ public class Transform2SwaggerModel {
         feature.setName(f.getName());
         feature.setPriority(Priority2Swagger(f.getPriority()));
         feature.setDependsOn(FeatureList2Swagger(f.getPreviousFeatures()));
-        feature.setRequiredSkills(SkillList2Swagger(f.getRequiredSkills()));
+        feature.setRequired_skills(SkillList2Swagger(f.getRequiredSkills()));
 
         return feature;
     }
@@ -75,7 +75,7 @@ public class Transform2SwaggerModel {
         Resource resource = new Resource();
         resource.setName(employee.getName());
         resource.setSkills(SkillList2Swagger(employee.getSkills()));
-        resource.setWeekAvailability(employee.getWeekAvailability());
+        resource.setAvailability(employee.getWeekAvailability());
 
         return resource;
     }

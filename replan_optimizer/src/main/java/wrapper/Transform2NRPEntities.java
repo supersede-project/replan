@@ -15,7 +15,7 @@ public class Transform2NRPEntities {
 
         List<Skill> skills = SkillList2Entities(resource.getSkills());
 
-        return new Employee(resource.getName(),resource.getWeekAvailability(),skills);
+        return new Employee(resource.getName(),resource.getAvailability(),skills);
 
     }
 
@@ -67,7 +67,7 @@ public class Transform2NRPEntities {
                                       PriorityLevel2Entities(f.getPriority()),
                                       f.getDuration(),
                                       FeatureList2Entities(f.getDependsOn()),
-                                      SkillList2Entities(f.getRequiredSkills()));
+                                      SkillList2Entities(f.getRequired_skills()));
         return feature;
     }
 

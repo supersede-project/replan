@@ -1,13 +1,9 @@
 package io.swagger.model;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
+
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.Feature;
-import io.swagger.model.Priority;
-import io.swagger.model.Skill;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +22,7 @@ public class Feature   {
 
   private Priority priority = null;
 
-  private List<Skill> requiredSkills = new ArrayList<Skill>();
+  private List<Skill> required_skills = new ArrayList<Skill>();
 
   private List<Feature> dependsOn = new ArrayList<Feature>();
 
@@ -85,26 +81,26 @@ public class Feature   {
   }
 
   public Feature requiredSkills(List<Skill> requiredSkills) {
-    this.requiredSkills = requiredSkills;
+    this.required_skills = requiredSkills;
     return this;
   }
 
   public Feature addRequiredSkillsItem(Skill requiredSkillsItem) {
-    this.requiredSkills.add(requiredSkillsItem);
+    this.required_skills.add(requiredSkillsItem);
     return this;
   }
 
    /**
-   * Get requiredSkills
-   * @return requiredSkills
+   * Get required_skills
+   * @return required_skills
   **/
   @ApiModelProperty(value = "")
-  public List<Skill> getRequiredSkills() {
-    return requiredSkills;
+  public List<Skill> getRequired_skills() {
+    return required_skills;
   }
 
-  public void setRequiredSkills(List<Skill> requiredSkills) {
-    this.requiredSkills = requiredSkills;
+  public void setRequired_skills(List<Skill> required_skills) {
+    this.required_skills = required_skills;
   }
 
   public Feature dependsOn(List<Feature> dependsOn) {
@@ -143,13 +139,13 @@ public class Feature   {
     return Objects.equals(this.name, feature.name) &&
         Objects.equals(this.duration, feature.duration) &&
         Objects.equals(this.priority, feature.priority) &&
-        Objects.equals(this.requiredSkills, feature.requiredSkills) &&
+        Objects.equals(this.required_skills, feature.required_skills) &&
         Objects.equals(this.dependsOn, feature.dependsOn);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(name, duration, priority, requiredSkills, dependsOn);
+    return Objects.hash(name, duration, priority, required_skills, dependsOn);
   }
 
   @Override
@@ -160,7 +156,7 @@ public class Feature   {
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    duration: ").append(toIndentedString(duration)).append("\n");
     sb.append("    priority: ").append(toIndentedString(priority)).append("\n");
-    sb.append("    requiredSkills: ").append(toIndentedString(requiredSkills)).append("\n");
+    sb.append("    required_skills: ").append(toIndentedString(required_skills)).append("\n");
     sb.append("    dependsOn: ").append(toIndentedString(dependsOn)).append("\n");
     sb.append("}");
     return sb.toString();
