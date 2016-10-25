@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  */
 @RestController
-@RequestMapping("/replan/projects/1")
+@RequestMapping("/replan")
 public class ReleasePlannerRest{
 	
 	@Value("${rest.server.url}")
@@ -57,7 +57,7 @@ public class ReleasePlannerRest{
 		 return "hello from Release Planner Rest Controller"; 
 	}
 	
-	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+	@RequestMapping(value = "/projects/1/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
 		CloseableHttpResponse response = null;
