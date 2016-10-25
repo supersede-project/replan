@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  */
 @RestController
-@RequestMapping("/replan/projects/1")
+@RequestMapping("/replan")
 public class ReleasePlannerRest{
 	
 	@Value("${rest.server.url}")
@@ -57,7 +57,83 @@ public class ReleasePlannerRest{
 		 return "hello from Release Planner Rest Controller"; 
 	}
 	
-	@RequestMapping(value = "/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+//	@RequestMapping(value = "/releases", method = {RequestMethod.GET})
+//	public ResponseEntity <?> releases (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+//	CloseableHttpResponse response = null;
+//		
+//		//append host
+//		StringBuilder sb = new StringBuilder(restServerUrl +"/replan/projects/1/releases");
+//		int code = 500;
+// 		
+//		try {
+// 			
+//			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+//			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
+//			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
+//			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
+//				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
+//				requestBuilder = requestBuilder.setProxy(proxy);
+//	       }
+//		   
+//			HttpClientBuilder builder = HttpClientBuilder.create();     
+//			builder.setDefaultRequestConfig(requestBuilder.build());
+//			CloseableHttpClient httpclient = builder.build();
+//			
+//			
+//			if("GET".equals(request.getMethod())){
+//				//create
+//				HttpGet httpGet = new HttpGet(sb.toString());			
+//
+//				//execute
+//				response = httpclient.execute(httpGet);
+//			}
+//		
+//			else{
+//				return new ResponseEntity<> ("request method  not implemented", org.springframework.http.HttpStatus.NOT_IMPLEMENTED);
+//			} 
+//			
+//			if(response != null && response.getStatusLine() != null){
+//				code = response.getStatusLine().getStatusCode();
+//			}
+//			
+//			if(	code == 200){
+//
+//				Header[] headers = response.getAllHeaders();
+//
+//				for (Header header : headers) {
+//					if("Content-Type".equals(header.getName())){
+//						httpServletResponse.setHeader(header.getName(), header.getValue());
+//						continue;
+//					}
+//				}
+//
+//				try (InputStream inputStream = response.getEntity().getContent();
+//						OutputStream outputStream = httpServletResponse.getOutputStream();
+//						)
+//						{
+//					IOUtils.copyLarge(inputStream, outputStream);
+//						}
+//				return new ResponseEntity<>(HttpStatus.OK);
+//
+//
+//			}
+//			else{
+//				String bodyResponse = getBodyResponse(response);
+//				log.debug("Error 500 in my rest client(body response): " + bodyResponse);
+//				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
+//			}
+//		}catch (Exception e) {
+//			log.debug("Error Exception in my rest client: " + e.getMessage());
+//			log.error("Error Exception in my rest client", e);
+//			return new ResponseEntity<> (e.getMessage(), org.springframework.http.HttpStatus.valueOf(code));
+//		} 
+// 		finally {
+//			if(response != null){
+//				response.close();	
+//			}
+//		}
+//	}
+	@RequestMapping(value = "/projects/1/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
 		CloseableHttpResponse response = null;
