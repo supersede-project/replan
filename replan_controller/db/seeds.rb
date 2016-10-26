@@ -25,30 +25,39 @@ r3.skills << s1
 r3.skills << s3
 
 f1 = p.features.create(code: 111, name: "Fix auto upload", description: "Bla, bla, bla", \
-                       deadline: Date.today + 10, priority: 5)
+                       deadline: Date.today + 10, priority: 5, effort: 10)
 f2 = p.features.create(code: 222, name: "New login", description: "Bla, bla, bla", \
-                       deadline: Date.today + 12, priority: 4)
+                       deadline: Date.today + 12, priority: 4, effort: 20)
 f3 = p.features.create(code: 334, name: "Enrollment refactoring", description: "Bla, bla, bla", \
-                       deadline: Date.today + 15, priority: 3)
+                       deadline: Date.today + 15, priority: 3, effort: 20)
 f4 = p.features.create(code: 454, name: "New channel", description: "Bla, bla, bla", \
-                       deadline: Date.today + 18, priority: 2)
+                       deadline: Date.today + 18, priority: 2, effort: 50)
 f5 = p.features.create(code: 556, name: "Email reply", description: "Bla, bla, bla", \
-                       deadline: Date.today + 20, priority: 1)
+                       deadline: Date.today + 20, priority: 1, effort: 10)
 f6 = p.features.create(code: 666, name: "Fix user display", description: "Bla, bla, bla", \
-                       deadline: Date.today + 23, priority: 4)
+                       deadline: Date.today + 23, priority: 4, effort: 5)
 f7 = p.features.create(code: 701, name: "Profile picture", description: "Bla, bla, bla", \
-                       deadline: Date.today + 30, priority: 5)
+                       deadline: Date.today + 30, priority: 5, effort: 5)
 
-f3.depends_on << f1
-f3.depends_on << f2
+f2.depends_on << f1
+f6.depends_on << f4
+f6.depends_on << f5
+f7.depends_on << f6
 
 f1.required_skills << s1
 f1.required_skills << s3
 f2.required_skills << s1
 f2.required_skills << s3
+f3.required_skills << s3
+f4.required_skills << s3
+f5.required_skills << s2
+f6.required_skills << s1
+f7.required_skills << s3
 
-l1 = p.releases.create(name: "August Release", description: "Bla, bla, bla", deadline: "2016-08-31")
-l2 = p.releases.create(name: "Summer Extraordinary", description: "Bla, bla, bla", deadline: "2016-09-20")
+l1 = p.releases.create(name: "November Release", description: "Bla, bla, bla",
+                       deadline: "2016-11-30", starts_at: "2016-11-02")
+l2 = p.releases.create(name: "Winter extraordinary", description: "Bla, bla, bla", 
+                       deadline: "2016-12-22", starts_at: "2016-12-01")
 
 l1.resources << r1
 l1.resources << r3
@@ -57,3 +66,8 @@ l2.resources << r3
 
 l1.features << f1
 l1.features << f2
+l2.features << f3
+l2.features << f4
+l2.features << f5
+l2.features << f6
+l2.features << f7

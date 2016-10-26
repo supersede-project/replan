@@ -382,7 +382,7 @@ paths:
           description: Parameters of the new Release
           required: true
           schema:
-            $ref: '#/definitions/ReleaseData'
+            $ref: '#/definitions/NewRelease'
       tags:
         - Releases
       responses:
@@ -1206,6 +1206,9 @@ definitions:
         description: Display name of release.
       description:
         type: string
+      starts_at:
+        type: string
+        format: date-time
       deadline:
         type: string
         format: date-time
@@ -1221,6 +1224,26 @@ definitions:
         description: Display name of release.
       description:
         type: string
+      starts_at:
+        type: string
+        format: date-time
+      deadline:
+        type: string
+        format: date-time
+  NewRelease:
+    type: object
+    required:
+      - starts_at
+      - deadline
+    properties:
+      name:
+        type: string
+        description: Display name of release.
+      description:
+        type: string
+      starts_at:
+        type: string
+        format: date-time
       deadline:
         type: string
         format: date-time

@@ -1,5 +1,5 @@
 class ReleaseSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :deadline, :resources
+  attributes :id, :name, :description, :starts_at, :deadline, :resources
   
   def resources
     object

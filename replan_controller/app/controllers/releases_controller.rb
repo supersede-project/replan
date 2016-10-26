@@ -44,12 +44,11 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
-    @plan = Plan.create(release: @release)
-    date = Date.tomorrow
-    @release.features.each do |f|
-      r = @project.resources.order("RANDOM()").limit(1).first
-      Job.create(starts: date, ends: date+2, feature: f, resource: r, plan: @plan)
-      date = date+3
+    #@plan = FakePlanner.plan(@release, @project)
+    if @release.starts_at.nil?
+      @plan = FakePlanner.plan(@release)
+    else
+      @plan = ValentinPlanner.plan(@release)
     end
     render json: @plan
   end
@@ -126,6 +125,6 @@ class ReleasesController < ApplicationController
 
     # Only allow a trusted parameter "white list" through.
     def release_params
-      params.require(:release).permit(:name, :description, :deadline)
+      params.require(:release).permit(:name, :description, :starts_at, :deadline)
     end
 end
