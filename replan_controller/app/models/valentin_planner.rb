@@ -35,6 +35,7 @@ class ValentinPlanner
     end
     
     def self.build_plan(release, vjobs)
+      release.plan.destroy if !release.plan.nil?
       plan = Plan.create(release: release)
       vjobs.each do |j|
         Job.create(starts: j["beginHour"].to_i.business_hours.after(release.starts_at), 
