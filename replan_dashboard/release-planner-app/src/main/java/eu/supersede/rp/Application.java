@@ -25,28 +25,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 
 import eu.supersede.fe.configuration.ApplicationConfiguration;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-//@SpringBootApplication(exclude = DataSourceAutoConfiguration.class) 
-//@ComponentScan(basePackages = {"eu.supersede.rp", "eu.supersede.fe"})
-//@EnableGlobalMethodSecurity( securedEnabled = true, prePostEnabled = true )
-////@EnableJpaRepositories(basePackages={"eu.supersede.rp.jpa"})
-//@EnableRedisHttpSession
-//public class Application extends SpringBootServletInitializer {
-//
-//	@Override
-//    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-//		ApplicationConfiguration.init();
-//        return application.sources(Application.class);
-//    }
-//	
-//	public static void main(String[] args) {
-//		ApplicationConfiguration.init();
-//		SpringApplication.run(Application.class, args);
-//	}
-//	
-//	
-//	
-//
-//}
 
 @SpringBootApplication(exclude = DataSourceAutoConfiguration.class)
 @ComponentScan(basePackages = {"eu.supersede.rp", "eu.supersede.fe"})

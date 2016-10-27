@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 
  */
 @RestController
-@RequestMapping("/replan")
+@RequestMapping("/replan/projects")
 public class ReleasePlannerRest{
 	
 	@Value("${rest.server.url}")
@@ -56,102 +57,13 @@ public class ReleasePlannerRest{
 	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		 return "hello from Release Planner Rest Controller"; 
 	}
-	
-//	@RequestMapping(value = "/releases", method = {RequestMethod.GET})
-//	public ResponseEntity <?> releases (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-//	CloseableHttpResponse response = null;
-//		
-//		//append host
-//		StringBuilder sb = new StringBuilder(restServerUrl +"/replan/projects/1/releases");
-//		int code = 500;
-// 		
-//		try {
-// 			
-//			RequestConfig.Builder requestBuilder = RequestConfig.custom();
-//			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
-//			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
-//			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
-//				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
-//				requestBuilder = requestBuilder.setProxy(proxy);
-//	       }
-//		   
-//			HttpClientBuilder builder = HttpClientBuilder.create();     
-//			builder.setDefaultRequestConfig(requestBuilder.build());
-//			CloseableHttpClient httpclient = builder.build();
-//			
-//			
-//			if("GET".equals(request.getMethod())){
-//				//create
-//				HttpGet httpGet = new HttpGet(sb.toString());			
-//
-//				//execute
-//				response = httpclient.execute(httpGet);
-//			}
-//		
-//			else{
-//				return new ResponseEntity<> ("request method  not implemented", org.springframework.http.HttpStatus.NOT_IMPLEMENTED);
-//			} 
-//			
-//			if(response != null && response.getStatusLine() != null){
-//				code = response.getStatusLine().getStatusCode();
-//			}
-//			
-//			if(	code == 200){
-//
-//				Header[] headers = response.getAllHeaders();
-//
-//				for (Header header : headers) {
-//					if("Content-Type".equals(header.getName())){
-//						httpServletResponse.setHeader(header.getName(), header.getValue());
-//						continue;
-//					}
-//				}
-//
-//				try (InputStream inputStream = response.getEntity().getContent();
-//						OutputStream outputStream = httpServletResponse.getOutputStream();
-//						)
-//						{
-//					IOUtils.copyLarge(inputStream, outputStream);
-//						}
-//				return new ResponseEntity<>(HttpStatus.OK);
-//
-//
-//			}
-//			else{
-//				String bodyResponse = getBodyResponse(response);
-//				log.debug("Error 500 in my rest client(body response): " + bodyResponse);
-//				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
-//			}
-//		}catch (Exception e) {
-//			log.debug("Error Exception in my rest client: " + e.getMessage());
-//			log.error("Error Exception in my rest client", e);
-//			return new ResponseEntity<> (e.getMessage(), org.springframework.http.HttpStatus.valueOf(code));
-//		} 
-// 		finally {
-//			if(response != null){
-//				response.close();	
-//			}
-//		}
-//	}
-	@RequestMapping(value = "/projects/1/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+
+	@RequestMapping(value = "/{projectId}/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+	public ResponseEntity<?> get(@PathVariable String projectId,HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
 		CloseableHttpResponse response = null;
 		
-		//append host
-		StringBuilder sb = new StringBuilder(restServerUrl);
-		//append uri
-		String uri = request.getRequestURI();
-		if(request.getRequestURI().startsWith("//")){
-			uri = uri.substring(1, uri.length());
-		}	
-		sb.append(uri);
-		//append query string
-		if(request.getQueryString() != null && !request.getQueryString().isEmpty()){
-			sb.append("?");
-			sb.append(request.getQueryString());
-		}
-
+	
 		int code = 500;
  		
 		try {
@@ -171,14 +83,14 @@ public class ReleasePlannerRest{
 			
 			if("GET".equals(request.getMethod())){
 				//create
-				HttpGet httpGet = new HttpGet(sb.toString());			
+				HttpGet httpGet = new HttpGet(getRightUrl(request));			
 
 				//execute
 				response = httpclient.execute(httpGet);
 			}
 			else if("POST".equals(request.getMethod())){
 				//create
-				HttpPost httpPost = new HttpPost(sb.toString());
+				HttpPost httpPost = new HttpPost(getRightUrl(request));
 				//add headers
 				// add only content-type header from request
 				@SuppressWarnings("rawtypes")
@@ -200,7 +112,7 @@ public class ReleasePlannerRest{
 			}
 			else if("PUT".equals(request.getMethod())){
 				//create
-				HttpPut httpPut = new HttpPut(sb.toString());
+				HttpPut httpPut = new HttpPut(getRightUrl(request));
 				//add headers
 				// add only content-type header from request
 				@SuppressWarnings("rawtypes")
@@ -222,7 +134,7 @@ public class ReleasePlannerRest{
 			}
 			else if("DELETE".equals(request.getMethod())){
 				//create
-				HttpDelete httpDelete = new HttpDelete(sb.toString());
+				HttpDelete httpDelete = new HttpDelete(getRightUrl(request));
 				//execute
 				response = httpclient.execute(httpDelete);			
 			}
@@ -257,7 +169,7 @@ public class ReleasePlannerRest{
 			}
 			else{
 				String bodyResponse = getBodyResponse(response);
-				log.debug("Error 500 in my rest client(body response): " + bodyResponse);
+				log.debug("Error "+ code + " in my rest client(body response): " + bodyResponse);
 				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
 			}
 		}catch (Exception e) {
@@ -273,6 +185,37 @@ public class ReleasePlannerRest{
 	}
 	
 	//help methods
+	
+	//help methods
+	private String getRightUrl(HttpServletRequest request){
+		//append host
+		StringBuilder sb = new StringBuilder(restServerUrl);
+		//append uri
+		String uri = request.getRequestURI();
+		//request.getRequestURL();
+		String replacedURI ="";
+		if(uri.contains("/release-planner-app")){
+			replacedURI = uri.replace("/release-planner-app", "");
+		}else{
+			replacedURI = uri;
+		}
+		if(request.getRequestURI().startsWith("//")){
+			replacedURI = replacedURI.substring(1, replacedURI.length());
+		}	
+		sb.append(replacedURI);
+		//append query string
+		if(request.getQueryString() != null && !request.getQueryString().isEmpty()){
+			sb.append("?");
+			sb.append(request.getQueryString());
+		}
+		
+		//improve
+		String replaced = sb.toString().replace("replan2", "replan");
+		 
+		log.debug("replaced url: " + replaced);
+		 
+		 return replaced;
+	}
 	public static String getBodyRequest(HttpServletRequest request) throws IOException {
 
 		String body = null;

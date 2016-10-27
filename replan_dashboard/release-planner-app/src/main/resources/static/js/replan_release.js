@@ -32,7 +32,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			url: baseURL + '/releases'
 		});
 	}
-
+//ok
 	$scope.getReleaseFeatures = function (releaseId) {
 
 		var url = baseURL + '/releases/' + releaseId + '/features';
@@ -41,7 +41,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			url: url
 		});
 	}
-
+	//ok
 	$scope.deleteDependenciesFromFeature = function (featureId, featureIdsToRemove){
 
 		var url =  baseURL + '/features/'+ featureId + '/dependencies';
@@ -81,7 +81,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		});	
 	};
 
-
+	//ok
 	//add feature to release
 	$scope.addFeatureToRelease = function (releaseId, featureId){
 
