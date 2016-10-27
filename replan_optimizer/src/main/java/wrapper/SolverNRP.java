@@ -23,6 +23,7 @@ import logic.operators.PlanningMutationOperator;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 
 public class SolverNRP {
@@ -52,10 +53,8 @@ public class SolverNRP {
         new AlgorithmRunner.Executor(algorithm).execute();
 
         List<PlanningSolution> population = algorithm.getResult();
-
-        return PopulationFilter.getBestSolution(population);
-
-
+        Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(population);
+        return bestSolutions.iterator().next();
     }
 
     public static void printPopulation(Collection<PlanningSolution> population) {
