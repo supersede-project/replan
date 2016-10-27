@@ -16,7 +16,7 @@ The following steps describe the installation procedure for the Replan dashboard
 
 ### Install instructions
 1. Copy the dashboard war file to the Tomcat directory.
- * `cp <generated WAR> <CATALINA_HOME>/webapps/`
+ * `cp <generated WAR> <CATALINA_HOME>/webapps/release-planner-app.war`
 1. Run Tomcat. 
  * `cd <CATALINA_HOME>/bin/`
  * `./start_up.sh`
