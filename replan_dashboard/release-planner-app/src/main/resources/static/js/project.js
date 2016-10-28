@@ -93,12 +93,12 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		for(var i=0 ; i< resource.skills.length; i++){
 
 			if(i == 0){
-				//url = url + "?skillId=" + resource.skills[i].id;
-				url = url + "?skillId[" + i + "]=" + resource.skills[i].id;
+				url = url + "?skillId=" + resource.skills[i].id;
+				//url = url + "?skillId[" + i + "]=" + resource.skills[i].id;
 			}
 			else{
-				//url = url + "," + resource.skills[i].id;
-				url = url + "&skillId[" + i + "]=" + resource.skills[i].id;
+				url = url + "," + resource.skills[i].id;
+				//url = url + "&skillId[" + i + "]=" + resource.skills[i].id;
 			}
 		}  
 

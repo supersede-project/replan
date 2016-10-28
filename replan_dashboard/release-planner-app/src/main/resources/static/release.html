@@ -57,6 +57,16 @@
 			        <span ng-show="updateReleaseForm.releaseDeadline.$error.required && !updateReleaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
 			      </div>
 			    </div>
+			    
+			    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine}">
+			      <label class="control-label col-sm-4 my-label" for="releaseStarts_at">Release start at :</label>
+			      <div class="col-sm-8">
+						<div id='dateInputUpdateStartAt'>
+						</div>
+			        <span ng-show="updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine" class="help-block">Release start at is required.</span>
+			      </div>
+			    </div>
+			    
 			     <!-- button -->
                 <div class="form-group">
                 
@@ -71,25 +81,7 @@
 		    </form>
                 </div>
 	     </div>
- 
-<!--            <div class="col-xs-12 margin-top-5px" ng-show="isUpdate"> -->
-<!--        		<div> -->
-<!-- 		      <label class="col-sm-2 my-label">Release deadline:</label> -->
-<!-- 		      <div class="col-sm-4"> -->
-<!-- 				<div id='dateInputUpdate'></div> -->
-<!-- 		      </div> -->
-<!-- 		      <div class="col-sm-6"> -->
-<!-- 		       	<jqx-toggle-button id="1monthsToggleBtn" class="my-button3 myHeight" ng-click="toogleMonthsToggleBtns($event)" jqx-disabled="!isUpdate">1 months</jqx-toggle-button> -->
-<!-- 	        	<jqx-toggle-button id="3monthsToggleBtn" class="my-button3 myHeight" ng-click="toogleMonthsToggleBtns($event)" jqx-disabled="!isUpdate">3 months</jqx-toggle-button> -->
-<!-- 			  </div> -->
-<!--   	    	</div> -->
-<!--         	</div> -->
-<!--  	        <div class="col-xs-12 margin-top-5px"> -->
-<!--        		  <div class="text-right" ng-show="isUpdate"> -->
-<!--        		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button> -->
-<!-- 				<jqx-button template="submit" class="my-button myHeight" ng-click="update()"><i class="fa fa-pencil fa-lg"></i>Update</jqx-button> -->
-<!--        		  </div> -->
-<!--         	</div> -->
+
         <div class="row">
 			<div class="col-xs-12">	
 	        	
@@ -114,12 +106,24 @@
 				   <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine}">
 				      <label class="control-label col-sm-4 my-label" for="releaseDeadline">Release deadline:</label>
 				      <div class="col-sm-8">
-<!-- 				        <jqx-date-input id="releaseNameInput" name="releaseDeadline" class="form-control myHeightSmall" ng-model="release.deadline" required></jqx-date-input> -->
 							<div id='dateInput'>
 							</div>
 				        <span ng-show="releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
 				      </div>
 				    </div>
+				    
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseStarts_at.$error.required && !releaseForm.releaseStarts_at.$pristine}">
+				      <label class="control-label col-sm-4 my-label" for="releaseStarts_at">Release start at:</label>
+				      <div class="col-sm-8">
+
+							<div id='dateInputStartAt'>
+							</div>
+				        <span ng-show="releaseForm.releaseStarts_at.$error.required && !releaseForm.releaseStarts_at.$pristine" class="help-block">Release start at is required.</span>
+				      </div>
+				    </div>
+				    
+				    
+				    
 				     <!-- button -->
 	                <div class="form-group">
 	                    <div class="col-sm-offset-2 col-sm-10">
