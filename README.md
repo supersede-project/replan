@@ -7,6 +7,10 @@ Replan tool is intended for a context in which software projects normally involv
 
 Replan tool is **not** intended to substitute the project leader/manager, but to give support. In this sense, the tool will provide one complete release planning based on the information provided which then can be accepted (or not) by the project leader/manager. 
 
+[![Test Replan!](images/testbtn.png)](http://supersede.es.atos.net:8080/)
+
+User/password: wp_admin/12345
+
 Replan tool is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 Replan tool is composed by three components:
@@ -19,4 +23,4 @@ Replan tool is composed by three components:
 
 Main contact: David Ameller <dameller@essi.upc.edu>
 
-<center>![Project funded by the European Union](images/european.union.logo.png)</center>
+![Project funded by the European Union](images/european.union.logo.png)
