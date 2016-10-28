@@ -124,7 +124,6 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var url =  baseURL + '/releases/'+ releaseId + '/features';
 		for(var i=0 ; i< featureIds.length; i++){
 			if(i == 0){
-				//url = url + "?featureId[" + i + "]=" + featureIds[i];
 				url = url + "?featureId=" + featureIds[i];
 			}
 			else{
@@ -421,6 +420,8 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 			var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 			var date = new Date(job.starts);
+			date.setHours(0,0,0,0);
+			
 			var newX = mappingXDateJSONObject[""+date.getTime()];
 			var newY = mappingXDateJSONObject[""+job.resource.name]-(mappingXDateJSONObject.Yinterval/2);
 			element.setAttribute("id", ""+ job.feature.id);
@@ -492,7 +493,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 								var lineYstart = newY + mappingXDateJSONObject.Yinterval/2;
 
 								var startDateJobEnd = new Date(jobEnd.starts);
+								startDateJobEnd.setHours(0,0,0,0);
 								var endDateJobEnd = new Date(jobEnd.ends);
+								endDateJobEnd.setHours(0,0,0,0);
 
 								var newXJobEnd = mappingXDateJSONObject[""+endDateJobEnd.getTime()];
 								var newYJobEnd = mappingXDateJSONObject[""+jobEnd.resource.name]-(mappingXDateJSONObject.Yinterval/2);
@@ -703,7 +706,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var dateArray = new Array();
 		var currentDate = startDate;
 		while (currentDate <= stopDate) {
-			dateArray.push( new Date (currentDate) )
+			var date = new Date (currentDate);
+			date.setHours(0,0,0,0);
+			dateArray.push( date );
 			currentDate = currentDate.addDays(1);
 		}
 		return dateArray;

@@ -26,7 +26,7 @@
 		         <ul class="media-list">
                    <li class="media border" ng-repeat="release in releases">   
                      <div class="media-body" ng-click="showReleaseDetails(release)" ng-attr-id="{{'release_' + release.id}}">
-                         <h4 class="media-heading">{{release.name}}&nbsp;<small>{{release.deadline}}</small></h4>
+                         <h4 class="media-heading">{{release.name}}&nbsp;<small>{{release.deadline | date}}</small></h4>
 <!--                          <p>{{release.id}}</p> -->
                          <p>{{release.description}}</p>
                      </div>

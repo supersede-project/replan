@@ -50,11 +50,9 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 			if(i == 0){
 				url = url + "?ResourceId=" + resourceIds[i];
-				//url = url + "?ResourceId[" + i + "]=" + resourceIds[i];
 			}
 			else{
 				url = url + "," + resourceIds[i];
-				//url = url + "&ResourceId[" + i + "]=" + resourceIds[i];
 			}
 		}  
 
@@ -138,6 +136,9 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 					
 					//data input
 					$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
+					//start at input
+					$('#dateInputUpdateStartAt').jqxDateTimeInput('setDate', new Date($scope.release.starts_at));
+					
 				},
 
 				function(response) {
@@ -461,32 +462,10 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		refreshResourcesAddListBox();
 	};
 	
-	
 	$("#dateInputUpdate").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
-	$('#dateInputUpdate').on('change', function (event) {
-		//$("#1monthsToggleBtn").jqxToggleButton({toggled: false });
-		//$("#3monthsToggleBtn").jqxToggleButton({toggled: false });
-	    
-	}); 
+	$("#dateInputUpdateStartAt").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
 	
-//	/*
-//	 * deadline buttons
-//	 */
-//	$scope.toogleMonthsToggleBtns = function(event){
-//
-//		var toggled = $("#"+ event.target.id).jqxToggleButton('toggled');
-//
-//		//reset all toggle buttons
-//		//layout
-//		$("#1monthsToggleBtn").jqxToggleButton({toggled: false });
-//		$("#3monthsToggleBtn").jqxToggleButton({toggled: false });
-//
-//		//set again
-//		$("#"+ event.target.id).jqxToggleButton({toggled: toggled});
-//
-//		//on click in toggle buttons set date in dateInput
-//		$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
-//	}
+
 
 	addRemoveResourcesToFromReleaseDate = function(){
 
@@ -556,16 +535,24 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	var day = now.getDate();
 	//new Date(year, month, day);
 	$("#dateInput").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd', min: new Date(year, month, day)});
+	$("#dateInputStartAt").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd', min: new Date(year, month, day)});
+	
 	
 	var nowPlusOneMonth = new Date();
 	nowPlusOneMonth.setMonth(nowPlusOneMonth.getMonth() + 1);
 	$('#dateInput').jqxDateTimeInput('setDate', nowPlusOneMonth);
+	$('#dateInputStartAt').jqxDateTimeInput('setDate', nowPlusOneMonth);
 	
 	$scope.add = function(){
-		var date = $("#dateInput").jqxDateTimeInput('getDate');
-		var strDate = getStringSUPERSEDEDate(date.getTime());
-		$scope.release.deadline = strDate;
-		//console.log("date:"+strDate);
+		var dateDeadLine = $("#dateInput").jqxDateTimeInput('getDate');
+		var strDateDeadLine = getStringSUPERSEDEDate(dateDeadLine.getTime());
+		$scope.release.deadline = strDateDeadLine;
+
+		var dateStartAt = $("#dateInputStartAt").jqxDateTimeInput('getDate');
+		var strDateStartAt = getStringSUPERSEDEDate(dateStartAt.getTime());
+		$scope.release.starts_at = strDateStartAt;
+
+		
 		if($scope.release.resources.length  == 0){
 			$scope.addClassHasErrorResourcesAreRequired = 'my-error-border-color';
 			$scope.showResourcesAreRequired = true;
@@ -589,22 +576,15 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	
 	$scope.update = function(){
 
-//		if($("#1monthsToggleBtn").jqxToggleButton('toggled')){
-//			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 1);
-//		}
-//		else if($("#3monthsToggleBtn").jqxToggleButton('toggled')){
-//			$scope.release.deadline = addXMonthsToDate($scope.release.deadline, 3);
-//		}
-//		else{
-//			
-//			var date = $("#dateInputUpdate").jqxDateTimeInput('getDate');
-		//var strDate = getStringSUPERSEDEDate(date.getTime());
-		//$scope.release.deadline = strDate;
-//		}
-
-		var date = $("#dateInputUpdate").jqxDateTimeInput('getDate');
-		var strDate = getStringSUPERSEDEDate(date.getTime());
-		$scope.release.deadline = strDate;
+		//deadLine
+		var dateDeadline = $("#dateInputUpdate").jqxDateTimeInput('getDate');
+		var strDateDeadLine = getStringSUPERSEDEDate(dateDeadline.getTime());
+		$scope.release.deadline = strDateDeadLine;
+	
+		//starts_at
+		var dateStartAt = $("#dateInputUpdateStartAt").jqxDateTimeInput('getDate');
+		var strDateStartAt = getStringSUPERSEDEDate(dateStartAt.getTime());
+		$scope.release.starts_at = strDateStartAt;
 		
 		$scope.updateRelease($scope.release)
 		.then(
@@ -649,27 +629,30 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	
 	function getStringSUPERSEDEDate(time){
 		
+//		var date = new Date(time);
+//	
+//		var month = date.getMonth() + 1;
+//		var day = date.getDate();
+//		
+//		var strMonth;
+//		if(month <= 9){
+//			strMonth ="0" + month;
+//		}else{
+//			strMonth = ""+month;
+//		}
+//		
+//		var strDay;
+//		if(day <= 9){
+//			strDay ="0" + day;
+//		}else{
+//			strDay = ""+day;
+//		}
+//		
+//		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
+//		return strDate;
 		var date = new Date(time);
-	
-		var month = date.getMonth() + 1;
-		var day = date.getDate();
-		
-		var strMonth;
-		if(month <= 9){
-			strMonth ="0" + month;
-		}else{
-			strMonth = ""+month;
-		}
-		
-		var strDay;
-		if(day <= 9){
-			strDay ="0" + day;
-		}else{
-			strDay = ""+day;
-		}
-		
-		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
-		return strDate;
+		var n = date.toISOString();
+		return n;
 	}
 
 	function removeElementWithId(id, list) {
