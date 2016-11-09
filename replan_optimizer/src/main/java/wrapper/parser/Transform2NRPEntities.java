@@ -1,4 +1,4 @@
-package wrapper;
+package wrapper.parser;
 
 import entities.*;
 import entities.Feature;
@@ -57,7 +57,7 @@ public class Transform2NRPEntities {
                 return PriorityLevel.FIVE;
         }
 
-       return null;
+        return PriorityLevel.FIVE;
     }
 
     /*Feature*/

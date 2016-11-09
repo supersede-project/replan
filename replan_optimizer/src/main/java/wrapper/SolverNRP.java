@@ -20,8 +20,6 @@ import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
 
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -30,8 +28,16 @@ public class SolverNRP {
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
+        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
 
-        NextReleaseProblem problem = new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks,hoursPerweek,features,employees);
+
+        PlanningSolution solution = this.generatePlanningSolution(problem);
+
+        return ee.planningSolution(solution);
+    }
+
+    private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 
         Algorithm<List<PlanningSolution>> algorithm;
         CrossoverOperator<PlanningSolution> crossover;
@@ -54,17 +60,8 @@ public class SolverNRP {
 
         List<PlanningSolution> population = algorithm.getResult();
         Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(population);
+
         return bestSolutions.iterator().next();
-    }
-
-    public static void printPopulation(Collection<PlanningSolution> population) {
-        int solutionCpt = 1;
-        Iterator<PlanningSolution> iterator = population.iterator();
-
-        while (iterator.hasNext()) {
-            PlanningSolution currentSolution = iterator.next();
-            System.out.println("Solution " + solutionCpt++ + ": " + currentSolution);
-        }
     }
 
 }

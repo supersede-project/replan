@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import wrapper.SolverNRP;
-import wrapper.Transform2NRPEntities;
-import wrapper.Transform2SwaggerModel;
+import wrapper.parser.Transform2NRPEntities;
+import wrapper.parser.Transform2SwaggerModel;
 
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
