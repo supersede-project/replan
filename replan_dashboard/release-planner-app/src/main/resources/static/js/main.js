@@ -1,5 +1,4 @@
 var app = angular.module('w5app');
-//app.controllerProvider.register(
 app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http',
                             function ($scope, $location, $http) {
 	/*

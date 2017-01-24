@@ -77,6 +77,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		.then(
 				function(response) {
 					$scope.releaseFeatures = response.data;
+					//alert("features release: " + $scope.releaseFeatures);
 					$scope.getReleases()
 					.then(
 							function(response) {
@@ -84,6 +85,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 								for(var i =0; i< response.data.length; i++){
 									if(response.data[i].id == parseInt(releaseId)){
 										$scope.release = response.data[i];
+										//alert("release: " + $scope.release);
 										break;
 									}
 								}
@@ -95,6 +97,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 											//var mydata = JSON.parse('{"id":214,"created_at":"2016-10-13T08:30:25.455Z","release_id":1,"jobs":[{"starts":"2016-10-14","ends":"2016-10-16","feature":{"id":1,"code":111,"name":"Fix auto upload","description":"Bla, bla, bla","effort":"2.0","deadline":"2016-11-11","priority":5,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-17","ends":"2016-10-19","feature":{"id":2,"code":222,"name":"New login","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-12","priority":4,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-20","ends":"2016-10-22","feature":{"id":3,"code":334,"name":"Enrollment refactoring","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-13","priority":3,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-23","ends":"2016-10-25","feature":{"id":4,"code":454,"name":"New channel","description":"Bla, bla, bla","effort":"4.0","deadline":"2016-10-18","priority":2,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-26","ends":"2016-10-28","feature":{"id":5,"code":556,"name":"Email reply","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-20","priority":1,"release":{"release_id":1}},"resource":{"id":3,"name":"Calvin","description":"Calvin California","availability":"90.0","skills":[{"id":1,"name":"Java","description":"Java Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}}]}');
 											
 											$scope.plan = response.data;
+											//alert("release-plan: " + $scope.plan);
 											$scope.showReleasePlan = true;
 											$scope.draw();
 										},
@@ -416,6 +419,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		for(var i = jobs.length-1; i>=0; i--){
 
 			//rectangle
+			var OFFSET_RECT = mappingXDateJSONObject.Xinterval/2;
 			var job = jobs[i];
 
 			var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -433,14 +437,23 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			var timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 
-			var width = mappingXDateJSONObject.Xinterval * diffDays;
+			var width = 0;
+			if(diffDays > 1){
+				width = (mappingXDateJSONObject.Xinterval * diffDays) - OFFSET_RECT;
+			}else{
+				width = (mappingXDateJSONObject.Xinterval * diffDays);
+			}
+			
 			element.setAttribute("width", "" + width);
-			element.setAttribute("height", "" + 2 * (mappingXDateJSONObject.Yinterval/2) );
+			var height = (2 * (mappingXDateJSONObject.Yinterval/2)) - OFFSET_RECT;
+			
+			element.setAttribute("height", "" + height );
 			element.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			element.setAttribute("ng-mousedown", "selectElement($event)");
-			element.setAttribute("style", "cursor: move;");
-
-
+			element.setAttribute("style", "cursor: move;stroke:rgb(135,206,235)");
+			var name = job.feature.name;
+			console.log("name: "+ name + " x1: " + newX  + " y1: "+ newY + " width: " + width + " height: "+ height );
+			
 			data.appendChild(element);
 			$compile(element)($scope);
 
@@ -460,21 +473,24 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			//element.textContent  = job.feature.name;
 
 			var myText = document.getElementById("myText");
-			var name = job.feature.name;
+			//var name = job.feature.name;
 			for (var x = name.length-3; x>0; x-=3){
 				myText.textContent = name.substring(0,x);
-				if ( myText.clientWidth <= width){
+				//if ( myText.clientWidth <= width){
 					var truncateName  = name.substring(0,x)+"...";
 					element.innerHTML   = "<title>" + job.feature.id + " " + name + "</title>" + truncateName;
 					break;
-				}
+				//}
 			}
 			myText.textContent ="";
 
 			data.appendChild(element);
-			//$compile(element)($scope);
+			//antonino oggi
+			$compile(element)($scope);
 
 
+			var dependenciesTag = document.getElementById("dependencies");
+			
 
 			//dependencies
 			//check if the job feature has dependencies
@@ -510,8 +526,8 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 
 								//draw line
-								var lineXend = newXJobEnd ;
-								var lineYend = newYJobEnd + mappingXDateJSONObject.Yinterval/2;
+								var lineXend = newXJobEnd + OFFSET_RECT;
+								var lineYend = newYJobEnd + mappingXDateJSONObject.Yinterval/2 + OFFSET_RECT;
 
 								element.setAttribute("x2", ""+lineXend);
 								element.setAttribute("y2", ""+lineYend);
@@ -520,7 +536,11 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 								element.setAttribute("stroke-dasharray", "5,5,5");
 								//element.setAttribute("marker-end", "url(#markerArrow)");
 
-								data.appendChild(element);
+								//data.appendChild(element);
+								//$compile(element)($scope);
+								console.log("name: "+ name + " x1d: " + lineXstart  + " y1d: "+lineYstart + " x2d: " + lineXend + " y2d: "+ lineYend );
+								
+								dependenciesTag.appendChild(element);
 								$compile(element)($scope);
 							}
 						}
@@ -629,7 +649,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 	function isRemovable(evt){
 
-		console.log("evt.clientX " + evt.clientX + " evt.clientY " + evt.clientY );
+		//console.log("evt.clientX " + evt.clientX + " evt.clientY " + evt.clientY );
 
 		var xGrid = document.getElementById("xGrid");
 		var rectXGrid = xGrid.getBoundingClientRect();
@@ -650,7 +670,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		//if on the right of ydx axis -> true
 		var ydxGrid = document.getElementById("ydxGrid");
 		var rectYdxGrid = ydxGrid.getBoundingClientRect();
-		console.log(rectYdxGrid.top, rectYdxGrid.right, rectYdxGrid.bottom, rectYdxGrid.left);
+		//console.log(rectYdxGrid.top, rectYdxGrid.right, rectYdxGrid.bottom, rectYdxGrid.left);
 		if(evt.clientX > rectXGrid.right){
 			return true;
 		}
@@ -684,8 +704,23 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			$scope.removeFeatureFromRelease($scope.release.id, $scope.featuresTORemove)
 			.then(
 					function(response) {
-						$scope.featuresTORemove = [];
-						$location.path("/release-planner-app/main");
+						
+						//To solve the bug (after feature is removed -> the feature doesn´t appear in main screen feature list)
+						//$scope.featuresTORemove = [];
+						//$location.path("/release-planner-app/main");
+						
+						$scope.getReleasePlan($scope.release.id)
+						.then(
+								function(response) {
+									$scope.featuresTORemove = [];
+									$location.path("/release-planner-app/main");
+								},
+								function(response) {
+									$scope.showReleasePlan = false;
+									$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
+								}
+						);
+
 					},
 					function(response) {
 						alert("Error: "+response.status + " " + response.statusText);
