@@ -11,7 +11,6 @@ class FakePlanner
       Job.create(starts: date, ends: date+2, feature: f, resource: r, plan: plan)
       date = date+3
     end
-    return plan
   end
 
   #attr_accessor :code, :message, :fields

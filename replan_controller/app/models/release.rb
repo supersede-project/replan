@@ -7,7 +7,11 @@ class Release < ApplicationRecord
   validates :starts_at, presence: true
   validates :deadline, presence: true
   validate :start_must_be_before_deadline
-
+  
+  def deprecate_plan
+    self.plan.deprecate if !self.plan.nil?
+  end
+  
   private
 
   def start_must_be_before_deadline

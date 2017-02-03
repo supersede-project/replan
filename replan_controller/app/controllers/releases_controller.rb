@@ -44,12 +44,7 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
-    #@plan = FakePlanner.plan(@release, @project)
-    if @release.starts_at.nil?
-      @plan = FakePlanner.plan(@release)
-    else
-      @plan = ValentinPlanner.plan(@release)
-    end
+    @plan = Plan.get_plan(@release)
     render json: @plan
   end
 
@@ -78,6 +73,7 @@ class ReleasesController < ApplicationController
             @release.resources << resource
           end
       end
+    @release.deprecate_plan
     render json: @release
   end
 
@@ -88,6 +84,7 @@ class ReleasesController < ApplicationController
             @release.resources.delete(resource)
           end
       end
+    @release.deprecate_plan
     render json: @release
   end
   
@@ -104,6 +101,7 @@ class ReleasesController < ApplicationController
             @release.features << feature
           end
       end
+    @release.deprecate_plan
     render json: {"message" => "Done"}
   end
 
@@ -114,6 +112,7 @@ class ReleasesController < ApplicationController
             @release.features.delete(feature)
           end
       end
+    @release.deprecate_plan
     render json: {"message" => "Done"}
   end
   
