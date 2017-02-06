@@ -39,9 +39,9 @@ class FeaturesController < ApplicationController
       when "any"
         @features = @project.features
       when "pending" 
-         @features = @project.features.select{|f| f.job.nil?}
+         @features = @project.features.select{|f| f.release.nil?}
       when "scheduled" 
-        @features = @project.features.select{|f| !f.job.nil?}
+        @features = @project.features.select{|f| !f.release.nil?}
       else
         render(status: :bad_request) and return
       end
