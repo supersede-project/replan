@@ -9,13 +9,17 @@
 
 <div class="well" ng-controller="main-utilities">
    <div class="container-fluid">
+  
+   
         <div class="row">
 			<!-- features -->
             <div class="col-xs-6" ng-show="!showFeatures">
             	<h4>{{messageFeatures}}</h4>
             </div>
  			<div class="col-xs-6" ng-show="showFeatures">
-            	<jqx-list-box id ="featureListBox" jqx-settings="settings" jqx-on-select="selectItem(event)"></jqx-list-box>
+ 				<span class="glyphicon glyphicon-history"></span>
+ 			
+ 		    	<jqx-list-box id ="featureListBox" jqx-settings="settings" jqx-on-select="selectItem(event)"></jqx-list-box>
             </div>
             
             <!-- releases -->
@@ -25,14 +29,25 @@
             <div class="col-xs-6" ng-show="showReleases">
 		         <ul class="media-list">
                    <li class="media border" ng-repeat="release in releases">   
-                     <div class="media-body" ng-click="showReleaseDetails(release)" ng-attr-id="{{'release_' + release.id}}">
+                     <div class="media-body" ng-model="release" ng-click="showReleaseDetails(release)" ng-attr-id="{{'release_' + release.id}}">
                          <h4 class="media-heading">{{release.name}}&nbsp;<small>{{release.deadline | date}}</small></h4>
 <!--                          <p>{{release.id}}</p> -->
                          <p>{{release.description}}</p>
                      </div>
+                    
                      <div class="media-right media-middle">
                           <a ng-click="showRelease(release)"><i class="fa fa-cog fa-3x"></i> </a>
                      </div>
+                     <div class="media">
+	                     <div class="media-body">
+	                      <div id="{{'featureDropDownId'+release.id}}"></div>
+	                      
+	                     </div>
+	                     <div class="media-right">
+	                     <span id="{{'badgeId'+release.id}}" class="badge">0</span>
+	                     </div>
+                     </div>
+                    
                    </li>
                  </ul>
                
