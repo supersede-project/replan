@@ -21,8 +21,8 @@ paths:
         This operation retrieves a list of projects.
       operationId: getProjects
       tags:
-        - Project
         - New in v.2
+        - Project
       responses:
         200:
           description: An array of projects
@@ -49,8 +49,8 @@ paths:
           schema:
             $ref: '#/definitions/NewProjectData'
       tags:
-        - Project
         - New in v.2
+        - Projects
       responses:
         200:
           description: A new Project
@@ -76,7 +76,7 @@ paths:
           description: ID of the project
           required: true
       tags:
-        - Project
+        - Projects
       responses:
         200:
           description: Project info
@@ -113,6 +113,30 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/Project'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    delete:
+      summary: Remove a given Project
+      description: |
+        This operation allows removing a given Project.
+      operationId: deleteProject 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+      tags:
+        - Projects
+        - New in v.2
+      responses:
+        200:
+          description: Success
         422:
           description: Unprocessable Entity
           schema:
