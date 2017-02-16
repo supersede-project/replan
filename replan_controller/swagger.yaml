@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
-  version: "1.0.1"
+  version: "2.0.0"
 # the domain of the service
 host: 62.14.219.13:8280
 #release-planner-ui-api.herokuapp.com
@@ -14,6 +14,54 @@ basePath: /replan
 produces:
   - application/json
 paths:
+  /projects:
+    get:
+      summary: Get projects
+      description: |
+        This operation retrieves a list of projects.
+      operationId: getProjects
+      tags:
+        - Project
+        - New in v.2
+      responses:
+        200:
+          description: An array of projects
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Project'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
+    post:
+      summary: Create a new Project
+      description: |
+        This operation allows defining a new Project.
+      operationId: createProject
+      parameters:
+        - name: body
+          in: body
+          description: Project parameters
+          required: true
+          schema:
+            $ref: '#/definitions/NewProjectData'
+      tags:
+        - Project
+        - New in v.2
+      responses:
+        200:
+          description: A new Project
+          schema:
+            $ref: '#/definitions/Project'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
   /projects/{projectId}:
     get:
       summary: Get Project info
@@ -108,6 +156,38 @@ paths:
             $ref: '#/definitions/Error'
         404:
           description: Project not found
+    post:
+      summary: Create a new Feature
+      description: |
+        This operation allows defining a new Feature for a given Project.
+      operationId: createFeature
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: body
+          in: body
+          description: Project parameters
+          required: true
+          schema:
+            $ref: '#/definitions/NewFeatureData'
+      tags:
+        - Features
+        - New in v.2
+      responses:
+        200:
+          description: A new Feature
+          schema:
+            $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project not found
   /projects/{projectId}/features/{featureId}:
     get:
       summary: Get a feature given its ID
@@ -171,6 +251,36 @@ paths:
           description: Success
           schema:
             $ref: '#/definitions/Feature'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Feature not found
+    delete:
+      summary: Remove a given Feature
+      description: |
+        This operation allows removing a given Feature.
+      operationId: deleteFeature 
+      parameters:
+        - name: projectId
+          in: path
+          type: number
+          format: int64
+          description: ID of the project
+          required: true
+        - name: featureId
+          in: path
+          type: number
+          format: int64
+          description: ID of the feature
+          required: true
+      tags:
+        - Features
+        - New in v.2
+      responses:
+        200:
+          description: Success
         422:
           description: Unprocessable Entity
           schema:
@@ -1145,6 +1255,28 @@ definitions:
         description: array of features
         items:
           $ref: '#/definitions/Feature'
+  NewFeatureData:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: Unique identifier from WP3.3
+      name:
+        type: string
+        description: Display name of feature.
+      description:
+        type: string
+        description: Description of feature.
+      effort:
+        type: number
+        description: Effort to implement the feature.
+      deadline:
+        type: string
+        format: date-time
+      priority:
+        type: integer
+        enum: [ 1, 2, 3, 4, 5 ]
+        description: It coms from Wp3.3
   FeatureData:
     type: object
     properties:
@@ -1268,6 +1400,21 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Resource'
+  NewProjectData:
+    type: object
+    properties:
+      name:
+        type: string
+        description: Display name of project.
+      description:
+        type: string
+      effort_unit:
+        type: string
+        description: e.g. "bin"
+      hours_per_effort_unit:
+        type: number
+      hours_per_week_and_full_time_resource:
+        type: number
   ProjectData:
     type: object
     properties:
