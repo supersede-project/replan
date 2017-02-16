@@ -19,6 +19,13 @@ Rails.application.routes.draw do
     match full_path, to: "#{opts.fetch(:controller_name)}##{opts[:action_name]}", via: http_method
   end
   
+  # new methods in v.2
+  # add_newinv2_route 'POST', '/replan/projects/{projectId}/features', controller_name: 'newInV2', action_name: 'create_feature'
+  # add_newinv2_route 'POST', '/replan/projects', controller_name: 'newInV2', action_name: 'create_project'
+  # add_newinv2_route 'DELETE', '/replan/projects/{projectId}/features/{featureId}', controller_name: 'newInV2', action_name: 'delete_feature'
+  # add_newinv2_route 'DELETE', '/replan/projects/{projectId}', controller_name: 'newInV2', action_name: 'delete_project'
+  # add_newinv2_route 'GET', '/replan/projects', controller_name: 'newInV2', action_name: 'get_projects'
+  
   add_wp3_route 'POST', '/projects/{projectId}/features', controller_name: 'wp3_api', action_name: 'receive_wp3_features'
   add_ui_route 'POST', '/projects/{projectId}/releases/{releaseId}/features', controller_name: 'releases', action_name: 'add_features_to_release'
   add_ui_route 'GET', '/projects/{projectId}/features/{featureId}', controller_name: 'features', action_name: 'get_feature'
