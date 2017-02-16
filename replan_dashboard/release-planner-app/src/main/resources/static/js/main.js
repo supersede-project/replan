@@ -6,7 +6,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
  	*/
 	var baseURL = "release-planner-app/replan/projects/1";
 	
-	$scope.getReleaseFeatures = function (releaseId, i) {
+	$scope.getReleaseFeatures = function (releaseId) {
  		return $http({
 			method: 'GET',
 			url: baseURL + '/releases/'+ releaseId +'/features'
@@ -27,6 +27,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 		});
  	}
  	
+	
 	/*
  	* FEATURES
  	*/
@@ -60,11 +61,11 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 			height: '400',
 			allowDrag: true,
 			renderer: function (index, label, value) {
-
+				
+				var datarecord = $scope.features[index];
 				//var img = '<span class="glyphicon glyphicon-wrench" style="font-size:30px;color:red;"></span>';
 				var glyphicon = '<span class="glyphicon glyphicon-wrench" style="font-size:15px;"></span>';
-				//var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '-' + value +  '</td></tr></table>';
-				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;">' + glyphicon + '</td><td>' + label  + '</td></tr></table>';
+				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;" rowspan="3">' + glyphicon + '</td><td><b>' + label  + '</b></td></tr> <tr><td>Effort: '+ datarecord.effort +' Priority:'+ datarecord.priority + '</td></tr></table>';
 				return table;
 			}
 
@@ -203,7 +204,10 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
         $location.path("/release-planner-app/release").search({releaseId: ''+release.id});
     }
  	
+ 	$scope.releaseFeatures = [];
+ 
  	
+
  	/**
 	 * start point release method
 	 */
@@ -221,52 +225,62 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
      			}
                 $scope.releases.length = response.data.length;
      			
-                //I try to add features into release but I run into problem :-(
+                for (var i = 0; i < $scope.releases.length; i++) {
+                	
+                	var release = $scope.releases[i];
+	                console.log("index: " +i);
+
+	                
+                	$scope.getReleaseFeatures(release.id)
+     			    .then(
+     			        function(response1) {
+     			        	
+     			        	
+//     	                	// prepare the data
+     	                    var sourcefeatureDropDownList =
+     	                    {
+     	                        datatype: "json",
+     	                        datafields: [
+     	                            { name: 'id' },
+     	                            { name: 'name' }
+     	                        ],
+     	                        id: 'id',
+     	                        localdata: response1.data
+     	                    };
+     			        	
+    	                   var dataAdapterFeaturesDropDownList = new $.jqx.dataAdapter(sourcefeatureDropDownList);
+
+     		              
+     		               var id = "featureDropDownId" + release.id;
+     		               
+     		               $("#"+id).jqxDropDownList({
+     		            	  source: dataAdapterFeaturesDropDownList,
+	                			displayMember: "name",
+	                			valueMember: "id",
+	                			//checkboxes: true,
+	                			enableSelection: false,
+	                			selectedIndex: 0,
+	                			width: '93%',
+	                			height: '15'
+     		                });
+     	                    
+     		              var idbadge = "badgeId" + release.id;
+   			        	
+     		           
+     		            
+   			        	var badge =  document.getElementById(idbadge);
+   			        	badge.innerHTML ='';
+   			        	badge.innerHTML =''+response1.data.length;
+   			        	
+     			        	
+     			        },
+     			        
+     			        function(response1) {
+     			        
+     			        }
+     			    );
+                }
                 
-//                for (var i = 0; i < $scope.releases.length-1; i++) {
-//           
-//                	$scope.getReleaseFeatures($scope.releases[i].id, i)
-//     			    .then(
-//     			        function(response1) {
-//     			        	
-//     			        	$scope.releases[i]["features"] = [];
-//     			        	
-//     			        	for (var y = 0; y < response1.data.length-1; y++) {
-//     			        		$scope.releases[i].features.push(response1.data[y]);
-//     	     			   }
-//     			        	
-//     			        	console.log("");
-//     			        	
-//     			        	
-//     			        },
-//     			        
-//     			        function(response1) {
-//     			        	$scope.showReleases = false;
-//     			            $scope.messageReleases = "Error: "+response1.status + " " + response1.statusText;
-//     			        }
-//     			    );
-//				}
-                
-//                for(var i = 0; i< $scope.releases.length; i++){
-//            		
-//               	 // prepare the data
-//                   var source =
-//                   {
-//                       datatype: "json",
-//                       datafields: [
-//                           { name: 'id' },
-//                           { name: 'name' }
-//                       ],
-//                       id: 'id',
-//                       localdata:$scope.releases[i].features
-//                   };
-//                   var dataAdapter = new $.jqx.dataAdapter(source);
-//                	
-//       			var listBoxId = "listBoxId_" + $scope.releases[i].id;
-//       			
-//       			$('#'+listBoxId).jqxDropDownList({ source: dataAdapter , displayMember: "name", valueMember: "id", selectedIndex: 0, disabled: true, checkboxes: true, enableSelection:false, width: '100%', height: '25'});
-//       			//$('#'+listBoxId).jqxDropDownList('checkAll'); 
-//       		}
         },
         
         function(response) {

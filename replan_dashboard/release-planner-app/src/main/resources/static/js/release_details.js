@@ -705,21 +705,21 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			.then(
 					function(response) {
 						
-						//To solve the bug (after feature is removed -> the feature doesn´t appear in main screen feature list)
-						//$scope.featuresTORemove = [];
-						//$location.path("/release-planner-app/main");
 						
-						$scope.getReleasePlan($scope.release.id)
-						.then(
-								function(response) {
-									$scope.featuresTORemove = [];
-									$location.path("/release-planner-app/main");
-								},
-								function(response) {
-									$scope.showReleasePlan = false;
-									$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
-								}
-						);
+						$scope.featuresTORemove = [];
+						$location.path("/release-planner-app/main");
+						//To solve the bug (after feature is removed -> the feature doesn´t appear in main screen feature list)
+//						$scope.getReleasePlan($scope.release.id)
+//						.then(
+//								function(response) {
+//									$scope.featuresTORemove = [];
+//									$location.path("/release-planner-app/main");
+//								},
+//								function(response) {
+//									$scope.showReleasePlan = false;
+//									$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
+//								}
+//						);
 
 					},
 					function(response) {
