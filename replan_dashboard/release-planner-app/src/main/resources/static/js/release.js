@@ -397,67 +397,67 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 				}
 		);
 	}
-	
-	/*
-	 * add resources buttons
-	 */
-	$scope.addDefaultResources = function($event){
-
-		$scope.getProjectResources()
-		.then(
-				function(response) {
-
-					for(var i=0; i< response.data.length; i++){
-						var found = false;
-						for(var j = 0; j< $scope.release.resources.length; j++){
-							if($scope.release.resources[j].id == response.data[i].id){
-								found = true;
-								break;
-							}
-						}
-						if(!found){
-							$scope.release.resources.push(response.data[i]);
-						}
-					}
-
-					var source =
-					{
-							datatype: "json",
-							datafields: [
-							             { name: 'id' },
-							             { name: 'name' }
-							             ],
-							             id: 'id',
-							             localdata: $scope.release.resources
-					};
-
-					$scope.dataAdapterResourcesListBox = new $.jqx.dataAdapter(source);
-					if($scope.release.resources == 0){
-						$scope.addClassHasErrorResourcesAreRequired = 'my-error-border-color';
-						$scope.showResourcesAreRequired = true;
-					}else{
-						$scope.addClassHasErrorResourcesAreRequired = '';
-						$scope.showResourcesAreRequired = false;	
-					}
-					
-					
-					//update the resourcesAddListBox
-					var toggled = $("#addResouceToggleBtn").jqxToggleButton('toggled');
-
-					if(toggled){
-						refreshResourcesAddListBox();	
-					}
-
-
-				},
-
-				function(response) {
-					$scope.showFeatures = false;
-					$scope.messageFeatures = "Error: "+response.status + " " + response.statusText;	
-				}
-		);
-
-	};
+	//commented on 17.02.2017 before saner conference
+//	/*
+//	 * add resources buttons
+//	 */
+//	$scope.addDefaultResources = function($event){
+//
+//		$scope.getProjectResources()
+//		.then(
+//				function(response) {
+//
+//					for(var i=0; i< response.data.length; i++){
+//						var found = false;
+//						for(var j = 0; j< $scope.release.resources.length; j++){
+//							if($scope.release.resources[j].id == response.data[i].id){
+//								found = true;
+//								break;
+//							}
+//						}
+//						if(!found){
+//							$scope.release.resources.push(response.data[i]);
+//						}
+//					}
+//
+//					var source =
+//					{
+//							datatype: "json",
+//							datafields: [
+//							             { name: 'id' },
+//							             { name: 'name' }
+//							             ],
+//							             id: 'id',
+//							             localdata: $scope.release.resources
+//					};
+//
+//					$scope.dataAdapterResourcesListBox = new $.jqx.dataAdapter(source);
+//					if($scope.release.resources == 0){
+//						$scope.addClassHasErrorResourcesAreRequired = 'my-error-border-color';
+//						$scope.showResourcesAreRequired = true;
+//					}else{
+//						$scope.addClassHasErrorResourcesAreRequired = '';
+//						$scope.showResourcesAreRequired = false;	
+//					}
+//					
+//					
+//					//update the resourcesAddListBox
+//					var toggled = $("#addResouceToggleBtn").jqxToggleButton('toggled');
+//
+//					if(toggled){
+//						refreshResourcesAddListBox();	
+//					}
+//
+//
+//				},
+//
+//				function(response) {
+//					$scope.showFeatures = false;
+//					$scope.messageFeatures = "Error: "+response.status + " " + response.statusText;	
+//				}
+//		);
+//
+//	};
 
 
 	$("#addResouceToggleBtn").jqxToggleButton({toggled: false });
@@ -488,7 +488,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 						$scope.addResoucesToRelease($scope.release.id, $scope.releasesTOAdd)
 						.then(
 								function(response) {
-									$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
+									$location.path("/release-planner-app/main");
 								},
 								function(response) {
 									alert("Error: "+response.status + " " + response.statusText);
@@ -508,7 +508,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			$scope.deleteResoucesFromRelease($scope.release.id, $scope.releasesTORemove)
 			.then(
 					function(response) {
-						$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
+						$location.path("/release-planner-app/main");
 					},
 					function(response) {
 						alert("Error: "+response.status + " " + response.statusText);
@@ -521,8 +521,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			$scope.addResoucesToRelease($scope.release.id, $scope.releasesTOAdd)
 			.then(
 					function(response) {
-
-						$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
+						$location.path("/release-planner-app/main");
 					},
 					function(response) {
 						alert("Error: "+response.status + " " + response.statusText);
@@ -531,7 +530,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 		}else {
 
-			$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
+			$location.path("/release-planner-app/main");
 		}
 	};
 	
@@ -569,8 +568,9 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			$scope.addReleaseToProject($scope.release)
 			.then(
 					function(response) {
-						$location.path("/release-planner-app/main");
-						//$location.path("/release-planner-app/release_details").search({releaseId: ''+response.data.id });
+						$scope.release = response.data;
+						addRemoveResourcesToFromReleaseDate();	
+						
 					},
 					function(response) {
 						alert("Error: "+response.status + " " + response.statusText);
@@ -597,9 +597,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		$scope.updateRelease($scope.release)
 		.then(
 				function(response) {
-				
-					$scope.releasesTORemove;
-					$scope.releasesTOAdd;
+					$scope.release = response.data;
 					addRemoveResourcesToFromReleaseDate();	
 				},
 				function(response) {

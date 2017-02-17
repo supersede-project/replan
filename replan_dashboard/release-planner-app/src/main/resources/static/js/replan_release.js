@@ -251,14 +251,13 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 					.then(
 							function(response) {
 								$scope.feature = response.data;
-
+								if($scope.feature.deadline == null){
+									$scope.feature.deadline = getStringSUPERSEDEDateNow();
+								}
+									
 								//data input
 								$("#dateInputDeadline").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
 								$('#dateInputDeadline').jqxDateTimeInput('setDate', new Date($scope.feature.deadline));
-
-
-
-
 
 								//dependencies
 								$scope.getReleaseFeatures($scope.release.id)
@@ -722,7 +721,31 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
 		return strDate;
 	}
+	function getStringSUPERSEDEDateNow(){
 
+		var date = new Date();
+
+		var month = date.getMonth() + 1;
+		var day = date.getDate();
+
+		var strMonth;
+		if(month <= 9){
+			strMonth ="0" + month;
+		}else{
+			strMonth = ""+month;
+		}
+
+		var strDay;
+		if(day <= 9){
+			strDay ="0" + day;
+		}else{
+			strDay = ""+day;
+		}
+
+		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
+		return strDate;
+	}
+	
 
 
 	/**
