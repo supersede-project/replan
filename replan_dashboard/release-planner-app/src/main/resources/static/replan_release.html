@@ -15,8 +15,7 @@
 	        </div>
 	    </div>
         <div class="row" ng-show="showFeature">
-<!--         	<h4>{{feature.name}} - {{feature.id}}</h4> -->
-        	<h4>{{feature.name}}</h4>
+        	<h4>{{feature.name}} - {{feature.id}}</h4>
 	 		<div class="col-xs-12">
 				<form id="featureForm" name="featureForm" class="form-horizontal" ng-submit="replanRelease()" novalidate>
 	
@@ -40,16 +39,24 @@
 				    <div class="form-group margin-bottom-5px" ng-class="{ 'has-error' : featureForm.dependency.$error.required}">
 				      <label class="control-label col-sm-2 my-label" for="deadline">Dependencies:</label>
 				      <div class="col-sm-10">
-<!-- 							<jqx-combo-box id="dependency" name="dependency" class="my-input-width" jqx-height="25"  ng-model="selectedDependency"  ng-disabled="true" jqx-source="feature.depends_on"></jqx-combo-box> -->
-							<jqx-drop-down-list  id="dependency" name="dependency" class="form-control" jqx-settings="dropDownListSettings" required></jqx-drop-down-list>
-							<span ng-show="featureForm.dependency.$error.required" class="help-block">Dependency is required.</span>
+							<jqx-drop-down-list  id="dependency" name="dependency" class="form-control" jqx-settings="dropDownListSettingsDependency" required></jqx-drop-down-list>
+							<span ng-show="featureForm.dependency.$error.required" class="help-block">Dependencies are required.</span>
 				      </div>
 				    </div>
-			  	  	
-			  	  	<div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.priority.$error.required}">
-				      <label class="control-label col-sm-2 my-label" for="priority">Priority:</label>
+				    
+				     <div class="form-group margin-bottom-5px required" ng-class="skillRequired">
+				      <label class="control-label col-sm-2 my-label" for="skill">Skills:</label>
 				      <div class="col-sm-10">
-				         <jqx-number-input   id="priorityInput" name="priority" class="form-control myHeightSmall" ng-model="feature.priority" jqx-input-mode="simple" jqx-text-align="left" jqx-min="0" jqx-max="1000" required/></jqx-number-input>
+							<jqx-drop-down-list  id="skill" name="skill" class="form-control" jqx-settings="dropDownListSettingsSkill" required></jqx-drop-down-list>
+							<span ng-show="skillRequiredBln" class="help-block">Skills are required.</span>
+				      </div>
+				    </div>
+				    			  	  	
+			  	  	<div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.priority.$error.required}">
+				      <label class="control-label col-sm-2 my-label" for="priority">Priority(1-5):</label>
+				      <div class="col-sm-10">
+<!-- 				         <jqx-number-input id="priorityInput" name="priority" class="form-control myHeightSmall" ng-model="feature.priority" jqx-input-mode="simple" jqx-text-align="left" jqx-min="1" jqx-max="5" groupSize=0 required/></jqx-number-input> -->
+				        <input id="priorityInput" name="priority"  type="number" min="1" max="5" ng-model="feature.priority" class="myHeight" style ="width: 97%; border: 1px solid #ccc; border-radius: 4px;" required/>
 				        <span ng-show="featureForm.priority.$error.required" class="help-block">Priority is required.</span>
 				      </div>
 				    </div>

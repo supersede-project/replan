@@ -12,6 +12,13 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			url: baseURL + '/releases'
 		});
 	}
+	$scope.removeRelease = function (release){
+
+		return $http({
+			method: 'DELETE',
+			url: baseURL + '/releases/'+ release.id
+		});	 
+	};
 	
 	//Modifies a given release (modify only name, description and deadline )
 	$scope.updateRelease = function (release){
@@ -455,7 +462,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 	$("#addResouceToggleBtn").jqxToggleButton({toggled: false });
 
-	$scope.addSpecificResources = function($event){
+	$scope.addSpecificResources = function(event){
 
 		$scope.showResourcesAddListBox = $("#"+ event.target.id).jqxToggleButton('toggled');
 
@@ -484,13 +491,13 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 									$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
 								},
 								function(response) {
-									alert("default", "Error: "+response.status + " " + response.statusText);
+									alert("Error: "+response.status + " " + response.statusText);
 								}
 						);
 
 					},
 					function(response) {
-						alert("default", "Error: "+response.status + " " + response.statusText);
+						alert("Error: "+response.status + " " + response.statusText);
 					}
 			);
 
@@ -504,7 +511,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 						$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
 					},
 					function(response) {
-						alert("default", "Error: "+response.status + " " + response.statusText);
+						alert("Error: "+response.status + " " + response.statusText);
 					}
 			);
 		}
@@ -518,7 +525,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 						$location.path("/release-planner-app/release_details").search({releaseId: ''+$scope.release.id });
 					},
 					function(response) {
-						alert("default", "Error: "+response.status + " " + response.statusText);
+						alert("Error: "+response.status + " " + response.statusText);
 					}
 			);
 
@@ -562,10 +569,11 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 			$scope.addReleaseToProject($scope.release)
 			.then(
 					function(response) {
-						$location.path("/release-planner-app/release_details").search({releaseId: ''+response.data.id });
+						$location.path("/release-planner-app/main");
+						//$location.path("/release-planner-app/release_details").search({releaseId: ''+response.data.id });
 					},
 					function(response) {
-						alert("default", "Error: "+response.status + " " + response.statusText);
+						alert("Error: "+response.status + " " + response.statusText);
 					}
 			);
 			
@@ -595,7 +603,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 					addRemoveResourcesToFromReleaseDate();	
 				},
 				function(response) {
-					alert("default", "Error: "+response.status + " " + response.statusText);
+					alert("Error: "+response.status + " " + response.statusText);
 				}
 		);
 	}
@@ -607,6 +615,65 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		else{
 			$location.path("/release-planner-app/main");
 		}
+	};
+	
+	$scope.remove = function(){
+		
+		var message= "Are you sure?";
+		var removeReleaseWindow = document.getElementById("removeReleaseWindow");
+		if(removeReleaseWindow == null){
+			$(document.body).append('<div id="removeReleaseWindow">'+
+					'<div>Remove Release</div>'+
+					'<div>'+
+					'<div style="margin-top: 15px; text-align: center;">'+
+					message +
+					'</div>'+
+					'<div>'+
+					'<div style="float: right; margin-top: 15px;">'+
+					'<input type="button" id="removeOk" class="my-button" style="margin-right: 10px" value="Remove" />'+
+					'<input type="button" id="removeCancel" class="my-button" value="Cancel" />'+
+					'</div>'+
+					'</div>'+
+					'</div>'+
+
+
+			'</div>');
+		}
+		
+		$("#removeOk").jqxInput({ height: 25});
+		$("#removeOk").on('click', function (){
+			
+			$("#removeReleaseWindow").jqxWindow('close');
+			
+			$scope.removeRelease($scope.release)
+			.then(
+					function(response) {
+						$location.path("/release-planner-app/main");
+						
+					},
+					function(response) {
+						alert("Error: "+response.status + " " + response.statusText);
+					}
+			);
+		});
+		
+		$("#removeCancel").jqxInput({ height: 25});
+		$("#removeCancel").on('click', function (){
+			$("#removeReleaseWindow").jqxWindow('close');
+		});
+		
+		
+		var featureForm = $('#resourcesListBox');
+		var offset = featureForm.offset();
+		var width = featureForm.width();
+		var height = featureForm.height();
+		
+		var removeReleaseWindowJquery = $('#removeReleaseWindow');
+		var checkDelayWindowHeight = removeReleaseWindowJquery.height();
+		
+		$("#removeReleaseWindow").jqxWindow({ height: 'auto', width: 400, position: { x: (offset.left+width), y: offset.top + (height/2) - checkDelayWindowHeight}, isModal: true, modalOpacity: 0.3, showCloseButton: false });
+		$("#removeReleaseWindow").jqxWindow('open');
+
 	};
 	
 	/**

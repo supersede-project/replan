@@ -32,7 +32,8 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			url: baseURL + '/releases'
 		});
 	}
-//ok
+
+	//ok
 	$scope.getReleaseFeatures = function (releaseId) {
 
 		var url = baseURL + '/releases/' + releaseId + '/features';
@@ -104,6 +105,14 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 
 	};
 
+	$scope.getProjectSkills = function(){
+
+		return $http({
+			method: 'GET',
+			url: baseURL + '/skills'
+		});
+	};
+
 	/*
 	 * All methods
 	 */
@@ -114,6 +123,12 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	$scope.release = {};
 	//contains array of feature object.
 	$scope.releaseFeatures = [];
+	$scope.skills = [];
+
+	/*
+	 * Dependencies
+	 */
+
 	var emptyArray = [];
 	// prepare the data
 	var sourceDependencyDropDownList =
@@ -129,7 +144,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList);
 
 	//settings
-	$scope.dropDownListSettings = { 
+	$scope.dropDownListSettingsDependency = { 
 
 			displayMember: "name",
 			valueMember: "id",
@@ -155,6 +170,70 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 
 	});
 
+
+	/*
+	 * Skills 
+	 */
+	var emptyArray = [];
+	// prepare the data
+	var sourceSkillDropDownList =
+	{
+			datatype: "json",
+			datafields: [
+			             { name: 'id' },
+			             { name: 'name' }
+			             ],
+			             id: 'id',
+			             localdata: emptyArray
+	};
+	$scope.dataAdapterSkillDropDownList = new $.jqx.dataAdapter(sourceSkillDropDownList);
+
+	//settings
+	$scope.dropDownListSettingsSkill = { 
+
+			displayMember: "name",
+			valueMember: "id",
+			checkboxes: true,
+			enableSelection: false,
+			width: '93%',
+			height: '15',
+			source: $scope.dataAdapterSkillDropDownList
+	};
+
+	$("#skill").on('bindingComplete', function (event) { 
+		//select all items in skillDropDownListId
+		var items = $("#skill").jqxDropDownList('getItems');
+		for(var i = 0; i< items.length; i++){
+			var item = items[i];
+			for (var y = 0; y < $scope.feature.required_skills.length; y++) {
+				var skill = $scope.feature.required_skills[y];
+				if(skill.id == item.value){
+					$("#skill").jqxDropDownList('checkIndex', i); 
+				}
+			}
+		}
+
+	});
+	
+	
+   
+    $("#skill").on('checkChange', function (event){
+    		   
+    
+    	var items = $("#skill").jqxDropDownList('getCheckedItems'); 
+        if(items.length == 0){
+        	$scope.skillRequired = 'has-error';
+        	$scope.skillRequiredBln = true;
+        	$scope.featureForm.$invalid = true;
+        }else{
+        	$scope.skillRequired = '';
+        	$scope.skillRequiredBln = false;
+        	$scope.featureForm.$invalid = false;
+        }
+    		
+	});
+    
+
 	$scope.getRelease = function (releaseId) {
 
 		$scope.getReleases()
@@ -172,14 +251,20 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 					.then(
 							function(response) {
 								$scope.feature = response.data;
-														//data input
+
+								//data input
 								$("#dateInputDeadline").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
 								$('#dateInputDeadline').jqxDateTimeInput('setDate', new Date($scope.feature.deadline));
 
+
+
+
+
+								//dependencies
 								$scope.getReleaseFeatures($scope.release.id)
 								.then(
 										function(response) {
-											$scope.showFeature = true;
+
 											$scope.releaseFeatures = response.data;
 											var array = [];
 											for (var y = 0; y < $scope.releaseFeatures.length; y++) {
@@ -187,6 +272,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 													array.push($scope.releaseFeatures[y]);
 												}
 											}
+
 											// prepare the data
 											var sourceDependencyDropDownList =
 											{
@@ -199,14 +285,42 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 													             localdata: array
 											};
 
-											$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList,
-													{
-														loadComplete: function () {
-															var items = $scope.dataAdapterDependencyDropDownList.records;
-		
-														}
-													});
+											$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList,{
+												loadComplete: function () {
+													var items = $scope.dataAdapterDependencyDropDownList.records;
 
+												}
+											});
+
+
+
+											$scope.getProjectSkills()
+											.then(
+													function(response) {
+														$scope.showFeature = true;
+
+														$scope.skills = response.data;
+
+														// prepare the data
+														var sourceSkillDropDownList =
+														{
+																datatype: "json",
+																datafields: [
+																             { name: 'id' },
+																             { name: 'name' }
+																             ],
+																             id: 'id',
+																             localdata: $scope.skills
+														};
+														$scope.dataAdapterSkillDropDownList = new $.jqx.dataAdapter(sourceSkillDropDownList);
+													},
+
+													function(response) {
+
+														$scope.showFeature = false;
+														$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
+													}
+											);
 										},
 										function(response) {
 											$scope.showFeature = false;
@@ -303,36 +417,8 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				$scope.updateFeature($scope.feature)
 				.then(
 						function(response) {
-							//remove all dependencies
-							$scope.deleteDependenciesFromFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_remove)
-							.then(
-									function(response) {
-										//add dependencies
-										$scope.addDependenciesToFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_add)
-										.then(
-												function(response) {
-													//add feature to release
-													//appendReplaneWindows("success", "Re-plan success.");
-													$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
-													.then(
-															function(response) {
-																appendReplaneWindows("success", "Re-plan success.");
-															},
-															function(response) {
-																appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-															}
-													);
-												},
-												function(response) {
-													appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-												}
-										);
-
-									},
-									function(response) {
-										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-									}
-							);
+							
+							internalUpdate();
 						},
 						function(response) {
 							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -383,36 +469,9 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				$scope.updateFeature($scope.feature)
 				.then(
 						function(response) {
-							//remove all dependencies
-							$scope.deleteDependenciesFromFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_remove)
-							.then(
-									function(response) {
-										//add dependencies
-										$scope.addDependenciesToFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_add)
-										.then(
-												function(response) {
-													//add feature to release
-													//appendReplaneWindows("success", "Re-plan success.");
-													$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
-													.then(
-															function(response) {
-																appendReplaneWindows("success", "Re-plan success.");
-															},
-															function(response) {
-																appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-															}
-													);
-												},
-												function(response) {
-													appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-												}
-										);
-
-									},
-									function(response) {
-										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-									}
-							);
+							
+							internalUpdate();
+						
 						},
 						function(response) {
 							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -468,33 +527,45 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	$scope.arrayFeatureDepend_on_to_add = [];
 	$scope.arrayFeatureDepend_on_to_remove = [];
 	
+	$scope.arraySkill_to_add = [];
+	$scope.arraySkill_to_remove = [];
+	
+
 	$scope.replanRelease = function(){
 
+		
 		//1. fill the Depend_ons to add and the Depend_on to remove
-		//add all
 		$scope.arrayFeatureDepend_on_to_add = []; 
 		var items = $("#dependency").jqxDropDownList('getCheckedItems');
 		for(var i = 0; i< items.length ; i++){
 			$scope.arrayFeatureDepend_on_to_add[i] = items[i].value;
 		}
-
-		//remove all
 		$scope.arrayFeatureDepend_on_to_remove = []; 
 		var items = $("#dependency").jqxDropDownList('getItems');
 		for(var i = 0; i< items.length ; i++){
 			$scope.arrayFeatureDepend_on_to_remove[i] = items[i].value;
 		}
+		
+		$scope.arraySkill_to_add = []; 
+		for(var i = 0; i< items.length ; i++){
+			$scope.arraySkill_to_add[i] = items[i].value;
+		}
+		$scope.arraySkill_to_remove = []; 
+		var items = $("#skill").jqxDropDownList('getItems');
+		for(var i = 0; i< items.length ; i++){
+			$scope.arraySkill_to_remove[i] = items[i].value;
+		}
+		
 		//2. update the deadline in feature
 		var date = $("#dateInputDeadline").jqxDateTimeInput('getDate');
 		var strDate = getStringSUPERSEDEDate(date.getTime());
 		$scope.feature.deadline = strDate;
 
-		//3.check feature parameters
-//		if(new Date($scope.feature.deadline) <= new Date()){
-//			appendReplaneWindows("default", "The feature deadline is before today." );
-//		}
-//		else 
-		if(new Date($scope.feature.deadline) >= new Date($scope.release.deadline)){
+		//3.check priority parameters
+		if(!($scope.feature.priority >=0 && $scope.feature.priority <=5)){
+			appendReplaneWindows("default", "The feature priority must be between 1 and 5." );
+		}
+		else if(new Date($scope.feature.deadline) >= new Date($scope.release.deadline)){
 			appendReplaneWindows("delay", "The release will be delayed if this feature is included." );
 		}
 		// some_variable is either null, undefined, 0, NaN, false, or an empty string
@@ -511,36 +582,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			$scope.updateFeature($scope.feature)
 			.then(
 					function(response) {
-						//remove all dependencies
-						$scope.deleteDependenciesFromFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_remove)
-						.then(
-								function(response) {
-									//add dependencies
-									$scope.addDependenciesToFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_add)
-									.then(
-											function(response) {
-												//add feature to release
-												//appendReplaneWindows("success", "Re-plan success.");
-												$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
-												.then(
-														function(response) {
-															appendReplaneWindows("success", "Re-plan success.");
-														},
-														function(response) {
-															appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-														}
-												);
-											},
-											function(response) {
-												appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-											}
-									);
-
-								},
-								function(response) {
-									appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-								}
-						);
+						internalUpdate();
 					},
 					function(response) {
 						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -549,32 +591,140 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		}
 	}
 
+	function internalUpdate(){
+		
+		if($scope.arrayFeatureDepend_on_to_remove.length >0){
+			
+			/*
+			 *  remove all dependencies
+			 *	add dependencies
+			 *	add feature to release
+			 *
+			 */
+			
+			//remove all dependencies
+			$scope.deleteDependenciesFromFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_remove)
+			.then(
+					function(response) {
+						//add dependencies
+						if($scope.arrayFeatureDepend_on_to_add.length >0){
+							$scope.addDependenciesToFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_add)
+							.then(
+									function(response) {
+										//add feature to release
+										//appendReplaneWindows("success", "Re-plan success.");
+										$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
+										.then(
+												function(response) {
+													appendReplaneWindows("success", "Re-plan success.");
+												},
+												function(response) {
+													appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+												}
+										);
+									},
+									function(response) {
+										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+									}
+							);
+						}else{
+							//add feature to release
+							//appendReplaneWindows("success", "Re-plan success.");
+							$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
+							.then(
+									function(response) {
+										appendReplaneWindows("success", "Re-plan success.");
+									},
+									function(response) {
+										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+									}
+							);
+						
+						}
+					},
+					function(response) {
+						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+					}
+			);
+		}
+		
+		/*
+		 *  
+		 *	add dependencies
+		 *	add feature to release
+		 *
+		 */
+		//add dependencies
+		else if($scope.arrayFeatureDepend_on_to_add.length >0){
+				$scope.addDependenciesToFeature($scope.feature.id, $scope.arrayFeatureDepend_on_to_add)
+				.then(
+						function(response) {
+							//add feature to release
+							//appendReplaneWindows("success", "Re-plan success.");
+							$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
+							.then(
+									function(response) {
+										appendReplaneWindows("success", "Re-plan success.");
+									},
+									function(response) {
+										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+									}
+							);
+						},
+						function(response) {
+							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+						}
+				);
+			}
+			else{
+				/*
+				 *  
+				 *	
+				 *	add feature to release
+				 *
+				 */
+				//add feature to release
+				//appendReplaneWindows("success", "Re-plan success.");
+				$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
+				.then(
+						function(response) {
+							appendReplaneWindows("success", "Re-plan success.");
+						},
+						function(response) {
+							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+						}
+				);
+			}
+	
+	}
 	
 	function getStringSUPERSEDEDate(time){
-		
+
 		var date = new Date(time);
-	
+
 		var month = date.getMonth() + 1;
 		var day = date.getDate();
-		
+
 		var strMonth;
 		if(month <= 9){
 			strMonth ="0" + month;
 		}else{
 			strMonth = ""+month;
 		}
-		
+
 		var strDay;
 		if(day <= 9){
 			strDay ="0" + day;
 		}else{
 			strDay = ""+day;
 		}
-		
+
 		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
 		return strDate;
 	}
-	
+
+
+
 	/**
 	 * start point method
 	 */

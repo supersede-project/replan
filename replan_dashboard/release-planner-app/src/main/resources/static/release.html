@@ -14,12 +14,9 @@
 	            <h4>{{messageRelease}}</h4>
 	        </div>
 	    </div>
-<!--         	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
-<!-- 				<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
-<!-- 			</a> -->
         <div class="row" ng-show="showRelease">
-<!--            <h4 ng-show="isUpdate">{{release.name}} - {{release.id}}</h4> -->
-           <h4 ng-show="isUpdate">{{release.name}}</h4>
+		   <div class="col-xs-12" ng-show="isUpdate"> <div class="text-right"><i class="fa fa-times" title="Remove release" aria-hidden="true" ng-click="remove()"></i> </div></div>
+           <h4 ng-show="isUpdate">{{release.name}} - {{release.id}}</h4>
 	       <h5>Resources:</h5>
            <div class="col-xs-4">
 	       	   	<jqx-list-box id ="resourcesListBox" jqx-settings="settingsResourcesListBox"  jqx-on-select="selectItemResourcesListBox(event)" ng-class="addClassHasErrorResourcesAreRequired"></jqx-list-box>
@@ -39,13 +36,30 @@
           
           <div class="row">
 			<div class="col-xs-12">	
-            <form ng-show="isUpdate" id="updateReleaseForm" name="updateReleaseForm" class="form-horizontal margin-top-5px" ng-submit="update()" novalidate>
+	           <form ng-show="isUpdate" id="updateReleaseForm" name="updateReleaseForm" class="form-horizontal margin-top-5px" ng-submit="update()" novalidate>
 			  
+			    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : updateReleaseForm.releaseName.$error.required && !updateReleaseForm.releaseName.$pristine}">
+			      <label class="control-label col-sm-4 my-label" for="releaseName">Release name:</label>
+			      <div class="col-sm-8">
+			        <jqx-input id="releaseNameInput" name="releaseName" class="form-control myHeightSmall" ng-model="release.name" required></jqx-input>
+			        <span ng-show="updateReleaseForm.releaseName.$error.required && !updateReleaseForm.releaseName.$pristine" class="help-block">Release name is required.</span>
+			      </div>
+			    </div>
+				    
 			    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : updateReleaseForm.releaseDescription.$error.required && !updateReleaseForm.releaseDescription.$pristine}">
 			      <label class="control-label col-sm-4 my-label" for="releaseDescription">Release description:</label>
 			      <div class="col-sm-8">
 			        <jqx-input id="releaseDescriptionInput" name="releaseDescription" class="form-control myHeightSmall" ng-model="release.description" required></jqx-input>
 			        <span ng-show="updateReleaseForm.releaseDescription.$error.required && !updateReleaseForm.releaseDescription.$pristine" class="help-block">Release description is required.</span>
+			      </div>
+			    </div>
+			    
+			     <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine}">
+			      <label class="control-label col-sm-4 my-label" for="releaseStarts_at">Release start at :</label>
+			      <div class="col-sm-8">
+						<div id='dateInputUpdateStartAt'>
+						</div>
+			        <span ng-show="updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine" class="help-block">Release start at is required.</span>
 			      </div>
 			    </div>
 			    
@@ -57,29 +71,20 @@
 			        <span ng-show="updateReleaseForm.releaseDeadline.$error.required && !updateReleaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
 			      </div>
 			    </div>
-			    
-			    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine}">
-			      <label class="control-label col-sm-4 my-label" for="releaseStarts_at">Release start at :</label>
-			      <div class="col-sm-8">
-						<div id='dateInputUpdateStartAt'>
-						</div>
-			        <span ng-show="updateReleaseForm.releaseStarts_at.$error.required && !updateReleaseForm.releaseStarts_at.$pristine" class="help-block">Release start at is required.</span>
-			      </div>
-			    </div>
-			    
+			  
 			     <!-- button -->
-                <div class="form-group">
-                
-                    <div class="col-sm-offset-2 col-sm-10">
-                   		<div class="text-right">
+	               <div class="form-group">
+	               
+	                   <div class="col-sm-offset-2 col-sm-10">
+	                  		<div class="text-right">
 	                   		<jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
 	                        <jqx-button template="submit" class="my-button myHeight" ng-disabled="updateReleaseForm.$invalid || showResourcesAreRequired"><i class="fa fa-plus fa-lg"></i>Update</jqx-button>
-                    	</div>
-                    </div>
-                    
-                </div>
+	                	</div>
+	                   </div>
+	                   
+	               </div>
 		    </form>
-                </div>
+           </div>
 	     </div>
 
         <div class="row">
@@ -102,27 +107,24 @@
 				        <span ng-show="releaseForm.releaseDescription.$error.required && !releaseForm.releaseDescription.$pristine" class="help-block">Release description is required.</span>
 				      </div>
 				    </div>
-				    
-				   <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine}">
-				      <label class="control-label col-sm-4 my-label" for="releaseDeadline">Release deadline:</label>
-				      <div class="col-sm-8">
-							<div id='dateInput'>
-							</div>
-				        <span ng-show="releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
-				      </div>
-				    </div>
-				    
+
 				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseStarts_at.$error.required && !releaseForm.releaseStarts_at.$pristine}">
 				      <label class="control-label col-sm-4 my-label" for="releaseStarts_at">Release start at:</label>
 				      <div class="col-sm-8">
-
-							<div id='dateInputStartAt'>
-							</div>
+						<div id='dateInputStartAt'>
+						</div>
 				        <span ng-show="releaseForm.releaseStarts_at.$error.required && !releaseForm.releaseStarts_at.$pristine" class="help-block">Release start at is required.</span>
 				      </div>
 				    </div>
-				    
-				    
+				    				    
+				   <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine}">
+				      <label class="control-label col-sm-4 my-label" for="releaseDeadline">Release deadline:</label>
+				      <div class="col-sm-8">
+						<div id='dateInput'>
+						</div>
+				        <span ng-show="releaseForm.releaseDeadline.$error.required && !releaseForm.releaseDeadline.$pristine" class="help-block">Release deadline is required.</span>
+				      </div>
+				    </div>
 				    
 				     <!-- button -->
 	                <div class="form-group">
