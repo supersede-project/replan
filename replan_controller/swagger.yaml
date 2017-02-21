@@ -4,13 +4,13 @@ info:
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
   version: "2.0.0"
 # the domain of the service
-host: 62.14.219.13:8280
+host: replan-project-carlesf.c9users.io
 #release-planner-ui-api.herokuapp.com
 # array of all schemes that your API supports
 schemes:
-  - http
+  - https
 # will be prefixed to all paths
-basePath: /replan
+basePath: /api/ui/v1
 produces:
   - application/json
 paths:
@@ -22,7 +22,7 @@ paths:
       operationId: getProjects
       tags:
         - New in v.2
-        - Project
+        - Projects
       responses:
         200:
           description: An array of projects
@@ -107,7 +107,7 @@ paths:
           schema:
             $ref: '#/definitions/ProjectData'
       tags:
-        - Project
+        - Projects
       responses:
         200:
           description: Success

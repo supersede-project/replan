@@ -20,6 +20,12 @@ limitations under the License.
 =end
 class ProjectController < ApplicationController
 
+  # New in v.2
+  def get_projects 
+    render json: Project.all
+  end
+
+  # ---
   def get_project
     render json: @project
   end
