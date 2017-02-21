@@ -34,6 +34,11 @@ class ProjectController < ApplicationController
       render json: @project.errors, status: :unprocessable_entity
     end
   end
+  
+  def delete_project
+    @project.destroy
+    render json: {"message" => "Project removed"}
+  end
 
   # ---
   def get_project
