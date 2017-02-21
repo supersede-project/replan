@@ -24,6 +24,16 @@ class ProjectController < ApplicationController
   def get_projects 
     render json: Project.all
   end
+  
+  def create_project
+    @project = Project.new(project_params)
+
+    if @project.save
+      render json: @project
+    else
+      render json: @project.errors, status: :unprocessable_entity
+    end
+  end
 
   # ---
   def get_project
