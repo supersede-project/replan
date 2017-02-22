@@ -19,7 +19,8 @@ limitations under the License.
 
 =end
 class FeaturesController < ApplicationController
-  before_action :set_feature, only: [:get_feature, :modify_feature, 
+  before_action :set_feature, only: [:delete_feature,
+                                     :get_feature, :modify_feature, 
                                      :remove_feature_from_release,
                                      :add_skills_to_feature,
                                      :delete_skills_from_feature,
@@ -41,6 +42,11 @@ class FeaturesController < ApplicationController
                 fields: "feature.code")
       render json: error, status: 400
     end
+  end
+  
+  def delete_feature
+    @feature.destroy
+    render json: {"message" => "Feature removed"}
   end
 
   #--------------
