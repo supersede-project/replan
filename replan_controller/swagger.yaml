@@ -205,6 +205,10 @@ paths:
           description: A new Feature
           schema:
             $ref: '#/definitions/Feature'
+        400:
+          description: Already exists feature with that 'code'
+          schema:
+            $ref: '#/definitions/Error'
         422:
           description: Unprocessable Entity
           schema:

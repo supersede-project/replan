@@ -4,11 +4,11 @@ info:
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
   version: "2.0.0"
 # the domain of the service
-host: localhost:8080
+host: replan-project-carlesf.c9users.io
 #release-planner-ui-api.herokuapp.com
 # array of all schemes that your API supports
 schemes:
-  - http
+  - https
 # will be prefixed to all paths
 basePath: /api/ui/v1
 produces:
@@ -206,6 +206,10 @@ paths:
           description: A new Feature
           schema:
             $ref: '#/definitions/Feature'
+        400:
+          description: Already exists feature with that 'code'
+          schema:
+            $ref: '#/definitions/Error'
         422:
           description: Unprocessable Entity
           schema:
