@@ -26,8 +26,24 @@ class FeaturesController < ApplicationController
                                      :add_dependencies_to_feature,
                                      :delete_dependencies_from_feature]
 
-  
+  # New in v.2
+  def create_feature
+    if Feature.find_by(code: params[:code]).nil?
+      @feature = @project.features.build(feature_params_with_code)
+      if @feature.save
+        render json: @feature
+      else
+        render json: @feature.errors, status: :unprocessable_entity
+      end
+    else
+      error = Error.new(code:400,
+                message: "Already exists feature with code = #{params[:code]}", 
+                fields: "feature.code")
+      render json: error, status: 400
+    end
+  end
 
+  #--------------
   def get_feature
     render json: @feature
   end
@@ -108,6 +124,11 @@ class FeaturesController < ApplicationController
     
     def feature_params
       params.require(:feature).permit(:name, :description, :effort, :deadline,
+                                      :priority)
+    end
+    
+    def feature_params_with_code
+      params.require(:feature).permit(:code, :name, :description, :effort, :deadline,
                                       :priority)
     end
 end

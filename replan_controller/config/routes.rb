@@ -20,11 +20,12 @@ Rails.application.routes.draw do
   end
   
   # new methods in v.2
-  # add_newinv2_route 'POST', '/replan/projects/{projectId}/features', controller_name: 'newInV2', action_name: 'create_feature'
   # add_newinv2_route 'DELETE', '/replan/projects/{projectId}/features/{featureId}', controller_name: 'newInV2', action_name: 'delete_feature'
   add_ui_route 'GET', '/projects', controller_name: 'project', action_name: 'get_projects'
   add_ui_route 'POST', '/projects', controller_name: 'project', action_name: 'create_project'
   add_ui_route 'DELETE', '/projects/{projectId}', controller_name: 'project', action_name: 'delete_project'
+  add_ui_route 'POST', '/projects/{projectId}/features', controller_name: 'features', action_name: 'create_feature'
+  
   
   add_wp3_route 'POST', '/projects/{projectId}/features', controller_name: 'wp3_api', action_name: 'receive_wp3_features'
   add_ui_route 'POST', '/projects/{projectId}/releases/{releaseId}/features', controller_name: 'releases', action_name: 'add_features_to_release'
