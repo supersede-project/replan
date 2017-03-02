@@ -179,6 +179,7 @@ paths:
             $ref: '#/definitions/Error'
         404:
           description: Project not found
+  /projects/{projectId}/features/create_one
     post:
       summary: Create a new Feature
       description: |

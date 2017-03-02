@@ -29,7 +29,7 @@ class FeaturesController < ApplicationController
 
   # New in v.2
   def create_feature
-    if Feature.find_by(code: params[:code]).nil?
+    if @project.features.find_by(code: params[:code]).nil?
       @feature = @project.features.build(feature_params_with_code)
       if @feature.save
         render json: @feature

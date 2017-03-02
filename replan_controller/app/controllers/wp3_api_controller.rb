@@ -22,7 +22,7 @@ class Wp3ApiController < ApplicationController
   
   def receive_wp3_features
 
-    already_in = params[:features].map { |f| Feature.find_by(code: f[:id]).code if Feature.find_by(code: f[:id])}.compact
+    already_in = params[:features].map { |f| @project.features.find_by(code: f[:id]).code if @project.features.find_by(code: f[:id])}.compact
     if !already_in.empty?
       error = Error.new(code:400,
                 message: "Already exists features with id = #{already_in.join(', ')}", 

@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   add_ui_route 'GET', '/projects', controller_name: 'project', action_name: 'get_projects'
   add_ui_route 'POST', '/projects', controller_name: 'project', action_name: 'create_project'
   add_ui_route 'DELETE', '/projects/{projectId}', controller_name: 'project', action_name: 'delete_project'
-  add_ui_route 'POST', '/projects/{projectId}/features', controller_name: 'features', action_name: 'create_feature'
+  add_ui_route 'POST', '/projects/{projectId}/features/create_one', controller_name: 'features', action_name: 'create_feature'
   add_ui_route 'DELETE', '/projects/{projectId}/features/{featureId}', controller_name: 'features', action_name: 'delete_feature'
   
   # methods in v.1
