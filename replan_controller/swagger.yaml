@@ -70,9 +70,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
       tags:
         - Projects
@@ -95,9 +94,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body
@@ -126,9 +124,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
       tags:
         - Projects
@@ -151,9 +148,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: status
           in: query
@@ -188,9 +184,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body
@@ -225,9 +220,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -256,9 +250,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -293,9 +286,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -324,9 +316,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -364,9 +355,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -405,9 +395,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -444,9 +433,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: featureId
           in: path
@@ -484,9 +472,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
       tags:
         - Releases
@@ -511,9 +498,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body
@@ -543,9 +529,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -574,9 +559,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -611,9 +595,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -641,9 +624,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -681,9 +663,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -722,9 +703,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -756,9 +736,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -794,9 +773,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -833,9 +811,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -865,9 +842,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: releaseId
           in: path
@@ -896,9 +872,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
       tags:
         - Skills
@@ -923,9 +898,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body
@@ -955,9 +929,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: skillId
           in: path
@@ -990,9 +963,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: skillId
           in: path
@@ -1020,9 +992,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
       tags:
         - Resources
@@ -1047,9 +1018,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body
@@ -1079,9 +1049,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: resourceId
           in: path
@@ -1116,9 +1085,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: resourceId
           in: path
@@ -1146,9 +1114,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: resourceId
           in: path
@@ -1186,9 +1153,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: resourceId
           in: path
