@@ -20,6 +20,27 @@ limitations under the License.
 =end
 class ProjectController < ApplicationController
 
+  # New in v.2
+  def get_projects 
+    render json: Project.all
+  end
+  
+  def create_project
+    @project = Project.new(project_params)
+
+    if @project.save
+      render json: @project
+    else
+      render json: @project.errors, status: :unprocessable_entity
+    end
+  end
+  
+  def delete_project
+    @project.destroy
+    render json: {"message" => "Project removed"}
+  end
+
+  # ---
   def get_project
     render json: @project
   end

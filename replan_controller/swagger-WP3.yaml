@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to WP3
   description: This API defines the operation that the Replan Controller component exposes to the WP3 components.
-  version: "1.1.0"
+  version: "1.2.0"
 # the domain of the service
 host: localhost
 # array of all schemes that your API supports
@@ -22,9 +22,8 @@ paths:
       parameters:
         - name: projectId
           in: path
-          type: number
-          format: int64
-          description: ID of the project
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
           required: true
         - name: body
           in: body

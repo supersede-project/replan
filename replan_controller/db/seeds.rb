@@ -5,7 +5,15 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-p = Project.create(name: "Project Name", description: "Bla, bla, bla", \
+p = Project.create(name: "SIEMENS", description: "SIEMENS AG. Release Planner", \
+                    effort_unit: "hour", hours_per_effort_unit: 1, \
+                    hours_per_week_and_full_time_resource: 40)
+                    
+Project.create(name: "SEnerCon", description: "SEnerCon Release Planner", \
+                    effort_unit: "hour", hours_per_effort_unit: 1, \
+                    hours_per_week_and_full_time_resource: 40)
+                    
+Project.create(name: "ATOS", description: "ATOS Release Planner", \
                     effort_unit: "hour", hours_per_effort_unit: 1, \
                     hours_per_week_and_full_time_resource: 40)
                     
