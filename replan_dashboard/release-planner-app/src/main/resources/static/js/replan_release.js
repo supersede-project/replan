@@ -5,7 +5,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	/*
 	 * REST methods
 	 */
-	var baseURL = "release-planner-app/replan/projects/1";
+	var baseURL = "release-planner-app/replan/projects/tenant";
 
 	$scope.getFeature = function(featureId){
 

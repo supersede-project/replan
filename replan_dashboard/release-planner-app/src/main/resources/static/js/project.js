@@ -4,7 +4,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	/*
  	* REST methods
  	*/
-	var baseURL = "release-planner-app/replan/projects/1";
+	var baseURL = "release-planner-app/replan/projects/tenant";
 
 	$scope.getProject = function(){
 

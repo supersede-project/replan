@@ -27,10 +27,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import eu.supersede.fe.security.DatabaseUser;
 /**
  * The ReleasePlannerRest invoke the rest API service provides by Ruby on Rails
  * 
@@ -58,16 +61,33 @@ public class ReleasePlannerRest{
 		 return "hello from Release Planner Rest Controller"; 
 	}
 
-	@RequestMapping(value = "/{projectId}/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
-	public ResponseEntity<?> get(@PathVariable String projectId,HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-		
+	@RequestMapping(value = "/tenant/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
+	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+	
+			
 		CloseableHttpResponse response = null;
 		
-	
 		int code = 500;
  		
 		try {
- 			
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if(auth == null){
+				log.error("Authentication is null");
+				return new ResponseEntity<>(org.springframework.http.HttpStatus.valueOf(code));
+			}
+			
+			DatabaseUser currentUser = (DatabaseUser) auth.getPrincipal();
+			if(currentUser == null){
+				log.error("DatabaseUser is null");
+				return new ResponseEntity<>("Logged user not found", org.springframework.http.HttpStatus.valueOf(code));
+			}
+			
+			String tenantId = currentUser.getTenantId();
+			if(tenantId == null || tenantId.isEmpty()){
+				log.error("tenantId not found ");
+				return new ResponseEntity<>("TenantId not found", org.springframework.http.HttpStatus.valueOf(code));
+			}
+			
 			RequestConfig.Builder requestBuilder = RequestConfig.custom();
 			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
 			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
@@ -83,14 +103,14 @@ public class ReleasePlannerRest{
 			
 			if("GET".equals(request.getMethod())){
 				//create
-				HttpGet httpGet = new HttpGet(getRightUrl(request));			
+				HttpGet httpGet = new HttpGet(getRightUrl(request, tenantId));			
 
 				//execute
 				response = httpclient.execute(httpGet);
 			}
 			else if("POST".equals(request.getMethod())){
 				//create
-				HttpPost httpPost = new HttpPost(getRightUrl(request));
+				HttpPost httpPost = new HttpPost(getRightUrl(request, tenantId));
 				//add headers
 				// add only content-type header from request
 				@SuppressWarnings("rawtypes")
@@ -112,7 +132,7 @@ public class ReleasePlannerRest{
 			}
 			else if("PUT".equals(request.getMethod())){
 				//create
-				HttpPut httpPut = new HttpPut(getRightUrl(request));
+				HttpPut httpPut = new HttpPut(getRightUrl(request, tenantId));
 				//add headers
 				// add only content-type header from request
 				@SuppressWarnings("rawtypes")
@@ -134,7 +154,7 @@ public class ReleasePlannerRest{
 			}
 			else if("DELETE".equals(request.getMethod())){
 				//create
-				HttpDelete httpDelete = new HttpDelete(getRightUrl(request));
+				HttpDelete httpDelete = new HttpDelete(getRightUrl(request, tenantId));
 				//execute
 				response = httpclient.execute(httpDelete);			
 			}
@@ -187,7 +207,7 @@ public class ReleasePlannerRest{
 	//help methods
 	
 	//help methods
-	private String getRightUrl(HttpServletRequest request){
+	private String getRightUrl(HttpServletRequest request, String tenant){
 		//append host
 		StringBuilder sb = new StringBuilder(restServerUrl);
 		//append uri
@@ -209,8 +229,7 @@ public class ReleasePlannerRest{
 			sb.append(request.getQueryString());
 		}
 		
-		//improve
-		String replaced = sb.toString().replace("replan2", "replan");
+		String replaced = sb.toString().replace("tenant", tenant);
 		 
 		log.debug("replaced url: " + replaced);
 		 
