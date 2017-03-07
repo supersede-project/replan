@@ -36,8 +36,15 @@ class ProjectController < ApplicationController
   end
   
   def delete_project
-    @project.destroy
-    render json: {"message" => "Project removed"}
+    if @project.id > 3
+      @project.destroy
+      render json: {"message" => "Project removed"}
+    else
+      error = Error.new(code:403,
+                message: "This project cannot be removed", 
+                fields: "project.id")
+      render json: error, status: 403
+    end
   end
 
   # ---
