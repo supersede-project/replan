@@ -86,29 +86,36 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	
 	};
 	
-	$scope.deleteSkillsToResource = function (resource){
-
-		var url =  baseURL + '/resources/'+ resource.id + '/skills';
-
-		for(var i=0 ; i< resource.skills.length; i++){
-
-			if(i == 0){
-				url = url + "?skillId=" + resource.skills[i].id;
-				//url = url + "?skillId[" + i + "]=" + resource.skills[i].id;
-			}
-			else{
-				url = url + "," + resource.skills[i].id;
-				//url = url + "&skillId[" + i + "]=" + resource.skills[i].id;
-			}
-		}  
+	$scope.removeSkillFromProject = function (skill){
 
 		return $http({
 			method: 'DELETE',
-			url: url
-		}); 
+			url: baseURL +'/skills/' + skill.id,
+			headers: {"Content-Type": "application/json;charset=UTF-8"}
+		});	 
 	};
 	
+	//add only name, description
+	$scope.addNewSkillToProject = function (skill){
+
+		return $http({
+			method: 'POST',
+			url: baseURL+'/skills',
+			headers: {"Content-Type": "application/json;charset=UTF-8"},
+			data: skill
+		});	 
+	};	
 	
+	//Modifies a given project (modify only effort_unit, hours_per_effort_unit and hours_per_week_and_full_time_resource )
+	$scope.updateSkill = function (skill){
+
+		return $http({
+			method: 'PUT',
+			url: baseURL +'/skills/' + skill.id,
+			headers: {"Content-Type": "application/json;charset=UTF-8"},
+			data: skill
+		});	 
+	};
 	/*
  	* All methods Top down
  	*/
@@ -116,14 +123,14 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	$scope.messageProject = "Loading ...";
 	$scope.project = {resources: []};
 	//$scope.update = true;
-	$scope.resource = { availability:"", description:"", id: -1, name:""};
+	$scope.resource = { id: -1,  name:"", availability:"", description:""};
 	$scope.resource["skills"] = [];
-	$scope.typeLabel = "Add";
+	$scope.typeLabelResource = "Add";
 	$scope.skills = [];
-	$scope.showAddUpdateResouceForm = false;
 	
 	
-	$scope.initTable = function(response){
+	$scope.initResourcesTable = function(response){
+		
 		$scope.project = response.data;
 		
 		// Create a jqxGrid
@@ -142,7 +149,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		var dataAdapter = new $.jqx.dataAdapter(source);
 
 		
-		$("#projectJqxgrid").jqxGrid({
+		$("#resourcesJqxgrid").jqxGrid({
 			width: '100%',
 			autoheight: true,
 			source: dataAdapter,
@@ -212,8 +219,8 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			$('#'+listBoxId).jqxDropDownList('checkAll'); 
 		}
 		
-		//on cellclick in the projectJqxgrid
-		$("#projectJqxgrid").on('cellclick', function (event) {
+		//on cellclick in the resourcesJqxgrid
+		$("#resourcesJqxgrid").on('cellclick', function (event) {
 			
 			//to solve update problem in skillDropDownListId
 			$scope.showAddUpdateResouceForm = false;
@@ -222,7 +229,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 			$('#removeResoureJqxButton').jqxButton({disabled: false });
 			
 			// get the column's text.
-			var column = $("#projectJqxgrid").jqxGrid('getcolumn', event.args.datafield).text;
+			var column = $("#resourcesJqxgrid").jqxGrid('getcolumn', event.args.datafield).text;
 			// column data field.
 			var dataField = event.args.datafield;
 			// row's bound index.
@@ -239,18 +246,13 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 
 			
 			$scope.resource = $scope.project.resources[event.args.rowindex];
-			$scope.typeLabel = "Update Resource";
-
 		
 		});		
 	};
 
 	/**
-	 * FORM methods
+	 * Resources FORM methods
 	 */
-	//logic addResoureJqxButton is always enabled
-	$('#editResoureJqxButton').jqxButton({disabled: true });
-	$('#removeResoureJqxButton').jqxButton({disabled: true });
 	
 	//skillDropDownListId
 	$scope.resourceTopicRequired = '';
@@ -321,7 +323,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		   		
 		$scope.addUpdateResouceForm.$setPristine();
 		 
-		$scope.typeLabel = "Add";
+		$scope.typeLabelResource = "Add";
 		$scope.resource = { availability:"", description:"", name:""};
 		$scope.resource["skills"] = [];
 
@@ -332,8 +334,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	
 	$scope.editFormAddUpdateResouceForm = function(){
 		
-		$scope.typeLabel = "Update Resource";
-		
+		$scope.typeLabelResource = "Update Resource";
 		
 		//initialize jqxDropDownList in FORM
 		$('#skillDropDownListId').jqxDropDownList('uncheckAll');
@@ -368,7 +369,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		        	.then(
 		        			function(response) {
 		        				$scope.showProject = true;
-		        				$scope.initTable(response);
+		        				$scope.initResourcesTable(response);
 		        				$scope.showAddUpdateResouceForm = false;
 		        			},
 
@@ -409,7 +410,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	    	arraySkillIds[i] = items[i].value;
 	    }
 		
-		if($scope.typeLabel == "Add"){
+		if($scope.typeLabelResource == "Add"){
 			
 			//add only name, description and availability
 			$scope.addNewResourceToProject($scope.resource)
@@ -425,7 +426,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 				        	.then(
 				        			function(response) {
 				        				$scope.showProject = true;
-				        				$scope.initTable(response);
+				        				$scope.initResourcesTable(response);
 				        				$scope.showAddUpdateResouceForm = false;
 				        			},
 
@@ -470,7 +471,7 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 						        	.then(
 						        			function(response) {
 						        				$scope.showProject = true;
-						        				$scope.initTable(response);
+						        				$scope.initResourcesTable(response);
 						        				$scope.showAddUpdateResouceForm = false;
 						        			},
 
@@ -496,9 +497,6 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 				            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 				        }
 				    );	
-		        	
-		        	
-		        
 		        },
 		        
 		        function(response) {
@@ -506,6 +504,82 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 		            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
 		        }
 		    );
+		}
+	};
+	
+	$scope.skill = {id: -1,  name:"" , description:""};
+	$scope.showAddUpdateResouceForm = false;
+	$scope.typeLabelSkill = "Add";
+	
+	$scope.initSkillTable = function(){
+		
+		$scope.createSkillGridWidget = false;
+		
+		// prepare the data
+		var source =
+		{
+			datatype: "json",
+			datafields: [
+				{ name: 'name', type: 'string' },
+				{ name: 'description', type: 'string' }
+			],
+			id: 'id',
+			localdata: $scope.skills
+		};
+		
+		var dataAdapter = new $.jqx.dataAdapter(source);
+		
+		$scope.gridSkillSettings =
+		{
+			width: '100%',
+			autoheight: true,
+			source: dataAdapter,
+			
+			columns: [
+			    { text: 'Name', datafield: 'name' },
+				{ text: 'Description', datafield: 'description' }
+			]
+		};
+		
+		$scope.createSkillGridWidget = true;
+		// display selected row index.
+        $("#skillsJqxgrid").on('rowselect', function (event) {
+
+			$('#editSkillJqxButton').jqxButton({disabled: false });
+			$('#removeSkillJqxButton').jqxButton({disabled: false });
+			
+			
+			$scope.skill = $scope.skills[event.args.rowindex];
+			$scope.typeLabelSkill = "Update Skill";
+	    });
+	};
+
+	/**
+	 * Skill FORM methods
+	 */
+	
+	$scope.resetFormAddUpdateSkillForm = function(){
+		
+		$('#editSkillJqxButton').jqxButton({disabled: true });
+		$('#removeSkillJqxButton').jqxButton({disabled: true });
+		
+		$scope.addUpdateSkillForm.$setPristine();
+		
+		$scope.skill = {id: -1,  name:"" , description:""};
+		
+		$scope.showAddUpdateSkillForm = true;
+		
+		$scope.typeLabelSkill = "Add";
+	}
+
+	$scope.hideAddUpdateSkillForm = function(){
+		$scope.showAddUpdateSkillForm = false;
+	};
+	
+	$scope.editFormAddUpdateSkillForm = function(){
+		$scope.typeLabelSkill = "Update Skill";
+	    if($scope.skill.id != -1){
+			$scope.showAddUpdateSkillForm = true;
 		}
 	};
 	
@@ -528,49 +602,120 @@ app.controllerProvider.register('project-utilities', ['$scope', '$location', '$h
 	$scope.cancel = function(){
 		$location.path("/release-planner-app/main");
 	};
+	
+	
+	
+	$scope.addUpdateSkill = function(){
+		//add
+		if($scope.skill.id == -1){
+			
+			//add only name and  description 
+			$scope.addNewSkillToProject($scope.skill)
+		    .then(
+		        function(response) {
+		        	$scope.hideAddUpdateSkillForm();
+		        	
+		        	$scope.mainMethod();
+	  	        },
+		        
+		        function(response) {
+		        	
+		        	$scope.showProject = false;
+		        	$scope.messageProject = "Error: "+response.status + " " + response.statusText;
+		        }
+		    );
+		}
+		//update
+		else{
+			
+			//update only name and  description 
+			$scope.updateSkill($scope.skill)
+		    .then(
+		        function(response) {
+		        	$scope.hideAddUpdateSkillForm();
+		        	
+		        	$scope.mainMethod();
+	  	        },
+		        
+		        function(response) {
+		        	
+		        	$scope.showProject = false;
+		        	$scope.messageProject = "Error: "+response.status + " " + response.statusText;
+		        }
+		    );
+		}
+		
+	};
+	
+	$scope.removeSkill = function(){
+		$scope.removeSkillFromProject($scope.skill).then(
+		        function(response) {
+		        	$scope.hideAddUpdateSkillForm();
+		        	$scope.mainMethod();
+		        },
+		        
+		        function(response) {
+		        	$scope.showAddUpdateResouceForm = false;
+		        	$scope.showProject = false;
+		            $scope.messageProject = "Error: "+response.status + " " + response.statusText;
+		        }
+		    );
+	};
+	
+	
+	
+	$scope.mainMethod = function(){
+		$('#editResoureJqxButton').jqxButton({disabled: true });
+		$('#removeResoureJqxButton').jqxButton({disabled: true });
+		
+		$('#editSkillJqxButton').jqxButton({disabled: true });
+		$('#removeSkillJqxButton').jqxButton({disabled: true });
+		
+		
+		$scope.getProjectSkills()
+		.then(
+				function(response) {
+					//skillDropDownListId
+					$scope.skills = response.data;
+					$scope.initSkillTable();
+					// prepare the data
+				    var sourceskillDropDownListId =
+				    {
+				        datatype: "json",
+				        datafields: [
+				            { name: 'id' },
+				            { name: 'name' }
+				        ],
+				        id: 'id',
+				        localdata: $scope.skills
+				    };
+				    $scope.dataAdapterskillDropDownListId = new $.jqx.dataAdapter(sourceskillDropDownListId);
+				   
+					$scope.getProject()
+					.then(
+							function(response) {
+								$scope.showProject = true;
+								$scope.initResourcesTable(response);
+							},
 
+							function(response) {
+								$scope.showProject = false;
+								$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
+							}
+					);
+				},
+
+				function(response) {
+					$scope.showProject = false;
+					$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
+				}
+		);
+	};
 	
 	/**
 	 * start points method
 	 */
-	$scope.getProjectSkills()
-	.then(
-			function(response) {
-				//skillDropDownListId
-				$scope.skills = response.data;
-				
-				// prepare the data
-			    var sourceskillDropDownListId =
-			    {
-			        datatype: "json",
-			        datafields: [
-			            { name: 'id' },
-			            { name: 'name' }
-			        ],
-			        id: 'id',
-			        localdata: $scope.skills
-			    };
-			    $scope.dataAdapterskillDropDownListId = new $.jqx.dataAdapter(sourceskillDropDownListId);
-			   
-				$scope.getProject()
-				.then(
-						function(response) {
-							$scope.showProject = true;
-							$scope.initTable(response);
-						},
-
-						function(response) {
-							$scope.showProject = false;
-							$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
-						}
-				);
-			},
-
-			function(response) {
-				$scope.showProject = false;
-				$scope.messageProject = "Error: "+response.status + " " + response.statusText;	
-			}
-	);
+	$scope.mainMethod();
 
 
 }]);

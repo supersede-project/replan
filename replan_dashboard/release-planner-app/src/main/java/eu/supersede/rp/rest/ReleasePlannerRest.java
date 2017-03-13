@@ -126,6 +126,7 @@ public class ReleasePlannerRest{
 				String body = getBodyRequest(request);
 				StringEntity bodyStringEntity = new StringEntity(body);
 				httpPost.setEntity(bodyStringEntity);
+				log.debug("body: " + body);
 				
 				//execute
 				response = httpclient.execute(httpPost);
@@ -148,6 +149,7 @@ public class ReleasePlannerRest{
 				String body = getBodyRequest(request);
 				StringEntity bodyStringEntity = new StringEntity(body);
 				httpPut.setEntity(bodyStringEntity);
+				log.debug("body: " + body);
 				
 				//execute
 				response = httpclient.execute(httpPut);
@@ -155,11 +157,13 @@ public class ReleasePlannerRest{
 			else if("DELETE".equals(request.getMethod())){
 				//create
 				HttpDelete httpDelete = new HttpDelete(getRightUrl(request, tenantId));
+				
 				//execute
 				response = httpclient.execute(httpDelete);			
 			}
 			else{
-				return new ResponseEntity<> ("request method  not implemented", org.springframework.http.HttpStatus.NOT_IMPLEMENTED);
+				log.debug("Reponse code: " + HttpStatus.NOT_IMPLEMENTED.toString());
+				return new ResponseEntity<> ("request method  not implemented", HttpStatus.NOT_IMPLEMENTED);
 			} 
 			
 			if(response != null && response.getStatusLine() != null){
@@ -183,6 +187,7 @@ public class ReleasePlannerRest{
 						{
 					IOUtils.copyLarge(inputStream, outputStream);
 						}
+				log.debug("Reponse code: " + HttpStatus.OK.toString());
 				return new ResponseEntity<>(HttpStatus.OK);
 
 
@@ -230,7 +235,7 @@ public class ReleasePlannerRest{
 		}
 		
 		String replaced = sb.toString().replace("tenant", tenant);
-		 
+		log.debug("method: " + request.getMethod()); 
 		log.debug("replaced url: " + replaced);
 		 
 		 return replaced;

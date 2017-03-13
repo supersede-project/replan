@@ -639,7 +639,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		}
 		
 		$("#removeOk").jqxInput({ height: 25});
-		$("#removeOk").on('click', function (){
+		$("#removeOk").one('click', function (){
 			
 			$("#removeReleaseWindow").jqxWindow('close');
 			
@@ -656,7 +656,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		});
 		
 		$("#removeCancel").jqxInput({ height: 25});
-		$("#removeCancel").on('click', function (){
+		$("#removeCancel").one('click', function (){
 			$("#removeReleaseWindow").jqxWindow('close');
 		});
 		
