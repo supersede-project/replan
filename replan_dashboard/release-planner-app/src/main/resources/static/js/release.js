@@ -534,20 +534,16 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 		}
 	};
 	
+
+	$("#dateInputStartAt").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'});
+	$("#dateInput").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'});
+	
 	var now = new Date();
-	var year = now.getFullYear();
-	var month = now.getMonth();
-	month = month + 1;
-	var day = now.getDate();
-	//new Date(year, month, day);
-	$("#dateInput").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd', min: new Date(year, month, day)});
-	$("#dateInputStartAt").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd', min: new Date(year, month, day)});
+//	var nowPlusOneMonth = new Date();
+//	nowPlusOneMonth.setMonth(nowPlusOneMonth.getMonth() + 1);
 	
-	
-	var nowPlusOneMonth = new Date();
-	nowPlusOneMonth.setMonth(nowPlusOneMonth.getMonth() + 1);
-	$('#dateInput').jqxDateTimeInput('setDate', nowPlusOneMonth);
-	$('#dateInputStartAt').jqxDateTimeInput('setDate', nowPlusOneMonth);
+	$('#dateInputStartAt').jqxDateTimeInput('setDate', now);
+	$('#dateInput').jqxDateTimeInput('setDate', now);
 	
 	$scope.add = function(){
 		var dateDeadLine = $("#dateInput").jqxDateTimeInput('getDate');
