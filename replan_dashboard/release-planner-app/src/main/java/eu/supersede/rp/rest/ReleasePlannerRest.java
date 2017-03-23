@@ -5,7 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,8 +52,11 @@ import eu.supersede.fe.security.DatabaseUser;
 @RequestMapping("/replan/projects")
 public class ReleasePlannerRest{
 	
-	@Value("${rest.server.url}")
-	private String restServerUrl;
+	@Value("${rest.server.url.development}")
+	private String restServerUrlDevelopment;
+	
+	@Value("${rest.server.url.production}")
+	private String restServerUrlProduction;
 	
 	@Value("${rest.server.proxy}")
 	private String restServerProxy;
@@ -58,13 +68,49 @@ public class ReleasePlannerRest{
 	
 	@RequestMapping(value = "/hello", method = {RequestMethod.GET})
 	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-		 return "hello from Release Planner Rest Controller"; 
+		
+		StringBuilder sb = new StringBuilder();
+		
+		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+		if(runtimeMxBean != null){
+			List<String> arguments = runtimeMxBean.getInputArguments();
+			if(arguments != null){
+				log.debug(" ------ JVM arguments ------");
+				sb.append(" ------ JVM arguments ------");
+				sb.append("\n");
+				for (String arg : arguments) {
+					log.debug("[" + arg+ "]");
+					sb.append("[" + arg+ "]");
+					sb.append("\n");
+				}
+				log.debug(" ------ -- ------");
+				sb.append(" ------ -- ------");
+				sb.append("\n");
+			}
+		}
+		
+		Map<String, String> envMap = System.getenv();
+		SortedMap<String, String> sortedEnvMap = new TreeMap<String, String>(envMap);
+		//Set<String> keySet = sortedEnvMap.keySet();
+		log.debug(" ------ SYSTEM variables ------");
+		sb.append(" ------ SYSTEM variables ------");
+		sb.append("\n");
+		for (Entry<String, String> entry : sortedEnvMap.entrySet()) {
+			
+			log.debug("[" +  entry.getKey() + "] " +  entry.getValue());
+			sb.append("[" +  entry.getKey() + "] " +  entry.getValue());
+			sb.append("\n");
+		}
+		log.debug(" ------ -- ------");
+		sb.append(" ------ -- ------");
+		sb.append("\n");
+		
+		return sb.toString(); 
 	}
 
 	@RequestMapping(value = "/tenant/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-	
-			
+		
 		CloseableHttpResponse response = null;
 		
 		int code = 500;
@@ -213,8 +259,19 @@ public class ReleasePlannerRest{
 	
 	//help methods
 	private String getRightUrl(HttpServletRequest request, String tenant){
+		
+		
+		String restController = restServerUrlDevelopment;
+		String supersedeIfProperties = System.getProperty("supersede.if.properties");
+				
+		if(supersedeIfProperties != null && "if.production.properties".equals(supersedeIfProperties)){
+			log.debug("supersede.if.properties " + supersedeIfProperties);
+			restController = restServerUrlProduction;
+		}
+		log.debug("restController URL " + restController);
+		
 		//append host
-		StringBuilder sb = new StringBuilder(restServerUrl);
+		StringBuilder sb = new StringBuilder(restController);
 		//append uri
 		String uri = request.getRequestURI();
 		//request.getRequestURL();
