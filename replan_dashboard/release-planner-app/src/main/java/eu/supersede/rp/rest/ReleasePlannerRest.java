@@ -265,6 +265,19 @@ public class ReleasePlannerRest{
 		}
 	}
 	
+//	public static void main(String[] args) {
+//		String blabla= "-Dsupersede.if.properties=if.production.properties";
+//		if(blabla.contains("Dsupersede.if.properties")){
+//			String splitted [] = blabla.split("=");
+//			String supersedeIfProperties = splitted[1];
+//			if("if.production.properties".equals(supersedeIfProperties)){
+//				System.out.println(splitted.length);
+//			}
+//				
+//		}
+//		
+//		
+//	}
 	//help methods
 	
 	//help methods
@@ -273,7 +286,20 @@ public class ReleasePlannerRest{
 		
 		String restControllerURL = restServerUrlDevelopment;
 		//String restControllerURL = env.getProperty("rest.server.url.development");
-		String supersedeIfProperties = System.getProperty("supersede.if.properties");
+		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+		List<String> arguments = runtimeMxBean.getInputArguments();
+		//String supersedeIfProperties = System.getProperty("supersede.if.properties");
+		String supersedeIfProperties = "";
+		
+		for (String arg : arguments) {
+			if(arg.contains("Dsupersede.if.properties")){
+				String splitted [] = arg.split("=");
+				if(splitted.length >= 2){
+					supersedeIfProperties = splitted[1];
+					break;
+				}
+			}
+		}
 				
 		if(supersedeIfProperties != null && "if.production.properties".equals(supersedeIfProperties)){
 			log.debug("supersede.if.properties " + supersedeIfProperties);
