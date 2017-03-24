@@ -31,10 +31,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -44,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.fe.security.DatabaseUser;
+
 /**
  * The ReleasePlannerRest invoke the rest API service provides by Ruby on Rails
  * 
@@ -53,14 +52,14 @@ import eu.supersede.fe.security.DatabaseUser;
  */
 @RestController
 @RequestMapping("/replan/projects")
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:release_planner_app.properties")
 public class ReleasePlannerRest{
 	
-	@Autowired
-	private Environment env;
+//	@Autowired
+//	private Environment env;
 	
-//	@Value("${rest.server.url.development}")
-//	private String restServerUrlDevelopment;
+	@Value("${rest.server.url.development}")
+	private String restServerUrlDevelopment;
 	
 	@Value("${rest.server.url.production}")
 	private String restServerUrlProduction;
@@ -77,7 +76,7 @@ public class ReleasePlannerRest{
 	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
 		StringBuilder sb = new StringBuilder();
-		String restServerUrlDevelopment = env.getProperty("rest.server.url.development");
+		
 		log.debug("[" + restServerUrlDevelopment+ "]");
 		sb.append("[" + restServerUrlDevelopment+ "]");
 		
@@ -272,8 +271,8 @@ public class ReleasePlannerRest{
 	private String getRightUrl(HttpServletRequest request, String tenant){
 		
 		
-		//String restControllerURL = restServerUrlDevelopment;
-		String restControllerURL = env.getProperty("rest.server.url.development");
+		String restControllerURL = restServerUrlDevelopment;
+		//String restControllerURL = env.getProperty("rest.server.url.development");
 		String supersedeIfProperties = System.getProperty("supersede.if.properties");
 				
 		if(supersedeIfProperties != null && "if.production.properties".equals(supersedeIfProperties)){
