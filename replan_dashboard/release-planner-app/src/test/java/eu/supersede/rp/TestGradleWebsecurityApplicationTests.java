@@ -38,14 +38,21 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@PropertySource("classpath:application.properties")
 public class TestGradleWebsecurityApplicationTests
 {
-    @Test
+//	@Value("${rest.server.url.production}")
+//	private String restServerUrlProduction;
+	
+	@Test
     public void contextLoads()
     {
+		//String ciao = restServerUrlProduction;
+		//System.out.println(ciao);
     }
 }
