@@ -1,34 +1,221 @@
-2017-03-23 18:58:20 [Test worker] INFO  e.s.r.TestGradleWebsecurityApplicationTests.logStarting(48) - Starting TestGradleWebsecurityApplicationTests on MD1B33KC with PID 1524 (started by z002z80a in D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app)
-2017-03-23 18:58:20 [Test worker] DEBUG e.s.r.TestGradleWebsecurityApplicationTests.logStarting(51) - Running with Spring Boot v1.4.1.RELEASE, Spring v4.3.3.RELEASE
-2017-03-23 18:58:20 [Test worker] INFO  e.s.r.TestGradleWebsecurityApplicationTests.logStartupProfileInfo(661) - No active profile set, falling back to default profiles: default
-2017-03-23 18:58:20 [Test worker] INFO  o.s.w.c.s.GenericWebApplicationContext.prepareRefresh(581) - Refreshing org.springframework.web.context.support.GenericWebApplicationContext@1f35efe3: startup date [Thu Mar 23 18:58:20 CET 2017]; root of context hierarchy
-2017-03-23 18:58:24 [Test worker] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: atos
-2017-03-23 18:58:24 [Test worker] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: siemens
-2017-03-23 18:58:24 [Test worker] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: senercon
-2017-03-23 18:58:24 [Test worker] INFO  e.s.f.m.CurrentTenantIdentifierResolverImpl.load(54) - release-planner-app.multitenancy.default = atos
-2017-03-23 18:58:25 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
-2017-03-23 18:58:25 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
-2017-03-23 18:58:25 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
-2017-03-23 18:58:28 [Test worker] INFO  e.s.fe.integration.ProxyWrapper.load(63) - release-planner-app.multitenancy.names = atos,siemens,senercon
-2017-03-23 18:58:28 [Test worker] INFO  e.s.fe.integration.ProxyWrapper.load(88) - Tenants: 3
-2017-03-23 18:58:31 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
-2017-03-23 18:58:31 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
-2017-03-23 18:58:31 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
-2017-03-23 18:58:31 [Test worker] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/siemens
-2017-03-23 18:58:31 [Test worker] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/atos
-2017-03-23 18:58:32 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
-2017-03-23 18:58:32 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
-2017-03-23 18:58:32 [Test worker] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
-2017-03-23 18:58:32 [Test worker] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/senercon
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache(534) - Looking for @ControllerAdvice: org.springframework.web.context.support.GenericWebApplicationContext@1f35efe3: startup date [Thu Mar 23 18:58:20 CET 2017]; root of context hierarchy
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/tenant/**],methods=[GET || POST || PUT || DELETE]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.get(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/hello],methods=[GET]}" onto public java.lang.String eu.supersede.rp.rest.ReleasePlannerRest.hello(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/test]}" onto public java.lang.String eu.supersede.rp.rest.TestRest.test()
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
-2017-03-23 18:58:33 [Test worker] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
-2017-03-23 18:58:34 [Test worker] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-2017-03-23 18:58:34 [Test worker] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-2017-03-23 18:58:34 [Test worker] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
-2017-03-23 18:58:34 [Test worker] INFO  o.s.w.s.v.v.VelocityConfigurer.postProcessVelocityEngine(141) - ClasspathResourceLoader with name 'springMacro' added to configured VelocityEngine
-2017-03-23 18:58:35 [Test worker] INFO  e.s.r.TestGradleWebsecurityApplicationTests.logStarted(57) - Started TestGradleWebsecurityApplicationTests in 15.118 seconds (JVM running for 18.007)
-2017-03-23 18:58:35 [Thread-7] INFO  o.s.w.c.s.GenericWebApplicationContext.doClose(982) - Closing org.springframework.web.context.support.GenericWebApplicationContext@1f35efe3: startup date [Thu Mar 23 18:58:20 CET 2017]; root of context hierarchy
+2017-03-24 10:55:22 [main] INFO  eu.supersede.rp.Application.logStarting(48) - Starting Application on MD1B33KC with PID 14056 (D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app\bin started by z002z80a in D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app)
+2017-03-24 10:55:22 [main] DEBUG eu.supersede.rp.Application.logStarting(51) - Running with Spring Boot v1.4.1.RELEASE, Spring v4.3.3.RELEASE
+2017-03-24 10:55:22 [main] INFO  eu.supersede.rp.Application.logStartupProfileInfo(661) - No active profile set, falling back to default profiles: default
+2017-03-24 10:55:27 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader.prepareEmbeddedWebApplicationContext(276) - Root WebApplicationContext: initialization completed in 4788 ms
+2017-03-24 10:55:29 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: atos
+2017-03-24 10:55:29 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: siemens
+2017-03-24 10:55:29 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: senercon
+2017-03-24 10:55:29 [main] INFO  e.s.f.m.CurrentTenantIdentifierResolverImpl.load(54) - release-planner-app.multitenancy.default = atos
+2017-03-24 10:55:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:55:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:55:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:55:32 [main] INFO  e.s.fe.integration.ProxyWrapper.load(63) - release-planner-app.multitenancy.names = atos,siemens,senercon
+2017-03-24 10:55:32 [main] INFO  e.s.fe.integration.ProxyWrapper.load(88) - Tenants: 3
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:55:34 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/siemens
+2017-03-24 10:55:34 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/atos
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:55:34 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:55:35 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/senercon
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache(534) - Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@556d0826: startup date [Fri Mar 24 10:55:23 CET 2017]; root of context hierarchy
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/tenant/**],methods=[GET || POST || PUT || DELETE]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.get(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/hello],methods=[GET]}" onto public java.lang.String eu.supersede.rp.rest.ReleasePlannerRest.hello(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/test]}" onto public java.lang.String eu.supersede.rp.rest.TestRest.test()
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:55:36 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:55:37 [main] INFO  o.s.w.s.v.v.VelocityConfigurer.postProcessVelocityEngine(141) - ClasspathResourceLoader with name 'springMacro' added to configured VelocityEngine
+2017-03-24 10:55:38 [main] INFO  eu.supersede.rp.Application.logStarted(57) - Started Application in 16.289 seconds (JVM running for 17.815)
+2017-03-24 10:56:27 [http-nio-8083-exec-1] INFO  o.s.web.servlet.DispatcherServlet.initServletBean(489) - FrameworkServlet 'dispatcherServlet': initialization started
+2017-03-24 10:56:27 [http-nio-8083-exec-1] INFO  o.s.web.servlet.DispatcherServlet.initServletBean(508) - FrameworkServlet 'dispatcherServlet': initialization completed in 29 ms
+2017-03-24 10:56:27 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(274) - restController URL http://62.14.219.13:8280
+2017-03-24 10:56:27 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(274) - restController URL http://62.14.219.13:8280
+2017-03-24 10:56:27 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(298) - method: GET
+2017-03-24 10:56:27 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(299) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/features?status=pending
+2017-03-24 10:56:27 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(298) - method: GET
+2017-03-24 10:56:27 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(299) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases
+2017-03-24 10:56:28 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.get(239) - Reponse code: 200
+2017-03-24 10:56:28 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.get(239) - Reponse code: 200
+2017-03-24 10:56:28 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(274) - restController URL http://62.14.219.13:8280
+2017-03-24 10:56:28 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(298) - method: GET
+2017-03-24 10:56:28 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(299) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases/1/features
+2017-03-24 10:56:28 [http-nio-8083-exec-1] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(274) - restController URL http://62.14.219.13:8280
+2017-03-24 10:56:28 [http-nio-8083-exec-1] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(298) - method: GET
+2017-03-24 10:56:28 [http-nio-8083-exec-1] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(299) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases/2/features
+2017-03-24 10:56:28 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.get(239) - Reponse code: 200
+2017-03-24 10:56:28 [http-nio-8083-exec-1] DEBUG e.s.rp.rest.ReleasePlannerRest.get(239) - Reponse code: 200
+2017-03-24 10:59:17 [main] INFO  eu.supersede.rp.Application.logStarting(48) - Starting Application on MD1B33KC with PID 27924 (D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app\bin started by z002z80a in D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app)
+2017-03-24 10:59:17 [main] DEBUG eu.supersede.rp.Application.logStarting(51) - Running with Spring Boot v1.4.1.RELEASE, Spring v4.3.3.RELEASE
+2017-03-24 10:59:17 [main] INFO  eu.supersede.rp.Application.logStartupProfileInfo(661) - No active profile set, falling back to default profiles: default
+2017-03-24 10:59:23 [localhost-startStop-1] INFO  o.s.web.context.ContextLoader.prepareEmbeddedWebApplicationContext(276) - Root WebApplicationContext: initialization completed in 4953 ms
+2017-03-24 10:59:24 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: atos
+2017-03-24 10:59:24 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: siemens
+2017-03-24 10:59:24 [main] INFO  e.s.f.m.DataSourceBasedMultiTenantConnectionProviderImpl.load(86) - Found tenant: senercon
+2017-03-24 10:59:25 [main] INFO  e.s.f.m.CurrentTenantIdentifierResolverImpl.load(54) - release-planner-app.multitenancy.default = atos
+2017-03-24 10:59:25 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:59:25 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:59:25 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:59:27 [main] INFO  e.s.fe.integration.ProxyWrapper.load(63) - release-planner-app.multitenancy.names = atos,siemens,senercon
+2017-03-24 10:59:27 [main] INFO  e.s.fe.integration.ProxyWrapper.load(88) - Tenants: 3
+2017-03-24 10:59:29 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:59:29 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:59:29 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:59:29 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/siemens
+2017-03-24 10:59:30 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/atos
+2017-03-24 10:59:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - initialSize is larger than maxActive, setting initialSize to: 3
+2017-03-24 10:59:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - minIdle is larger than maxActive, setting minIdle to: 3
+2017-03-24 10:59:30 [main] WARN  o.a.tomcat.jdbc.pool.ConnectionPool.log(179) - maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-03-24 10:59:30 [main] INFO  e.s.fe.multitenant.MultiJpaProvider.load(81) - Loading database: jdbc:postgresql://localhost/senercon
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerAdapter.initControllerAdviceCache(534) - Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55b5f5d2: startup date [Fri Mar 24 10:59:18 CET 2017]; root of context hierarchy
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/tenant/**],methods=[GET || POST || PUT || DELETE]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.get(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/replan/projects/hello],methods=[GET]}" onto public java.lang.String eu.supersede.rp.rest.ReleasePlannerRest.hello(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/test]}" onto public java.lang.String eu.supersede.rp.rest.TestRest.test()
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2017-03-24 10:59:31 [main] INFO  o.s.w.s.m.m.a.RequestMappingHandlerMapping.register(543) - Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2017-03-24 10:59:32 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:59:32 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:59:32 [main] INFO  o.s.w.s.h.SimpleUrlHandlerMapping.registerHandler(354) - Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-03-24 10:59:32 [main] INFO  o.s.w.s.v.v.VelocityConfigurer.postProcessVelocityEngine(141) - ClasspathResourceLoader with name 'springMacro' added to configured VelocityEngine
+2017-03-24 10:59:33 [main] INFO  eu.supersede.rp.Application.logStarted(57) - Started Application in 16.478 seconds (JVM running for 17.803)
+2017-03-24 11:00:53 [http-nio-8083-exec-1] INFO  o.s.web.servlet.DispatcherServlet.initServletBean(489) - FrameworkServlet 'dispatcherServlet': initialization started
+2017-03-24 11:00:53 [http-nio-8083-exec-1] INFO  o.s.web.servlet.DispatcherServlet.initServletBean(508) - FrameworkServlet 'dispatcherServlet': initialization completed in 37 ms
+2017-03-24 11:01:36 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(280) - restController URL http://62.14.219.13:8280
+2017-03-24 11:01:36 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(304) - method: GET
+2017-03-24 11:01:36 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(305) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases
+2017-03-24 11:01:36 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.get(244) - Reponse code: 200
+2017-03-24 11:01:37 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(280) - restController URL http://62.14.219.13:8280
+2017-03-24 11:01:37 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(304) - method: GET
+2017-03-24 11:01:37 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(305) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/features?status=pending
+2017-03-24 11:01:37 [http-nio-8083-exec-7] DEBUG e.s.rp.rest.ReleasePlannerRest.get(244) - Reponse code: 200
+2017-03-24 11:01:38 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(280) - restController URL http://62.14.219.13:8280
+2017-03-24 11:01:38 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(304) - method: GET
+2017-03-24 11:01:38 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(305) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases/2/features
+2017-03-24 11:01:38 [http-nio-8083-exec-10] DEBUG e.s.rp.rest.ReleasePlannerRest.get(244) - Reponse code: 200
+2017-03-24 11:01:41 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(280) - restController URL http://62.14.219.13:8280
+2017-03-24 11:01:41 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(304) - method: GET
+2017-03-24 11:01:41 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.getRightUrl(305) - replaced url: http://62.14.219.13:8280/replan/projects/siemens/releases/1/features
+2017-03-24 11:01:51 [http-nio-8083-exec-8] DEBUG e.s.rp.rest.ReleasePlannerRest.get(255) - Error Exception in my rest client: Connect to 194.138.0.3:9400 [/194.138.0.3] failed: connect timed out
+2017-03-24 11:01:51 [http-nio-8083-exec-8] ERROR e.s.rp.rest.ReleasePlannerRest.get(256) - Error Exception in my rest client
+org.apache.http.conn.ConnectTimeoutException: Connect to 194.138.0.3:9400 [/194.138.0.3] failed: connect timed out
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:150)
+	at org.apache.http.impl.conn.PoolingHttpClientConnectionManager.connect(PoolingHttpClientConnectionManager.java:353)
+	at org.apache.http.impl.execchain.MainClientExec.establishRoute(MainClientExec.java:388)
+	at org.apache.http.impl.execchain.MainClientExec.execute(MainClientExec.java:236)
+	at org.apache.http.impl.execchain.ProtocolExec.execute(ProtocolExec.java:184)
+	at org.apache.http.impl.execchain.RetryExec.execute(RetryExec.java:88)
+	at org.apache.http.impl.execchain.RedirectExec.execute(RedirectExec.java:110)
+	at org.apache.http.impl.client.InternalHttpClient.doExecute(InternalHttpClient.java:184)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:82)
+	at org.apache.http.impl.client.CloseableHttpClient.execute(CloseableHttpClient.java:107)
+	at eu.supersede.rp.rest.ReleasePlannerRest.get(ReleasePlannerRest.java:163)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:221)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:136)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:114)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:827)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:738)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:85)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:897)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:970)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:861)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:846)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:729)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:230)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:52)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:317)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.invoke(FilterSecurityInterceptor.java:127)
+	at org.springframework.security.web.access.intercept.FilterSecurityInterceptor.doFilter(FilterSecurityInterceptor.java:91)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.access.ExceptionTranslationFilter.doFilter(ExceptionTranslationFilter.java:115)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.session.SessionManagementFilter.doFilter(SessionManagementFilter.java:137)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.authentication.AnonymousAuthenticationFilter.doFilter(AnonymousAuthenticationFilter.java:111)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter.doFilter(SecurityContextHolderAwareRequestFilter.java:169)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.savedrequest.RequestCacheAwareFilter.doFilter(RequestCacheAwareFilter.java:63)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:121)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at eu.supersede.fe.security.SecurityConfiguration$1.doFilterInternal(SecurityConfiguration.java:116)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.csrf.CsrfFilter.doFilterInternal(CsrfFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.header.HeaderWriterFilter.doFilterInternal(HeaderWriterFilter.java:66)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.context.SecurityContextPersistenceFilter.doFilter(SecurityContextPersistenceFilter.java:105)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter.doFilterInternal(WebAsyncManagerIntegrationFilter.java:56)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:331)
+	at org.springframework.security.web.FilterChainProxy.doFilterInternal(FilterChainProxy.java:214)
+	at org.springframework.security.web.FilterChainProxy.doFilter(FilterChainProxy.java:177)
+	at org.springframework.web.filter.DelegatingFilterProxy.invokeDelegate(DelegatingFilterProxy.java:346)
+	at org.springframework.web.filter.DelegatingFilterProxy.doFilter(DelegatingFilterProxy.java:262)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:99)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.web.filter.HttpPutFormContentFilter.doFilterInternal(HttpPutFormContentFilter.java:89)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.web.filter.HiddenHttpMethodFilter.doFilterInternal(HiddenHttpMethodFilter.java:77)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.session.web.http.SessionRepositoryFilter.doFilterInternal(SessionRepositoryFilter.java:164)
+	at org.springframework.session.web.http.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:80)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:197)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:107)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:192)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:165)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:198)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:108)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:472)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:140)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:79)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:87)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:349)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:784)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:66)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:802)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1410)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:49)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.SocketTimeoutException: connect timed out
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at org.apache.http.conn.socket.PlainConnectionSocketFactory.connectSocket(PlainConnectionSocketFactory.java:74)
+	at org.apache.http.impl.conn.DefaultHttpClientConnectionOperator.connect(DefaultHttpClientConnectionOperator.java:141)
+	... 104 common frames omitted

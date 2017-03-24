@@ -31,7 +31,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -52,8 +54,11 @@ import eu.supersede.fe.security.DatabaseUser;
 @RequestMapping("/replan/projects")
 public class ReleasePlannerRest{
 	
-	@Value("${rest.server.url.development}")
-	private String restServerUrlDevelopment;
+	@Autowired
+	private Environment env;
+	
+//	@Value("${rest.server.url.development}")
+//	private String restServerUrlDevelopment;
 	
 	@Value("${rest.server.url.production}")
 	private String restServerUrlProduction;
@@ -70,6 +75,10 @@ public class ReleasePlannerRest{
 	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
 		
 		StringBuilder sb = new StringBuilder();
+		String restServerUrlDevelopment = env.getProperty("rest.server.url.development");
+		log.debug("[" + restServerUrlDevelopment+ "]");
+		sb.append("[" + restServerUrlDevelopment+ "]");
+		
 		
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		if(runtimeMxBean != null){
@@ -261,17 +270,18 @@ public class ReleasePlannerRest{
 	private String getRightUrl(HttpServletRequest request, String tenant){
 		
 		
-		String restController = restServerUrlDevelopment;
+		//String restControllerURL = restServerUrlDevelopment;
+		String restControllerURL = env.getProperty("rest.server.url.development");
 		String supersedeIfProperties = System.getProperty("supersede.if.properties");
 				
 		if(supersedeIfProperties != null && "if.production.properties".equals(supersedeIfProperties)){
 			log.debug("supersede.if.properties " + supersedeIfProperties);
-			restController = restServerUrlProduction;
+			restControllerURL = restServerUrlProduction;
 		}
-		log.debug("restController URL " + restController);
+		log.debug("restController URL " + restControllerURL);
 		
 		//append host
-		StringBuilder sb = new StringBuilder(restController);
+		StringBuilder sb = new StringBuilder(restControllerURL);
 		//append uri
 		String uri = request.getRequestURI();
 		//request.getRequestURL();
