@@ -14,22 +14,44 @@
 
 package eu.supersede.rp;
 
+//import org.junit.Test;
+//import org.junit.runner.RunWith;
+//import org.springframework.test.context.web.WebAppConfiguration;
+//
+//import eu.supersede.rp.Application;
+//
+//import org.springframework.boot.test.SpringApplicationConfiguration;
+//import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+//
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@SpringApplicationConfiguration(classes = Application.class)
+//@WebAppConfiguration
+//public class TestGradleWebsecurityApplicationTests {
+//
+//	@Test
+//	public void contextLoads() {
+//	}
+//
+//}
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import eu.supersede.rp.Application;
-
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = Application.class)
-@WebAppConfiguration
-public class TestGradleWebsecurityApplicationTests {
-
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+//@PropertySource("classpath:application.properties")
+public class TestGradleWebsecurityApplicationTests
+{
+//	@Value("${rest.server.url.production}")
+//	private String restServerUrlProduction;
+	
 	@Test
-	public void contextLoads() {
-	}
-
+    public void contextLoads()
+    {
+		//String ciao = restServerUrlProduction;
+		//System.out.println(ciao);
+    }
 }

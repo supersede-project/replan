@@ -14,26 +14,24 @@
 	            <h4>{{messageProject}}</h4>
 	        </div>
 	    </div>
-<!--        	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
-<!-- 			<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
-<!-- 		</a> -->
        <div class="row">
-       	   <h4 ng-show="showProject">{{project.name}}</h4>
-<!--            <h4>{{project.name}} - {{project.id}}</h4> -->
-           <h5 ng-show="showProject">Resources:</h5>
-           <div class="col-xs-10">
-           	<div id="projectJqxgrid"></div>
+       	   <div class="col-xs-12">
+       			<h4 ng-show="showProject">{{project.name}} - {{project.id}}</h4>
+           </div>
+       	   <div class="col-xs-12">
+           		<h5 ng-show="showProject">Resources:</h5>
+           </div>
+       	   <div class="col-xs-10">
+           	<div id="resourcesJqxgrid"></div>
            </div>
            <div class="col-xs-2" ng-show="showProject">
         		  <div class="text-right">
         		   <jqx-button id="addResoureJqxButton" class="my-button2 myHeight2" ng-click="resetFormAddUpdateResouceForm()"><i class="fa fa-plus fa-lg"></i>Add new resource</jqx-button>
         		   <jqx-button id="editResoureJqxButton" class="my-button2 myHeight2 margin-top-5px" ng-click="editFormAddUpdateResouceForm()"><i class="fa fa-pencil fa-lg"></i>Edit resource</jqx-button>
         		   <jqx-button id="removeResoureJqxButton" class="my-button2 myHeight2 margin-top-5px" ng-click="removeResource()"><i class="fa fa-trash fa-lg" aria-hidden="true"></i>Remove resource</jqx-button>
-        		 
-        		   <jqx-button template="submit" class="my-button2 myHeight2 margin-top-15px"><i class="fa fa-pencil fa-lg"></i>Manage topics</jqx-button>
         		  </div>
         	</div>
-            <div class="col-xs-10" ng-show="showAddUpdateResouceForm && showProject">	
+          	<div class="col-xs-10" ng-show="showAddUpdateResouceForm && showProject">	
 		           	<form id="addUpdateResouceForm" name="addUpdateResouceForm" class="form-horizontal margin-top-5px" ng-submit="addUpdateResource()" novalidate>
 					    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : addUpdateResouceForm.resourceName.$error.required && !addUpdateResouceForm.resourceName.$pristine}">
 					      <label class="control-label col-sm-4 my-label" for="resourceName">Resource name:</label>
@@ -66,35 +64,75 @@
 		                    <div class="col-sm-offset-2 col-sm-10">
 		                   		<div class="text-right">
 			                   		<jqx-button type="reset" class="my-button" ng-click="hideAddUpdateResouceForm()">Cancel</jqx-button>
-			                        <jqx-button template="submit" class="my-button myHeight"  ng-disabled="addUpdateResouceForm.$invalid || resourceTopicRequiredBln || resourceAvailabilityRequiredBln">{{typeLabel}}</jqx-button>
+			                        <jqx-button template="submit" class="my-button myHeight"  ng-disabled="addUpdateResouceForm.$invalid || resourceTopicRequiredBln || resourceAvailabilityRequiredBln">{{typeLabelResource}}</jqx-button>
 		                    	</div>
 		                    </div>
 		                </div>
 				    </form>
-		       	</div>
-       		
-        	 	<div class="col-xs-8 margin-top-5px" ng-show="showProject">
-	        		<table>
-						<tr>
-							<td class="padding-bottom-5px">Hours/bin:</td>
-							<td class="padding-bottom-5px">
-				  				<jqx-number-input id="hoursBinInput" class ="myHeight" type="text" ng-model="project.hours_per_effort_unit" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
-				  			</td>
-						</tr>
-						<tr>
-							<td class="padding-bottom-5px">Hours/week of a full-time resources:</td>
-							<td class="padding-bottom-5px">
-								<jqx-number-input id="hoursWeekInput" class ="myHeight" type="text" ng-model="project.hours_per_week_and_full_time_resource" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
-							</td>
-						</tr>
-					</table>
-        		</div>
-	        	<div class="col-xs-12 margin-top-5px" ng-show="showProject">
-	        		  <div class="text-right">
-	        		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
-						<jqx-button template="submit" class="my-button myHeight" ng-click="update()"><i class="fa fa-pencil fa-lg"></i>Modify</jqx-button>
-	        		  </div>
-	        	</div>
+		    </div>
+			<div class="col-xs-12">
+           		<h5 ng-show="showProject">Skills:</h5>
+           	</div>
+           	<div class="col-xs-10">
+           		<jqx-grid id="skillsJqxgrid" jqx-create="createSkillGridWidget" jqx-settings="gridSkillSettings"></jqx-grid>
+           	</div>
+			<div class="col-xs-2" ng-show="showProject">
+        		  <div class="text-right">
+        		   <jqx-button id="addSkillJqxButton" class="my-button2 myHeight2" ng-click="resetFormAddUpdateSkillForm()"><i class="fa fa-plus fa-lg"></i>Add new skill</jqx-button>
+        		   <jqx-button id="editSkillJqxButton" class="my-button2 myHeight2 margin-top-5px" ng-click="editFormAddUpdateSkillForm()"><i class="fa fa-pencil fa-lg"></i>Edit skill</jqx-button>
+        		   <jqx-button id="removeSkillJqxButton" class="my-button2 myHeight2 margin-top-5px" ng-click="removeSkill()"><i class="fa fa-trash fa-lg" aria-hidden="true"></i>Remove skill</jqx-button>
+        		  </div>
         	</div>
+   	        <div class="col-xs-10" ng-show="showAddUpdateSkillForm && showProject">	
+		           	<form id="addUpdateSkillForm" name="addUpdateSkillForm" class="form-horizontal margin-top-5px" ng-submit="addUpdateSkill()" novalidate>
+					    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : addUpdateSkillForm.skillName.$error.required && !addUpdateSkillForm.skillName.$pristine}">
+					      <label class="control-label col-sm-4 my-label" for="skillName">Skill name:</label>
+					      <div class="col-sm-8">
+					        <jqx-input id="skillNameInput" name="skillName" class="form-control myHeightSmall" ng-model="skill.name" required></jqx-input>
+					        <span ng-show="addUpdateSkillForm.skillName.$error.required && !addUpdateSkillForm.skillName.$pristine" class="help-block">Skill name is required.</span>
+					      </div>
+					    </div>
+					    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : addUpdateSkillForm.skillDescription.$error.required && !addUpdateSkillForm.skillDescription.$pristine}">
+					      <label class="control-label col-sm-4 my-label" for="skillDescription">Skill description:</label>
+					      <div class="col-sm-8">
+					        <jqx-input id="skillDescriptionInput" name="skillDescription" class="form-control myHeightSmall" ng-model="skill.description" required></jqx-input>
+					        <span ng-show="addUpdateSkillForm.skillDescription.$error.required && !addUpdateSkillForm.skillDescription.$pristine" class="help-block">Skill description is required.</span>
+					      </div>
+					    </div>
+					     <!-- button -->
+		                <div class="form-group">
+		                    <div class="col-sm-offset-2 col-sm-10">
+		                   		<div class="text-right">
+			                   		<jqx-button type="reset" class="my-button" ng-click="hideAddUpdateSkillForm()">Cancel</jqx-button>
+			                        <jqx-button template="submit" class="my-button myHeight"  ng-disabled="addUpdateSkillForm.$invalid">{{typeLabelSkill}}</jqx-button>
+		                    	</div>
+		                    </div>
+		                </div>
+				    </form>
+		    </div>
+       		
+       	 	<div class="col-xs-8 margin-top-5px" ng-show="showProject">
+        		<table>
+					<tr>
+						<td class="padding-bottom-5px">Hours/bin:</td>
+						<td class="padding-bottom-5px">
+			  				<jqx-number-input id="hoursBinInput" class ="myHeight" type="text" ng-model="project.hours_per_effort_unit" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
+			  			</td>
+					</tr>
+					<tr>
+						<td class="padding-bottom-5px">Hours/week of a full-time resources:</td>
+						<td class="padding-bottom-5px">
+							<jqx-number-input id="hoursWeekInput" class ="myHeight" type="text" ng-model="project.hours_per_week_and_full_time_resource" jqx-input-mode="simple" jqx-text-align="left"/></jqx-number-input>
+						</td>
+					</tr>
+				</table>
+       		</div>
+        	<div class="col-xs-12 margin-top-5px" ng-show="showProject">
+        		  <div class="text-right">
+        		    <jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
+					<jqx-button template="submit" class="my-button myHeight" ng-click="update()"><i class="fa fa-pencil fa-lg"></i>Modify</jqx-button>
+        		  </div>
+        	</div>
+       </div>
      </div>
 </div>

@@ -5,7 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +32,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -34,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import eu.supersede.fe.security.DatabaseUser;
+
 /**
  * The ReleasePlannerRest invoke the rest API service provides by Ruby on Rails
  * 
@@ -43,10 +52,17 @@ import eu.supersede.fe.security.DatabaseUser;
  */
 @RestController
 @RequestMapping("/replan/projects")
+@PropertySource("classpath:release_planner_app.properties")
 public class ReleasePlannerRest{
 	
-	@Value("${rest.server.url}")
-	private String restServerUrl;
+//	@Autowired
+//	private Environment env;
+	
+	@Value("${rest.server.url.development}")
+	private String restServerUrlDevelopment;
+	
+	@Value("${rest.server.url.production}")
+	private String restServerUrlProduction;
 	
 	@Value("${rest.server.proxy}")
 	private String restServerProxy;
@@ -58,13 +74,53 @@ public class ReleasePlannerRest{
 	
 	@RequestMapping(value = "/hello", method = {RequestMethod.GET})
 	public String  hello (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-		 return "hello from Release Planner Rest Controller"; 
+		
+		StringBuilder sb = new StringBuilder();
+		
+		log.debug("[" + restServerUrlDevelopment+ "]");
+		sb.append("[" + restServerUrlDevelopment+ "]");
+		
+		
+		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+		if(runtimeMxBean != null){
+			List<String> arguments = runtimeMxBean.getInputArguments();
+			if(arguments != null){
+				log.debug(" ------ JVM arguments ------");
+				sb.append(" ------ JVM arguments ------");
+				sb.append("\n");
+				for (String arg : arguments) {
+					log.debug("[" + arg+ "]");
+					sb.append("[" + arg+ "]");
+					sb.append("\n");
+				}
+				log.debug(" ------ -- ------");
+				sb.append(" ------ -- ------");
+				sb.append("\n");
+			}
+		}
+		
+		Map<String, String> envMap = System.getenv();
+		SortedMap<String, String> sortedEnvMap = new TreeMap<String, String>(envMap);
+		//Set<String> keySet = sortedEnvMap.keySet();
+		log.debug(" ------ SYSTEM variables ------");
+		sb.append(" ------ SYSTEM variables ------");
+		sb.append("\n");
+		for (Entry<String, String> entry : sortedEnvMap.entrySet()) {
+			
+			log.debug("[" +  entry.getKey() + "] " +  entry.getValue());
+			sb.append("[" +  entry.getKey() + "] " +  entry.getValue());
+			sb.append("\n");
+		}
+		log.debug(" ------ -- ------");
+		sb.append(" ------ -- ------");
+		sb.append("\n");
+		
+		return sb.toString(); 
 	}
 
 	@RequestMapping(value = "/tenant/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
-	
-			
+		
 		CloseableHttpResponse response = null;
 		
 		int code = 500;
@@ -126,6 +182,7 @@ public class ReleasePlannerRest{
 				String body = getBodyRequest(request);
 				StringEntity bodyStringEntity = new StringEntity(body);
 				httpPost.setEntity(bodyStringEntity);
+				log.debug("body: " + body);
 				
 				//execute
 				response = httpclient.execute(httpPost);
@@ -148,6 +205,7 @@ public class ReleasePlannerRest{
 				String body = getBodyRequest(request);
 				StringEntity bodyStringEntity = new StringEntity(body);
 				httpPut.setEntity(bodyStringEntity);
+				log.debug("body: " + body);
 				
 				//execute
 				response = httpclient.execute(httpPut);
@@ -155,11 +213,13 @@ public class ReleasePlannerRest{
 			else if("DELETE".equals(request.getMethod())){
 				//create
 				HttpDelete httpDelete = new HttpDelete(getRightUrl(request, tenantId));
+				
 				//execute
 				response = httpclient.execute(httpDelete);			
 			}
 			else{
-				return new ResponseEntity<> ("request method  not implemented", org.springframework.http.HttpStatus.NOT_IMPLEMENTED);
+				log.debug("Reponse code: " + HttpStatus.NOT_IMPLEMENTED.toString());
+				return new ResponseEntity<> ("request method  not implemented", HttpStatus.NOT_IMPLEMENTED);
 			} 
 			
 			if(response != null && response.getStatusLine() != null){
@@ -183,6 +243,7 @@ public class ReleasePlannerRest{
 						{
 					IOUtils.copyLarge(inputStream, outputStream);
 						}
+				log.debug("Reponse code: " + HttpStatus.OK.toString());
 				return new ResponseEntity<>(HttpStatus.OK);
 
 
@@ -204,12 +265,50 @@ public class ReleasePlannerRest{
 		}
 	}
 	
+//	public static void main(String[] args) {
+//		String blabla= "-Dsupersede.if.properties=if.production.properties";
+//		if(blabla.contains("Dsupersede.if.properties")){
+//			String splitted [] = blabla.split("=");
+//			String supersedeIfProperties = splitted[1];
+//			if("if.production.properties".equals(supersedeIfProperties)){
+//				System.out.println(splitted.length);
+//			}
+//				
+//		}
+//		
+//		
+//	}
 	//help methods
 	
 	//help methods
 	private String getRightUrl(HttpServletRequest request, String tenant){
+		
+		
+		String restControllerURL = restServerUrlDevelopment;
+		//String restControllerURL = env.getProperty("rest.server.url.development");
+		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
+		List<String> arguments = runtimeMxBean.getInputArguments();
+		//String supersedeIfProperties = System.getProperty("supersede.if.properties");
+		String supersedeIfProperties = "";
+		
+		for (String arg : arguments) {
+			if(arg.contains("Dsupersede.if.properties")){
+				String splitted [] = arg.split("=");
+				if(splitted.length >= 2){
+					supersedeIfProperties = splitted[1];
+					break;
+				}
+			}
+		}
+				
+		if(supersedeIfProperties != null && "if.production.properties".equals(supersedeIfProperties)){
+			log.debug("supersede.if.properties " + supersedeIfProperties);
+			restControllerURL = restServerUrlProduction;
+		}
+		log.debug("restController URL " + restControllerURL);
+		
 		//append host
-		StringBuilder sb = new StringBuilder(restServerUrl);
+		StringBuilder sb = new StringBuilder(restControllerURL);
 		//append uri
 		String uri = request.getRequestURI();
 		//request.getRequestURL();
@@ -230,7 +329,7 @@ public class ReleasePlannerRest{
 		}
 		
 		String replaced = sb.toString().replace("tenant", tenant);
-		 
+		log.debug("method: " + request.getMethod()); 
 		log.debug("replaced url: " + replaced);
 		 
 		 return replaced;

@@ -81,7 +81,49 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			data: dataObj
 		});	
 	};
+	
+	
+	$scope.deleteSkillsFromFeature = function (featureId, skillIdsToRemove){
 
+		var url =  baseURL + '/features/'+ featureId + '/skills';
+		for(var i=0 ; i< skillIdsToRemove.length; i++){
+			if(i == 0){
+				url = url + "?skill_id[]=" + skillIdsToRemove[i];
+			}
+			else{
+				url = url + "&skill_id[]=" + skillIdsToRemove[i];
+			}
+		}  
+
+		return $http({
+			method: 'DELETE',
+			url: url
+		});
+	};
+	
+	$scope.addSkillsToFeature = function (featureId, skillIdsToAdd){
+
+		var arr = [];
+		for(var i = 0 ; i< skillIdsToAdd.length; i++){
+			var skillIdObj = {};
+			skillIdObj["skill_id"] = skillIdsToAdd[i];
+			arr.push(skillIdObj);
+		}
+
+		var dataObj = {};
+		dataObj["_json"] = arr;
+
+		return $http({
+			method: 'POST',
+			url: baseURL + '/features/'+ featureId + '/skills',
+			headers: {"Content-Type": "application/json;charset=UTF-8"},
+			data: dataObj
+		});	
+	};
+	
+	
+	
+	
 	//ok
 	//add feature to release
 	$scope.addFeatureToRelease = function (releaseId, featureId){
@@ -194,7 +236,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			displayMember: "name",
 			valueMember: "id",
 			checkboxes: true,
-			enableSelection: false,
+			//enableSelection: false,
 			width: '93%',
 			height: '15',
 			source: $scope.dataAdapterSkillDropDownList
@@ -215,11 +257,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 
 	});
 	
-	
-   
     $("#skill").on('checkChange', function (event){
-    		   
-    
     	var items = $("#skill").jqxDropDownList('getCheckedItems'); 
         if(items.length == 0){
         	$scope.skillRequired = 'has-error';
@@ -369,7 +407,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				'</div>');
 			}
 			$("#successOk").jqxInput({ height: 25});
-			$("#successOk").on('click', function (){
+			$("#successOk").one('click', function (){
 				$("#successWindow").jqxWindow('close');
 				$location.path("/release-planner-app/release_details");
 			});
@@ -403,29 +441,33 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				'</div>');
 			}
 			$("#delayOk").jqxInput({ height: 25});
-			$("#delayOk").on('click', function (){
-				//appendReplaneWindows("success", "Re-plan success.");
+			$scope.update = false;
+			$("#delayOk").one('click', function (){
+
+				//console.log("update " + new Date());
 				$("#delayWindow").jqxWindow('close');
+				appendReplaneWindows("success", "Re-plan success.");
+	
+					//1.update feature
+					//2.remove all dependencies
+					//3.add dependencies
+					//4.add features to release	
+	
+					//update feature only name, description, effort, deadline, priority
+					$scope.updateFeature($scope.feature)
+					.then(
+							function(response) {
+								addRemoveSkills();
+							},
+							function(response) {
+								appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+							}
+					);
+			
 
-				//1.update feature
-				//2.remove all dependencies
-				//3.add dependencies
-				//4.add features to release	
-
-				//update feature only name, description, effort, deadline, priority
-				$scope.updateFeature($scope.feature)
-				.then(
-						function(response) {
-							
-							internalUpdate();
-						},
-						function(response) {
-							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-						}
-				);
 			});
 			$("#delayCancel").jqxInput({ height: 25});
-			$("#delayCancel").on('click', function (){
+			$("#delayCancel").one('click', function (){
 				$("#delayWindow").jqxWindow('close');
 			});
 			var delayWindow = $('#delayWindow');
@@ -457,7 +499,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				'</div>');
 			}
 			$("#omittedOk").jqxInput({ height: 25});
-			$("#omittedOk").on('click', function (){
+			$("#omittedOk").one('click', function (){
 				$("#omittedWindow").jqxWindow('close');
 				//1.update feature
 				//2.remove all dependencies
@@ -468,8 +510,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				$scope.updateFeature($scope.feature)
 				.then(
 						function(response) {
-							
-							internalUpdate();
+							addRemoveSkills();
 						
 						},
 						function(response) {
@@ -478,7 +519,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				);
 			});
 			$("#omittedCancel").jqxInput({ height: 25});
-			$("#omittedCancel").on('click', function (){
+			$("#omittedCancel").one('click', function (){
 				$("#omittedWindow").jqxWindow('close');
 			});
 			var omittedWindow = $('#omittedWindow');
@@ -509,7 +550,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		}
 
 		$("#defaultCancel").jqxInput({ height: 25});
-		$("#defaultCancel").on('click', function (){
+		$("#defaultCancel").one('click', function (){
 			$("#defaultWindow").jqxWindow('close');
 		});
 		var defaultWindow = $('#defaultWindow');
@@ -545,7 +586,8 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			$scope.arrayFeatureDepend_on_to_remove[i] = items[i].value;
 		}
 		
-		$scope.arraySkill_to_add = []; 
+		$scope.arraySkill_to_add = [];
+		var items = $("#skill").jqxDropDownList('getCheckedItems');
 		for(var i = 0; i< items.length ; i++){
 			$scope.arraySkill_to_add[i] = items[i].value;
 		}
@@ -581,7 +623,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			$scope.updateFeature($scope.feature)
 			.then(
 					function(response) {
-						internalUpdate();
+						addRemoveSkills();
 					},
 					function(response) {
 						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -590,6 +632,100 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		}
 	}
 
+	function addRemoveSkills(){
+		
+		/*
+		 *  remove all skills
+		 *	add skills
+		 *	call internalUpdate
+		 *
+		 */
+		$scope.deleteSkillsFromFeature($scope.feature.id, $scope.arraySkill_to_remove)
+		.then(
+				function(response) {
+					if($scope.arraySkill_to_add.length >0){
+						
+						$scope.addSkillsToFeature($scope.feature.id, $scope.arraySkill_to_add)
+						.then(
+								function(response) {
+									internalUpdate();
+								},
+								function(response) {
+									appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+								}
+						);
+					}else{
+						internalUpdate();
+					}
+				
+				},
+				function(response) {
+					appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+				}
+		);
+		
+		
+		
+//		//remove all skills
+//		if($scope.arraySkill_to_remove.length >0){
+//			
+//			/*
+//			 *  remove all skills
+//			 *	add skills
+//			 *	call internalUpdate
+//			 *
+//			 */
+//			$scope.deleteSkillsFromFeature($scope.feature.id, $scope.arraySkill_to_remove)
+//			.then(
+//					function(response) {
+//						if($scope.arraySkill_to_add.length >0){
+//							
+//							$scope.addSkillsToFeature($scope.feature.id, $scope.arraySkill_to_add)
+//							.then(
+//									function(response) {
+//										internalUpdate();
+//									},
+//									function(response) {
+//										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+//									}
+//							);
+//						}else{
+//							internalUpdate();
+//						}
+//					
+//					},
+//					function(response) {
+//						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+//					}
+//			);
+//			
+//		}
+//		/*
+//		 *  
+//		 *	add skills
+//		 *	call internalUpdate
+//		 *
+//		 */
+//		//add skills
+//		else if($scope.arraySkill_to_add.length >0){
+//
+//			$scope.addSkillsToFeature($scope.feature.id, $scope.arraySkill_to_add)
+//			.then(
+//					function(response) {
+//						internalUpdate();
+//					},
+//					function(response) {
+//						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+//					}
+//			);
+//		}
+//		else{
+//			internalUpdate();
+//		}
+		
+		
+	}
+	
 	function internalUpdate(){
 		
 		if($scope.arrayFeatureDepend_on_to_remove.length >0){
@@ -611,7 +747,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 							.then(
 									function(response) {
 										//add feature to release
-										//appendReplaneWindows("success", "Re-plan success.");
 										$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 										.then(
 												function(response) {
@@ -628,7 +763,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 							);
 						}else{
 							//add feature to release
-							//appendReplaneWindows("success", "Re-plan success.");
 							$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 							.then(
 									function(response) {
@@ -721,6 +855,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
 		return strDate;
 	}
+	
 	function getStringSUPERSEDEDateNow(){
 
 		var date = new Date();
