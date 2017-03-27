@@ -382,7 +382,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				if (!hasSkill) {
                     violatedConstraints++;
                     overall -= 1.0;
-					break;
 				}
 			}
 		}
