@@ -275,7 +275,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				}
 			}
 
-			// TODO: Check that the employee has the required skills
 				
 			// Checks the employee availability
 			Employee currentEmployee = currentPlannedFeature.getEmployee();
@@ -366,7 +365,28 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			violatedConstraints++;
 			overall -= 1.0;
 		}
-		
+
+
+		// Check if the employees assigned to the planned features have the required skills
+		for (PlannedFeature plannedFeature : solution.getPlannedFeatures()) {
+			List<Skill> featureSkills = plannedFeature.getFeature().getRequiredSkills();
+			List<Skill> employeeSkills = plannedFeature.getEmployee().getSkills();
+			for (Skill featureSkill : featureSkills) {
+				boolean hasSkill = false;
+				for (Skill employeeSkill : employeeSkills) {
+					if (featureSkill.equals(employeeSkill)) {
+						hasSkill = true;
+						break;
+					}
+				}
+				if (!hasSkill) {
+                    violatedConstraints++;
+                    overall -= 1.0;
+					break;
+				}
+			}
+		}
+
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);
 		overallConstraintViolation.setAttribute(solution, overall);
 		if (violatedConstraints > 0) {
