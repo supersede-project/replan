@@ -3,22 +3,17 @@
  */
 package logic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import entities.*;
+import entities.parameters.IterationParameters;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
-import entities.Employee;
-import entities.PlannedFeature;
-import entities.EmployeeWeekAvailability;
-import entities.Skill;
-import entities.Feature;
-import entities.parameters.IterationParameters;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vavou
@@ -279,6 +274,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 				}
 			}
+
+			// TODO: Check that the employee has the required skills
 				
 			// Checks the employee availability
 			Employee currentEmployee = currentPlannedFeature.getEmployee();
