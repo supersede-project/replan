@@ -24,7 +24,7 @@ public class SolverNRPTest {
     }
 
     /**
-     *  - Situation: There is a Release with only one Feature that requires two Skills and
+     *  - Situation: We need to plan only one Feature that requires two Skills and we have
      * a Resource that only has one of them.
      *  - Expected: The generated solution should not have any PlannedFeature.
      */
@@ -36,19 +36,15 @@ public class SolverNRPTest {
         List<Skill> featureSkills = new ArrayList<>();
         featureSkills.add(commonSkill);
         featureSkills.add(nonCommonSkill);
-
         List<Feature> features = Arrays.asList(
                 new Feature("Test Feature", PriorityLevel.FIVE, 100.0, null, featureSkills)
         );
 
-
         List<Skill> employeeSkills = new ArrayList<>();
         employeeSkills.add(commonSkill);
-
         List<Employee> employees = Arrays.asList(
                 new Employee("Test Employee", 40.0, employeeSkills)
         );
-
 
         PlanningSolution solution = this.solver.executeNRP(3, 40.0, features, employees);
 
