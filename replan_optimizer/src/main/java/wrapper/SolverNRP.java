@@ -32,6 +32,10 @@ public class SolverNRP {
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
+        /*
+            The generated solution might violate constraints in case the solver does not find a better one.
+            In that case, the planning is invalid and should be cleared.
+        */
         NumberOfViolatedConstraints<logic.PlanningSolution> numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
         if (numberOfViolatedConstraints.getAttribute(solution) > 0) {
             solution.getEmployeesPlanning().clear();
