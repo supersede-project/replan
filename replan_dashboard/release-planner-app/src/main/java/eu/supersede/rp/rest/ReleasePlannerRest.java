@@ -117,6 +117,148 @@ public class ReleasePlannerRest{
 		
 		return sb.toString(); 
 	}
+	
+
+	@RequestMapping(value = "/dev", method = {RequestMethod.GET})
+	public ResponseEntity<?>  dev (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+		int code = 500;
+		
+		CloseableHttpResponse response = null;
+		
+		try {
+			
+			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+			requestBuilder = requestBuilder.setConnectTimeout(60 * 1000);
+			requestBuilder = requestBuilder.setConnectionRequestTimeout(60 * 1000);
+			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
+				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
+				requestBuilder = requestBuilder.setProxy(proxy);
+	       }
+		   
+			HttpClientBuilder builder = HttpClientBuilder.create();     
+			builder.setDefaultRequestConfig(requestBuilder.build());
+			CloseableHttpClient httpclient = builder.build();
+			//create
+			HttpGet httpGet = new HttpGet("http://62.14.219.13:8280/replan/projects/siemens/features?status=pending");			
+
+			//execute
+			response = httpclient.execute(httpGet);
+			if(response != null && response.getStatusLine() != null){
+				code = response.getStatusLine().getStatusCode();
+			}
+			
+			if(	code == 200){
+
+				Header[] headers = response.getAllHeaders();
+
+				for (Header header : headers) {
+					if("Content-Type".equals(header.getName())){
+						httpServletResponse.setHeader(header.getName(), header.getValue());
+						continue;
+					}
+				}
+
+				try (InputStream inputStream = response.getEntity().getContent();
+						OutputStream outputStream = httpServletResponse.getOutputStream();
+						)
+						{
+					IOUtils.copyLarge(inputStream, outputStream);
+						}
+				log.debug("Reponse code: " + HttpStatus.OK.toString());
+				return new ResponseEntity<>(HttpStatus.OK);
+
+
+			}
+			else{
+				String bodyResponse = getBodyResponse(response);
+				log.debug("Error "+ code + " in my rest client(body response): " + bodyResponse);
+				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
+			}
+		}catch (Exception e) {
+			log.debug("Error Exception in my rest client: " + e.getMessage());
+			log.error("Error Exception in my rest client", e);
+			return new ResponseEntity<> (e.getMessage(), org.springframework.http.HttpStatus.valueOf(code));
+		} 
+ 		finally {
+			if(response != null){
+				response.close();	
+			}
+		}
+	
+	}
+	
+	
+	
+	
+	@RequestMapping(value = "/production", method = {RequestMethod.GET})
+	public ResponseEntity<?>  production (HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
+		int code = 500;
+		
+		CloseableHttpResponse response = null;
+		
+		try {
+			
+			RequestConfig.Builder requestBuilder = RequestConfig.custom();
+			requestBuilder = requestBuilder.setConnectTimeout(60 * 1000);
+			requestBuilder = requestBuilder.setConnectionRequestTimeout(60 * 1000);
+			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
+				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
+				requestBuilder = requestBuilder.setProxy(proxy);
+	       }
+		   
+			HttpClientBuilder builder = HttpClientBuilder.create();     
+			builder.setDefaultRequestConfig(requestBuilder.build());
+			CloseableHttpClient httpclient = builder.build();
+			//create
+			
+			HttpGet httpGet = new HttpGet("http://platform.supersede.eu:8280/replan/projects/siemens/features?status=pending");			
+
+			//execute
+			response = httpclient.execute(httpGet);
+			if(response != null && response.getStatusLine() != null){
+				code = response.getStatusLine().getStatusCode();
+			}
+			
+			if(	code == 200){
+
+				Header[] headers = response.getAllHeaders();
+
+				for (Header header : headers) {
+					if("Content-Type".equals(header.getName())){
+						httpServletResponse.setHeader(header.getName(), header.getValue());
+						continue;
+					}
+				}
+
+				try (InputStream inputStream = response.getEntity().getContent();
+						OutputStream outputStream = httpServletResponse.getOutputStream();
+						)
+						{
+					IOUtils.copyLarge(inputStream, outputStream);
+						}
+				log.debug("Reponse code: " + HttpStatus.OK.toString());
+				return new ResponseEntity<>(HttpStatus.OK);
+
+
+			}
+			else{
+				String bodyResponse = getBodyResponse(response);
+				log.debug("Error "+ code + " in my rest client(body response): " + bodyResponse);
+				return new ResponseEntity<> (bodyResponse, org.springframework.http.HttpStatus.valueOf(code));
+			}
+		}catch (Exception e) {
+			log.debug("Error Exception in my rest client: " + e.getMessage());
+			log.error("Error Exception in my rest client", e);
+			return new ResponseEntity<> (e.getMessage(), org.springframework.http.HttpStatus.valueOf(code));
+		} 
+ 		finally {
+			if(response != null){
+				response.close();	
+			}
+		}
+	
+	}
+	
 
 	@RequestMapping(value = "/tenant/**", method = {RequestMethod.GET,  RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 	public ResponseEntity<?> get(HttpServletRequest request, HttpServletResponse httpServletResponse) throws IOException {
@@ -144,9 +286,11 @@ public class ReleasePlannerRest{
 				return new ResponseEntity<>("TenantId not found", org.springframework.http.HttpStatus.valueOf(code));
 			}
 			
+			
+			
 			RequestConfig.Builder requestBuilder = RequestConfig.custom();
-			requestBuilder = requestBuilder.setConnectTimeout(10 * 1000);
-			requestBuilder = requestBuilder.setConnectionRequestTimeout(10 * 1000);
+			requestBuilder = requestBuilder.setConnectTimeout(60 * 1000);
+			requestBuilder = requestBuilder.setConnectionRequestTimeout(60 * 1000);
 			if(restServerProxy != null && !restServerProxy.isEmpty() && restServerPort != null && !restServerPort.isEmpty()){
 				HttpHost proxy = new HttpHost(restServerProxy, Integer.parseInt(restServerPort));
 				requestBuilder = requestBuilder.setProxy(proxy);
@@ -155,8 +299,7 @@ public class ReleasePlannerRest{
 			HttpClientBuilder builder = HttpClientBuilder.create();     
 			builder.setDefaultRequestConfig(requestBuilder.build());
 			CloseableHttpClient httpclient = builder.build();
-			
-			
+						
 			if("GET".equals(request.getMethod())){
 				//create
 				HttpGet httpGet = new HttpGet(getRightUrl(request, tenantId));			
@@ -183,6 +326,7 @@ public class ReleasePlannerRest{
 				StringEntity bodyStringEntity = new StringEntity(body);
 				httpPost.setEntity(bodyStringEntity);
 				log.debug("body: " + body);
+				
 				
 				//execute
 				response = httpclient.execute(httpPost);
@@ -334,6 +478,7 @@ public class ReleasePlannerRest{
 		 
 		 return replaced;
 	}
+	
 	public static String getBodyRequest(HttpServletRequest request) throws IOException {
 
 		String body = null;
