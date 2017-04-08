@@ -83,7 +83,7 @@ ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 
       JSON.parse(RestClient.get(uri).body).each do |f|
         nl.features << Feature.find(f["id"])
       end
-      nl.plan.destroy
+      nl.plan.destroy unless nl.plan.nil?
    end
 
 end
