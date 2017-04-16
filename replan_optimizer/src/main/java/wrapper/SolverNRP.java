@@ -18,6 +18,7 @@ import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +29,14 @@ public class SolverNRP {
 
         EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
 
-        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks,hoursPerweek,features,employees);
+
+        // Do not plan the features that have already been finished
+        List<Feature> validFeatures = new ArrayList<>();
+        for (Feature f : features) {
+            if (!f.isStatic()) validFeatures.add(f);
+        }
+
+        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, validFeatures, employees);
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
@@ -45,21 +53,6 @@ public class SolverNRP {
 
         return ee.planningSolution(solution);
     }
-
-    /* Generate a new solution from a previous one */
-    /*public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees ,
-                                       PlanningSolution previousSolution) {
-        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
-
-        // Generate a new problem from the features that haven't started yet
-        List<Feature> validFeatures = new ArrayList<>();
-        for (PlannedFeature feature : previousSolution.getPlannedFeatures()) {
-
-        }
-
-        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek,
-        )
-    }*/
 
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 

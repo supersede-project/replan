@@ -17,6 +17,11 @@ public class Feature {
 	 * The deadline of the feature
 	 */
 	private LocalDateTime deadline;
+
+    /**
+     * A static feature will NOT be planned, such as one whose deadline has already passed.
+     */
+	private boolean isStatic;
 	
 	/**
 	 * The name of the feature
@@ -87,6 +92,14 @@ public class Feature {
 	public List<Skill> getRequiredSkills() {
 		return requiredSkills;
 	}
+
+    /**
+     * @return a boolean indicating wether the feature is static. A static feature will NOT be planned, such as one whose deadline has already passed.
+     */
+    public boolean isStatic() { return isStatic; }
+
+    public void setStatic(boolean b) { isStatic = b; }
+
 	
 	
 	/* --- Constructors --- */
@@ -105,6 +118,7 @@ public class Feature {
 		this.duration = duration;
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
+		isStatic = false;
 	}
 
 
@@ -123,6 +137,8 @@ public class Feature {
         this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
         this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
         this.deadline = deadline;
+
+        isStatic = deadline.isBefore(LocalDateTime.now()); // TODO: Most likely use UTC time for the comparison
     }
 
 	
@@ -141,6 +157,7 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = new ArrayList<>();
 		requiredSkills.add(requiredSkill);
+		isStatic = false;
 	}
 	
 	@Override
