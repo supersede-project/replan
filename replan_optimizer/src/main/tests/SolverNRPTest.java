@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import wrapper.SolverNRP;
+import wrapper.parser.Transform2SwaggerModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,5 +50,31 @@ public class SolverNRPTest {
         PlanningSolution solution = this.solver.executeNRP(3, 40.0, features, employees);
 
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
+    }
+
+    /*
+        Not an actual test, just checking out some things
+     */
+    @Test
+    public void validPlan() {
+        Skill s1 = new Skill("Skill 1");
+        Skill s2 = new Skill("Skill 2");
+
+        List<Skill> skills = new ArrayList<>();
+        skills.add(s1); skills.add(s1);
+        List<Feature> features = Arrays.asList(
+                new Feature("Test Feature", PriorityLevel.FIVE, 100.0, null, skills)
+        );
+
+        List<Employee> employees = Arrays.asList(
+                new Employee("Test Employee", 40.0, skills)
+        );
+
+        PlanningSolution solution = this.solver.executeNRP(3, 40.0, features, employees);
+
+        Transform2SwaggerModel ts = new Transform2SwaggerModel();
+        io.swagger.model.PlanningSolution s = ts.transformPlanningSolution2Swagger(solution);
+
+        Assert.assertFalse(solution.getPlannedFeatures().isEmpty());
     }
 }

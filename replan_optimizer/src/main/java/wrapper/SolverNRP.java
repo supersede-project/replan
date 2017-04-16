@@ -46,6 +46,21 @@ public class SolverNRP {
         return ee.planningSolution(solution);
     }
 
+    /* Generate a new solution from a previous one */
+    /*public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees ,
+                                       PlanningSolution previousSolution) {
+        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
+
+        // Generate a new problem from the features that haven't started yet
+        List<Feature> validFeatures = new ArrayList<>();
+        for (PlannedFeature feature : previousSolution.getPlannedFeatures()) {
+
+        }
+
+        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek,
+        )
+    }*/
+
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 
         Algorithm<List<PlanningSolution>> algorithm;
@@ -72,5 +87,7 @@ public class SolverNRP {
 
         return bestSolutions.iterator().next();
     }
+
+
 
 }

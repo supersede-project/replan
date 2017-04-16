@@ -1,5 +1,6 @@
 package entities;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,11 @@ import java.util.List;
 public class Feature {
 
 	/* --- Atributes --- */
+
+	/**
+	 * The deadline of the feature
+	 */
+	private LocalDateTime deadline;
 	
 	/**
 	 * The name of the feature
@@ -39,7 +45,14 @@ public class Feature {
 
 	
 	/* --- Getters and setters --- */
-	
+
+    /**
+     * @return the deadline of the feature
+     */
+    public LocalDateTime getDeadline() {
+        return deadline;
+    }
+
 	/**
 	 * @return the name of the feature
 	 */
@@ -93,6 +106,25 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
 	}
+
+
+    /**
+     * Constructs a feature with a deadline
+     * @param name the name of the feature
+     * @param priority the priority of the feature
+     * @param duration the duration of the feature
+     * @param previousFeatures the list of the previous features or null
+     * @param requiredSkills the required skills to do this feature
+     */
+    public Feature(String name, PriorityLevel priority, Double duration, List<Feature> previousFeatures, List<Skill> requiredSkills, LocalDateTime deadline) {
+        this.name = name;
+        this.priority = priority;
+        this.duration = duration;
+        this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
+        this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
+        this.deadline = deadline;
+    }
+
 	
 	/**
 	 * Constructor with only one Skill

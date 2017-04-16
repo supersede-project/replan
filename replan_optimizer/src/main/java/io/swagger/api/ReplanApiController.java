@@ -1,7 +1,7 @@
 package io.swagger.api;
 
 
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiParam;
 import io.swagger.model.NextReleaseProblem;
 import io.swagger.model.PlanningSolution;
 import org.springframework.http.HttpStatus;
@@ -28,6 +28,8 @@ public class ReplanApiController implements ReplanApi {
 
         Transform2NRPEntities te = new Transform2NRPEntities();
         Transform2SwaggerModel ts = new Transform2SwaggerModel();
+
+        // I need the deadlines of each feature
 
         logic.PlanningSolution solution = solver.executeNRP(body.getNbWeeks(),
                                                     body.getHoursPerWeek(),
