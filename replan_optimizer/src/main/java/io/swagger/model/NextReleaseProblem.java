@@ -1,14 +1,10 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.Feature;
-import io.swagger.model.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 
@@ -19,6 +15,10 @@ import java.util.List;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
 
 public class NextReleaseProblem   {
+
+    // This one is not @Generated, actually
+    private PlanningSolution previousPlan;
+
   private Integer nbWeeks = null;
 
   private Double hoursPerWeek = null;
@@ -31,6 +31,19 @@ public class NextReleaseProblem   {
     this.nbWeeks = nbWeeks;
     return this;
   }
+
+
+    // Not @Generated
+    @ApiModelProperty(value = "")
+    public PlanningSolution getPreviousPlan() {
+        return previousPlan;
+    }
+
+    public void setPreviousPlan(PlanningSolution plan) {
+        previousPlan = plan;
+    }
+
+
 
    /**
    * Get nbWeeks

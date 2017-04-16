@@ -18,7 +18,6 @@ import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -29,14 +28,7 @@ public class SolverNRP {
 
         EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
 
-
-        // Do not plan the features that have already been finished
-        List<Feature> validFeatures = new ArrayList<>();
-        for (Feature f : features) {
-            if (!f.isStatic()) validFeatures.add(f);
-        }
-
-        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, validFeatures, employees);
+        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, features, employees);
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 

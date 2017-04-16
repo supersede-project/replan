@@ -1,6 +1,7 @@
 package io.swagger.api;
 
 
+import entities.Feature;
 import io.swagger.annotations.ApiParam;
 import io.swagger.model.NextReleaseProblem;
 import io.swagger.model.PlanningSolution;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import wrapper.SolverNRP;
 import wrapper.parser.Transform2NRPEntities;
 import wrapper.parser.Transform2SwaggerModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
@@ -29,11 +33,16 @@ public class ReplanApiController implements ReplanApi {
         Transform2NRPEntities te = new Transform2NRPEntities();
         Transform2SwaggerModel ts = new Transform2SwaggerModel();
 
-        // I need the deadlines of each feature
+        // Do not plan the features that have already been finished
+        List<Feature> features = new ArrayList<>();
+        for (Feature f : te.FeatureList2Entities(body.getFeatures())) {
+            if (!f.isStatic()) features.add(f);
+        }
+
 
         logic.PlanningSolution solution = solver.executeNRP(body.getNbWeeks(),
                                                     body.getHoursPerWeek(),
-                                                    te.FeatureList2Entities(body.getFeatures()),
+                                                    features,
                                                     te.ListResource2Employee(body.getResources()));
 
 
