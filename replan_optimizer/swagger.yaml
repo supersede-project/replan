@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner. Wrapper of Valentin's Implementation
-  version: "1.0.0"
+  version: "1.1.0"
 # the domain of the service
 host: localhost
 #release-planner-ui-api.herokuapp.com
@@ -94,6 +94,8 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Resource'
+      currentPlan:
+        $ref: '#/definitions/PlanningSolution'
   PlannedFeature:
     type: object
     properties:
@@ -103,6 +105,10 @@ definitions:
       endHour:
         type: number
         format: double
+      frozen:
+        type: boolean
+        default: false
+        description: if true means it cannot be rescheduled
       resource:
         $ref: '#/definitions/Resource'
       feature:
