@@ -9,7 +9,7 @@ Replan tool is **not** intended to substitute the project leader/manager, but to
 
 [![Test Replan!](images/testbtn.png)](http://supersede.es.atos.net:8080/)
 
-User/password: wp_admin/12345
+User/password: Please request by email to David Ameller <dameller@essi.upc.edu>
 
 Replan tool is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
