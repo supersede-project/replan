@@ -27,6 +27,27 @@ public class NextReleaseProblem   {
 
   private List<Resource> resources = new ArrayList<Resource>();
 
+    public NextReleaseProblem() {}
+
+    public NextReleaseProblem(Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Resource> resources) {
+        this.nbWeeks = nbWeeks;
+        this.hoursPerWeek = hoursPerWeek;
+        this.features = features;
+        this.resources = resources;
+        previousPlan = null;
+    }
+
+    public NextReleaseProblem(
+            Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Resource> resources,
+            PlanningSolution previousPlan)
+    {
+        this(nbWeeks, hoursPerWeek, features, resources);
+        this.previousPlan = previousPlan;
+    }
+
+
+
+
   public NextReleaseProblem nbWeeks(Integer nbWeeks) {
     this.nbWeeks = nbWeeks;
     return this;

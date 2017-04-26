@@ -54,6 +54,9 @@ public class Transform2SwaggerModel {
         feature.setDepends_on(FeatureList2Swagger(f.getPreviousFeatures()));
         feature.setRequired_skills(SkillList2Swagger(f.getRequiredSkills()));
 
+        if (f.getDeadline() != null)
+            feature.setDeadline(f.getDeadline());
+
         return feature;
     }
 

@@ -169,6 +169,13 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 
 	/* --- Constructors --- */
+
+	/**
+	 * Empty problem for convenience
+	 */
+	public NextReleaseProblem() {
+		// Nothing here
+	}
 	
 	/**
 	 * Constructor

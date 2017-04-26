@@ -1,9 +1,10 @@
 package wrapper.parser;
 
-import entities.*;
+import entities.Employee;
 import entities.Feature;
+import entities.PriorityLevel;
 import entities.Skill;
-import io.swagger.model.*;
+import io.swagger.model.Resource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,6 +80,7 @@ public class Transform2NRPEntities {
                     SkillList2Entities(f.getRequired_skills()),
                     f.getDeadline());
         }
+        feature.setStatic(f.isStatic());
         return feature;
     }
 
@@ -89,5 +91,4 @@ public class Transform2NRPEntities {
         }
         return featureList;
     }
-
 }

@@ -19,20 +19,19 @@ import java.util.List;
  */
 public class SolverNRPTest {
     private static SolverNRP solver;
+    private static Transform2SwaggerModel ts;
 
 
     /*   -----------------
         | UTILITY METHODS |
          -----------------
      */
-    private Feature randomFeature() {
-        return null;
-    }
 
 
     @BeforeClass
     public static void setUpBeforeClass() {
         solver = new SolverNRP();
+        ts = new Transform2SwaggerModel();
     }
 
     /**

@@ -24,6 +24,14 @@ import java.util.Set;
 
 public class SolverNRP {
 
+    /*
+        TODO: If you have whatever number of features that fit exactly into the available hours it won't plan them.
+        Most likely because of a < where there should be a <=. The problem is caused by hoursPerWeek,
+        not by the employee availability (ex: 120 hours and three features of 40 hours each -> It only plans two of them)
+        ACTUALLY not, the employee availability also causes trouble.
+    */
+
+
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
         EntitiesEvaluator ee = EntitiesEvaluator.getInstance();

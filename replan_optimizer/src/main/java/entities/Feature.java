@@ -100,6 +100,15 @@ public class Feature {
 
     public void setStatic(boolean b) { isStatic = b; }
 
+    /**
+     *
+     * @param f a feature
+     * @return a boolean indicating wether this feature depends on f
+     */
+    public boolean dependsOn(Feature f) {
+        return previousFeatures.contains(f);
+    }
+
 	
 	
 	/* --- Constructors --- */
