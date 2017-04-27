@@ -1,10 +1,11 @@
 class JobSerializer < ActiveModel::Serializer
-  attributes :starts, :ends, :feature, :resource
+  attributes :id, :starts, :ends, :feature, :resource, :depends_on
   
-  def required_skills
+  def depends_on
     object
-      .required_skills
-      .map { |x| SkillSerializer.new(x).as_json }
+      .feature
+      .depends_on
+      .map { |x| SmallJobSerializer.new(x.job).as_json unless x.job.nil? || x.release.nil? || x.release != object.plan.release}.compact
   end
   
   def feature
