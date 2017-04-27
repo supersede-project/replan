@@ -1,6 +1,5 @@
 package entities;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +11,6 @@ import java.util.List;
 public class Feature {
 
 	/* --- Atributes --- */
-
-	/**
-	 * The deadline of the feature
-	 */
-	private LocalDateTime deadline;
-
-    /**
-     * A static feature will NOT be planned, such as one whose deadline has already passed.
-     */
-	private boolean isStatic;
 	
 	/**
 	 * The name of the feature
@@ -50,13 +39,6 @@ public class Feature {
 
 	
 	/* --- Getters and setters --- */
-
-    /**
-     * @return the deadline of the feature
-     */
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
 
 	/**
 	 * @return the name of the feature
@@ -94,13 +76,6 @@ public class Feature {
 	}
 
     /**
-     * @return a boolean indicating wether the feature is static. A static feature will NOT be planned, such as one whose deadline has already passed.
-     */
-    public boolean isStatic() { return isStatic; }
-
-    public void setStatic(boolean b) { isStatic = b; }
-
-    /**
      *
      * @param f a feature
      * @return a boolean indicating wether this feature depends on f
@@ -127,28 +102,7 @@ public class Feature {
 		this.duration = duration;
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
-		isStatic = false;
 	}
-
-
-    /**
-     * Constructs a feature with a deadline
-     * @param name the name of the feature
-     * @param priority the priority of the feature
-     * @param duration the duration of the feature
-     * @param previousFeatures the list of the previous features or null
-     * @param requiredSkills the required skills to do this feature
-     */
-    public Feature(String name, PriorityLevel priority, Double duration, List<Feature> previousFeatures, List<Skill> requiredSkills, LocalDateTime deadline) {
-        this.name = name;
-        this.priority = priority;
-        this.duration = duration;
-        this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
-        this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
-        this.deadline = deadline;
-
-        isStatic = deadline.isBefore(LocalDateTime.now()); // TODO: Most likely use UTC time for the comparison
-    }
 
 	
 	/**
@@ -166,7 +120,6 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = new ArrayList<>();
 		requiredSkills.add(requiredSkill);
-		isStatic = false;
 	}
 	
 	@Override

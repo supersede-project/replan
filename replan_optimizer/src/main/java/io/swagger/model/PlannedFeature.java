@@ -13,6 +13,9 @@ import java.util.Objects;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
 
 public class PlannedFeature   {
+
+  private boolean frozen;
+
   private Double beginHour = null;
 
   private Double endHour = null;
@@ -37,6 +40,16 @@ public class PlannedFeature   {
     this.beginHour = beginHour;
     return this;
   }
+
+  @ApiModelProperty(value = "")
+  public boolean isFrozen() {
+    return frozen;
+  }
+
+  public void setFrozen(boolean frozen) {
+    this.frozen = frozen;
+  }
+
 
    /**
    * Get beginHour

@@ -2,7 +2,6 @@ package io.swagger.model;
 
 import io.swagger.annotations.ApiModelProperty;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,11 +16,6 @@ import java.util.Objects;
 
 public class Feature   {
 
-    /* Some assumptions around here */
-    private LocalDateTime deadline = null;
-
-    private boolean isStatic = false;
-
     private String name = null;
 
     private Double duration = null;
@@ -35,49 +29,18 @@ public class Feature   {
     public Feature() {}
 
     public Feature(String name, Priority priority, Double duration, List<Feature> depends_on,
-                   List<Skill> required_skills, LocalDateTime deadline) {
+                   List<Skill> required_skills) {
         this.name = name;
         this.duration = duration;
         this.priority = priority;
         this.required_skills = required_skills;
         this.depends_on = depends_on;
-        setDeadline(deadline);
     }
-
-
 
 
     public Feature name(String name) {
         this.name = name;
         return this;
-    }
-
-
-    /**
-     * Get deadline
-     * @return deadline
-     **/
-    @ApiModelProperty(value = "")
-    public LocalDateTime getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDateTime deadline) {
-        this.deadline = deadline;
-        isStatic = deadline.isBefore(LocalDateTime.now());
-    }
-
-    /**
-     * Get isStatic
-     * @return isStatic
-     **/
-    @ApiModelProperty(value = "")
-    public boolean isStatic() {
-        return isStatic;
-    }
-
-    public void setStatic(boolean b) {
-        isStatic = b;
     }
 
 

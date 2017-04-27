@@ -99,7 +99,7 @@ public class EntitiesEvaluator {
 
         skills.add(new Skill("null"));
 
-        return new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills, f.getDeadline());
+        return new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills);
     }
 
     public List<Feature> featuresDeleteSkills(List<Feature> features) {

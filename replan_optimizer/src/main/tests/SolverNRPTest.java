@@ -9,7 +9,6 @@ import org.junit.Test;
 import wrapper.SolverNRP;
 import wrapper.parser.Transform2SwaggerModel;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,29 +63,6 @@ public class SolverNRPTest {
 
 
 
-    @Test
-    public void alreadyFinishedFeaturesAreNotPlanned() {
-        Skill s = new Skill("Whatever skill");
-        List<Skill> skills = new ArrayList<>();
-        skills.add(s);
-
-        LocalDateTime now = LocalDateTime.now();
-        Feature f1 = new Feature("Feature 1", PriorityLevel.FIVE, 50.0, null, skills, now.minusDays(7));
-        Feature f2 = new Feature("Feature 2", PriorityLevel.FIVE, 50.0, null, skills, now.plusDays(7));
-
-        List<Employee> employees = Arrays.asList(
-                new Employee("Test Employee", 40.0, skills)
-        );
-
-        List<Feature> features = new ArrayList<>();
-        features.add(f1);
-        features.add(f2);
-
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
-
-        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
-        Assert.assertTrue(solution.getPlannedFeatures().get(0).getFeature().equals(f2));
-    }
 
     /*
         Not an actual test, just checking out some things

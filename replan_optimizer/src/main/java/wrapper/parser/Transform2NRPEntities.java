@@ -66,21 +66,12 @@ public class Transform2NRPEntities {
        // String name, PriorityLevel priority, Double duration, List<Feature> previousFeatures, List< Skill > requiredSkills
         Feature feature = null;
 
-        if (f.getDeadline() == null) {
-            feature = new Feature(f.getName(),
-                    PriorityLevel2Entities(f.getPriority()),
-                    f.getDuration(),
-                    FeatureList2Entities(f.getDepends_on()),
-                    SkillList2Entities(f.getRequired_skills()));
-        } else {
-            feature = new Feature(f.getName(),
-                    PriorityLevel2Entities(f.getPriority()),
-                    f.getDuration(),
-                    FeatureList2Entities(f.getDepends_on()),
-                    SkillList2Entities(f.getRequired_skills()),
-                    f.getDeadline());
-        }
-        feature.setStatic(f.isStatic());
+        feature = new Feature(f.getName(),
+                PriorityLevel2Entities(f.getPriority()),
+                f.getDuration(),
+                FeatureList2Entities(f.getDepends_on()),
+                SkillList2Entities(f.getRequired_skills()));
+
         return feature;
     }
 
