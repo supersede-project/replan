@@ -23,8 +23,8 @@ public class ReplanApiControllerTest {
     @Test
     public void frozenJobsAreNotReplaned() {
         List<Skill> skills = rnd.skillList(7);
-        List<Feature> features = rnd.featureList(4);
-        List<Resource> resources = rnd.resourceList(3);
+        List<Feature> features = rnd.featureList(5);
+        List<Resource> resources = rnd.resourceList(5);
 
         rnd.mix(features, skills, resources);
 

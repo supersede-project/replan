@@ -16,8 +16,8 @@ import java.util.Objects;
 
 public class NextReleaseProblem   {
 
-    // This one is not @Generated, actually
-    private PlanningSolution previousPlan;
+  // This one is not @Generated, actually
+  private PlanningSolution previousPlan;
 
   private Integer nbWeeks = null;
 

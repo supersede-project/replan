@@ -31,6 +31,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	 * Generated Id
 	 */
 	private static final long serialVersionUID = 3302475694747789178L;
+
+
+	private PlanningSolution previousSolution;
 	
 	/**
 	 * Features available for the iteration
@@ -100,6 +103,14 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	
 	
 	/* --- Getters and setters --- */
+
+	public PlanningSolution getPreviousSolution() {
+		return previousSolution;
+	}
+
+	public void setPreviousSolution(PlanningSolution previousSolution) {
+		this.previousSolution = previousSolution;
+	}
 
 	/**
 	 * @return the features
@@ -172,6 +183,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	/**
 	 * Empty problem for convenience
+	 * Edit: Not happening. It is accessed everywhere and will cause a shitton of NullPointerException
 	 */
 	public NextReleaseProblem() {
 		// Nothing here
@@ -220,6 +232,18 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		overallConstraintViolation = new OverallConstraintViolation<>();
 		solutionQuality = new SolutionQuality();
 	}
+
+	/**
+	 * Constructor
+	 * @param features features of the iteration
+	 * @param employees employees available during the iteration
+	 * @param iterationParam The parameters of the iteration
+	 * @param iterationParam a previously generated solution for this problem
+	 */
+	public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam, PlanningSolution previousSolution) {
+		this(features, employees, iterationParam);
+		this.previousSolution = previousSolution;
+	}
 	
 	
 	/* --- Methods --- */
@@ -260,6 +284,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public PlanningSolution createSolution() {
 		return new PlanningSolution(this);
 	}
+
 
 	@Override
 	public void evaluate(PlanningSolution solution) {
@@ -389,6 +414,16 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				if (!hasSkill) {
                     violatedConstraints++;
                     overall -= 1.0;
+				}
+			}
+		}
+
+		// Frozen jobs constraint
+		if (previousSolution != null) {
+			for (PlannedFeature pf : previousSolution.getPlannedFeatures()) {
+				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {
+					violatedConstraints++;
+					overall -= 1.0;
 				}
 			}
 		}

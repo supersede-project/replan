@@ -5,6 +5,8 @@ import entities.Feature;
 import entities.PriorityLevel;
 import entities.Skill;
 import io.swagger.model.Resource;
+import logic.NextReleaseProblem;
+import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,5 +83,22 @@ public class Transform2NRPEntities {
             featureList.add(Feature2Entities(f));
         }
         return featureList;
+    }
+
+    public PlanningSolution planningSolutionToEntity(io.swagger.model.PlanningSolution swaggerSolution, NextReleaseProblem problem) {
+        List<entities.PlannedFeature> plannedFeatures = new ArrayList<>();
+        for (io.swagger.model.PlannedFeature pf : swaggerSolution.getJobs()) {
+            entities.PlannedFeature newPf = new entities.PlannedFeature(
+                    Feature2Entities(pf.getFeature()),
+                    Resource2Employee(pf.getResource())
+            );
+            newPf.setBeginHour(pf.getBeginHour());
+            newPf.setEndHour(pf.getEndHour());
+            newPf.setFrozen(pf.isFrozen());
+
+            plannedFeatures.add(newPf);
+        }
+
+        return new PlanningSolution(problem, plannedFeatures);
     }
 }

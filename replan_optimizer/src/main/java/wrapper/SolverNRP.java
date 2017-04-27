@@ -40,18 +40,40 @@ public class SolverNRP {
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
-        /*
-            The generated solution might violate constraints in case the solver does not find a better one.
-            In that case, the planning is invalid and should be cleared.
-        */
+        clearSolutionIfNotValid(solution);
+
+        return ee.planningSolution(solution);
+    }
+
+    // TODO: Things
+    public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
+                                       List<Employee> employees, PlanningSolution previousSolution) {
+        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
+
+
+
+        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, features, employees);
+
+        problem.setPreviousSolution(previousSolution);
+
+        PlanningSolution solution = this.generatePlanningSolution(problem);
+
+        clearSolutionIfNotValid(solution);
+
+        return ee.planningSolution(solution);
+    }
+
+    /*
+        The generated solution might violate constraints in case the solver does not find a better one.
+        In that case, the planning is invalid and should be cleared.
+    */
+    private void clearSolutionIfNotValid(PlanningSolution solution) {
         NumberOfViolatedConstraints<logic.PlanningSolution> numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
         if (numberOfViolatedConstraints.getAttribute(solution) > 0) {
             solution.getEmployeesPlanning().clear();
             for (PlannedFeature plannedFeature : solution.getPlannedFeatures())
                 solution.unschedule(plannedFeature);
         }
-
-        return ee.planningSolution(solution);
     }
 
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {

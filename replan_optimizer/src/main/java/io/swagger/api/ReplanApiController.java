@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import wrapper.EntitiesEvaluator;
 import wrapper.SolverNRP;
 import wrapper.parser.Transform2NRPEntities;
 import wrapper.parser.Transform2SwaggerModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -35,10 +37,24 @@ public class ReplanApiController implements ReplanApi {
 
         List<Feature> features = te.FeatureList2Entities(body.getFeatures());
 
-        logic.PlanningSolution solution = solver.executeNRP(body.getNbWeeks(),
-                                                    body.getHoursPerWeek(),
-                                                    features,
-                                                    te.ListResource2Employee(body.getResources()));
+        logic.PlanningSolution solution;
+
+        if (body.getPreviousPlan() == null) {
+            solution = solver.executeNRP(body.getNbWeeks(),
+                    body.getHoursPerWeek(),
+                    features,
+                    te.ListResource2Employee(body.getResources()));
+        } else {
+            /* Dummy problem to be able to create a logic.PlanningSolution */
+            EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
+            logic.NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(0, 0.0, new ArrayList<>(), new ArrayList<>());
+
+            solution = solver.executeNRP(body.getNbWeeks(),
+                    body.getHoursPerWeek(),
+                    features,
+                    te.ListResource2Employee(body.getResources()),
+                    te.planningSolutionToEntity(body.getPreviousPlan(), problem));
+        }
 
 
         PlanningSolution s = ts.transformPlanningSolution2Swagger(solution);
