@@ -1,5 +1,6 @@
 class Plan < ApplicationRecord
   belongs_to :release
+  has_one :plan
   has_many :jobs, :dependent => :destroy
   
   def self.get_plan(release)
