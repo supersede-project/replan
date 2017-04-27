@@ -382,6 +382,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 		
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
+			if (currentFeature.isFrozen()) continue; 	/* Ignore precedences if the feature is frozen */
+
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour()) {

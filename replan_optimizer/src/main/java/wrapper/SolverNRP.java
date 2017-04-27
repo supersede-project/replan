@@ -45,7 +45,6 @@ public class SolverNRP {
         return ee.planningSolution(solution);
     }
 
-    // TODO: Things
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
                                        List<Employee> employees, PlanningSolution previousSolution) {
         EntitiesEvaluator ee = EntitiesEvaluator.getInstance();

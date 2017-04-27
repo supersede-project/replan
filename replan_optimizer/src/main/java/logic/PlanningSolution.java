@@ -155,7 +155,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		undoneFeatures.addAll(problem.getFeatures());
 		this.plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
 		for (PlannedFeature plannedFeature : plannedFeatures) {
-			scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
+			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
 		}
 	    initializeObjectiveValues();
 	}

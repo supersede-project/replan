@@ -63,6 +63,8 @@ public class RandomSwaggerThings {
     }
 
     public void freeze(PlanningSolution solution) {
+        if (solution.getJobs().size() == 0) return;
+
         int frozenPfs = 0;
         for (PlannedFeature pf : solution.getJobs()) {
             if (shouldMutate()) {

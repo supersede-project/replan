@@ -35,6 +35,11 @@ public class ReplanApiControllerTest {
         problem.setPreviousPlan(s1);
         PlanningSolution s2 = apiController.replan(problem).getBody();
 
-        Assert.assertTrue(true);
+
+        for (PlannedFeature pf : s1.getJobs()) {
+            if (pf.isFrozen()) {
+                Assert.assertTrue(s2.getJobs().contains(pf));
+            }
+        }
     }
 }
