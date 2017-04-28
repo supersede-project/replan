@@ -9,7 +9,7 @@ class Release < ApplicationRecord
   validate :start_must_be_before_deadline
   
   def deprecate_plan
-    self.plan.deprecate if !self.plan.nil?
+    self.plan.deprecate unless self.plan.nil?
   end
   
   private

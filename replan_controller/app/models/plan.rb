@@ -22,4 +22,10 @@ class Plan < ApplicationRecord
   def deprecated?
     self.created_at != self.updated_at
   end
+  
+  def cancel
+    self.release.plan = self.release.plan.prev_plan
+    self.release.save
+    self.destroy
+  end
 end

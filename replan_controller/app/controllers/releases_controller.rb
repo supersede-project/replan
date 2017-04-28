@@ -33,7 +33,7 @@ class ReleasesController < ApplicationController
 
   def cancel_last_release_plan
     # Your code here
-    @release.plan.destroy
+    @release.plan.cancel unless @release.plan.nil?
     render json: {"message" => "Plan deleted"}
   end
 
@@ -44,6 +44,7 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
+    @release.deprecate_plan unless params[:force_new].nil? || params[:force_new] != "true"
     @plan = Plan.get_plan(@release)
     render json: @plan
   end

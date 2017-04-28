@@ -820,6 +820,11 @@ paths:
           format: int64
           description: ID of the realese
           required: true
+        - name: force_new
+          in: query
+          type: boolean
+          description: If true a new plan is created
+          required: false
       tags:
         - Releases
         - Plan
