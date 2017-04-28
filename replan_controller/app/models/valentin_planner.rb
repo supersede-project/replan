@@ -40,7 +40,7 @@ class ValentinPlanner
     
     def self.build_plan(release, vjobs)
       p_plan = release.plan
-      plan = Plan.create(release: release, plan: p_plan)
+      release.create_plan(prev_plan: p_plan)
       vjobs.each do |j|
         Job.create(starts: j["beginHour"].to_i.business_hours.after(release.starts_at), 
                    ends: j["endHour"].to_i.business_hours.after(release.starts_at),

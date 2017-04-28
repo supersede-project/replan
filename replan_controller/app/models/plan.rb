@@ -1,6 +1,6 @@
 class Plan < ApplicationRecord
-  belongs_to :release
-  has_one :plan
+  has_one :release
+  belongs_to :prev_plan, class_name: "Plan", foreign_key: "plan_id", optional: true
   has_many :jobs, :dependent => :destroy
   
   def self.get_plan(release)
