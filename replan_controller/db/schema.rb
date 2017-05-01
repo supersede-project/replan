@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170428111653) do
+ActiveRecord::Schema.define(version: 20170427141239) do
 
   create_table "dependencies", id: false, force: :cascade do |t|
     t.integer "feature_id"
@@ -53,10 +53,12 @@ ActiveRecord::Schema.define(version: 20170428111653) do
   end
 
   create_table "plans", force: :cascade do |t|
+    t.integer  "release_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "plan_id"
     t.index ["plan_id"], name: "index_plans_on_plan_id"
+    t.index ["release_id"], name: "index_plans_on_release_id"
   end
 
   create_table "projects", force: :cascade do |t|
@@ -77,8 +79,6 @@ ActiveRecord::Schema.define(version: 20170428111653) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.datetime "starts_at"
-    t.integer  "plan_id"
-    t.index ["plan_id"], name: "index_releases_on_plan_id"
     t.index ["project_id"], name: "index_releases_on_project_id"
   end
 

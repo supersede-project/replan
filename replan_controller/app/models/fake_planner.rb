@@ -4,7 +4,7 @@ class FakePlanner
   def self.plan(release)
     # Your code here
     project = release.project
-    plan = release.create_plan(prev_plan: release.plan)
+    plan = Plan.replan(release)
     date = Date.tomorrow
     release.features.each do |f|
       r = project.resources.order("RANDOM()").limit(1).first
