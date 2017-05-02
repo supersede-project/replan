@@ -15,6 +15,10 @@ public class SolverNRPTest {
     private static RandomThings random;
     private static Validator validator;
 
+    /*   -------------
+        | AUX METHODS |
+         -------------
+     */
     private <T> List<T> asList(T... elements) {
         return Arrays.asList(elements);
     }
@@ -78,7 +82,7 @@ public class SolverNRPTest {
 
         validator.validateDependencies(solution);
     }
-
+    
     @Test
     public void featureDependingOnItselfIsNotPlanned() {
         Skill s1 = random.skill();
