@@ -41,12 +41,8 @@ public class SolverNRPTest {
         validateSkills(solution);
     }
 
-    private List<Feature> featuresToList(Feature... features) {
-        return Arrays.asList(features);
-    }
-
-    private List<Employee> employeesToList(Employee... employees) {
-        return Arrays.asList(employees);
+    private <T> List<T> asList(T... elements) {
+        return Arrays.asList(elements);
     }
 
 
@@ -108,9 +104,6 @@ public class SolverNRPTest {
         validateDependencies(solution);
     }
 
-    /**
-     * ´Features with recursive dependencies should not be planned
-     */
     @Test
     public void featureDependingOnItselfIsNotPlanned() {
         Skill s1 = random.skill();
@@ -123,9 +116,29 @@ public class SolverNRPTest {
 
         f1.getPreviousFeatures().add(f1);
 
-        for (int i = 0; i < 5; ++i) {
-            PlanningSolution solution = solver.executeNRP(3, 40, featuresToList(f1), employeesToList(e1));
-            Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
-        }
+        PlanningSolution solution = solver.executeNRP(3, 40, asList(f1), asList(e1));
+        Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
+    }
+
+    @Test
+    public void featureDependeciesDeadlock() {
+        Skill s1 = random.skill();
+        List<Feature> features = random.featureList(2);
+        List<Employee> employees = random.employeeList(2);
+
+        Feature f0 = features.get(0);
+        Feature f1 = features.get(1);
+
+        f0.getRequiredSkills().add(s1);
+        f1.getRequiredSkills().add(s1);
+
+        employees.get(0).getSkills().add(s1);
+        employees.get(1).getSkills().add(s1);
+
+        f0.getPreviousFeatures().add(f1);
+        f1.getPreviousFeatures().add(f0);
+
+        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 }
