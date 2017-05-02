@@ -382,7 +382,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 		
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
-			if (currentFeature.isFrozen()) continue; 	/* Ignore precedences if the feature is frozen */
+
+			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
+
+			if (	previousSolution != null &&
+					previousSolution.findPlannedFeature(currentFeature.getFeature()) != null &&
+					previousSolution.getPlannedFeatures().contains(currentFeature))
+			{
+				continue;
+			}
 
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
@@ -427,7 +435,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			for (PlannedFeature pf : previousSolution.getPlannedFeatures()) {
 				previousFeatures.put(pf.getFeature(), pf.getEmployee());
 
-				/* Frozen jobs contraint */
+				/* Frozen jobs constraint */
 				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {
 					violatedConstraints++;
 					overall -= 1.0;
