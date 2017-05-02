@@ -12,26 +12,27 @@ import java.util.List;
  */
 public class ReplanApiControllerTest {
     private static ReplanApiController apiController;
-    private static RandomSwaggerThings rnd;
+    private static RandomSwaggerThings random;
 
     @BeforeClass
     public static void setUpBeforeClass() {
         apiController = new ReplanApiController();
-        rnd = new RandomSwaggerThings();
+        random = new RandomSwaggerThings();
     }
 
     @Test
     public void frozenJobsAreNotReplaned() {
-        List<Skill> skills = rnd.skillList(7);
-        List<Feature> features = rnd.featureList(5);
-        List<Resource> resources = rnd.resourceList(15);
+        List<Skill> skills = random.skillList(7);
+        List<Feature> features = random.featureList(5);
+        List<Resource> resources = random.resourceList(15);
 
-        rnd.mix(features, skills, resources);
+        random.mix(features, skills, resources);
 
         NextReleaseProblem problem = new NextReleaseProblem(4, 50.0, features, resources);
         PlanningSolution s1 = apiController.replan(problem).getBody();
 
-        rnd.freeze(s1);
+        random.freeze(s1);
+
         problem.setPreviousPlan(s1);
         PlanningSolution s2 = apiController.replan(problem).getBody();
 

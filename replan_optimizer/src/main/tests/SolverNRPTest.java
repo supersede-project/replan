@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import wrapper.SolverNRP;
-import wrapper.parser.Transform2SwaggerModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,19 +17,43 @@ import java.util.List;
  */
 public class SolverNRPTest {
     private static SolverNRP solver;
-    private static Transform2SwaggerModel ts;
-
+    private static RandomThings random;
 
     /*   -----------------
         | UTILITY METHODS |
          -----------------
      */
+    private void validateDependencies(PlanningSolution solution) {
+
+    }
+
+    private void validateSkills(PlanningSolution solution) {
+
+    }
+
+    private void validateFrozen(PlanningSolution solution) {
+
+    }
+
+    private void validateAll(PlanningSolution solution) {
+        validateDependencies(solution);
+        validateFrozen(solution);
+        validateSkills(solution);
+    }
+
+    private List<Feature> featuresToList(Feature... features) {
+        return Arrays.asList(features);
+    }
+
+    private List<Employee> employeesToList(Employee... employees) {
+        return Arrays.asList(employees);
+    }
 
 
     @BeforeClass
     public static void setUpBeforeClass() {
         solver = new SolverNRP();
-        ts = new Transform2SwaggerModel();
+        random = new RandomThings();
     }
 
     /**
@@ -53,7 +76,7 @@ public class SolverNRPTest {
         List<Skill> employeeSkills = new ArrayList<>();
         employeeSkills.add(commonSkill);
         List<Employee> employees = Arrays.asList(
-                new Employee("Test Employee", 40.0, employeeSkills)
+                new Employee("Test Employee", 41.0, employeeSkills)
         );
 
         PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
@@ -61,32 +84,48 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
-
-
-
-    /*
-        Not an actual test, just checking out some things
+    /**
+     * Validate that precedences between features are respected even if there are enough employees
+     * to work on them at the same time.
      */
     @Test
-    public void validPlan() {
-        Skill s1 = new Skill("Skill 1");
-        Skill s2 = new Skill("Skill 2");
+    public void precencesAreRespected() {
+        Skill s1 = random.skill();
 
-        List<Skill> skills = new ArrayList<>();
-        skills.add(s1); skills.add(s1);
-        List<Feature> features = Arrays.asList(
-                new Feature("Test Feature", PriorityLevel.FIVE, 100.0, null, skills)
-        );
+        List<Feature> features = random.featureList(2);
+        List<Employee> employees = random.employeeList(2);
 
-        List<Employee> employees = Arrays.asList(
-                new Employee("Test Employee", 40.0, skills)
-        );
+        employees.get(0).getSkills().add(s1);
+        employees.get(1).getSkills().add(s1);
 
-        PlanningSolution solution = this.solver.executeNRP(3, 40.0, features, employees);
+        features.get(0).getRequiredSkills().add(s1);
+        features.get(1).getRequiredSkills().add(s1);
 
-        Transform2SwaggerModel ts = new Transform2SwaggerModel();
-        io.swagger.model.PlanningSolution s = ts.transformPlanningSolution2Swagger(solution);
+        features.get(1).getPreviousFeatures().add(features.get(0));
 
-        Assert.assertFalse(solution.getPlannedFeatures().isEmpty());
+        PlanningSolution solution = solver.executeNRP(3, 40, features, employees);
+
+        validateDependencies(solution);
+    }
+
+    /**
+     * ´Features with recursive dependencies should not be planned
+     */
+    @Test
+    public void featureDependingOnItselfIsNotPlanned() {
+        Skill s1 = random.skill();
+        Feature f1 = random.feature();
+        Employee e1 = random.employee();
+
+        e1.getSkills().add(s1);
+
+        f1.getRequiredSkills().add(s1);
+
+        f1.getPreviousFeatures().add(f1);
+
+        for (int i = 0; i < 5; ++i) {
+            PlanningSolution solution = solver.executeNRP(3, 40, featuresToList(f1), employeesToList(e1));
+            Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
+        }
     }
 }

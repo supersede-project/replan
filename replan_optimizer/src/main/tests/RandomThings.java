@@ -1,0 +1,128 @@
+import entities.*;
+import logic.PlanningSolution;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by kredes on 28/04/2017.
+ */
+public class RandomThings {
+    private static JMetalRandom random = JMetalRandom.getInstance();
+
+    private static final int MANY = 1000;
+    private static final int MEDIUM = 100;
+    private static final int FEW = 10;
+    private static final int VERY_FEW = 5;
+
+    private static final double MUTATION_PROBABILITY = 0.25;
+
+    public Skill skill() {
+        return new Skill(name("S"));
+    }
+
+    public List<Skill> skillList (int nbElems) {
+        List<Skill> skills = new ArrayList<>();
+        for (int i = 0; i < nbElems; ++i) {
+            skills.add(skill());
+        }
+        return skills;
+    }
+
+    public Feature feature() {
+        return new Feature(name("F"), PriorityLevel.FIVE, 40.0, new ArrayList<>(), new ArrayList<>());
+    }
+
+    public List<Feature> featureList(int nbElems) {
+        List<Feature> features = new ArrayList<>();
+        for (int i = 0; i < nbElems; ++i) {
+            features.add(feature());
+        }
+        return features;
+    }
+
+    public Employee employee() {
+        return new Employee(name("E"), 41.0, new ArrayList<>());
+    }
+
+    public List<Employee> employeeList(int nbElems) {
+        List<Employee> employees = new ArrayList<>();
+        for (int i = 0; i < nbElems; ++i) {
+            employees.add(employee());
+        }
+        return employees;
+    }
+
+
+    public void mix(List<Feature> features, List<Skill> skills, List<Employee> employees) {
+        skillsToFeatures(features, skills);
+        skillsToEmployees(employees, skills);
+        dependencies(features);
+    }
+
+    public void freeze(PlanningSolution solution) {
+        List<PlannedFeature> jobs = solution.getPlannedFeatures();
+        if (jobs.size() == 0) return;
+
+        int frozenPfs = 0;
+        for (PlannedFeature pf : jobs) {
+            if (shouldMutate()) {
+                pf.setFrozen(true);
+                ++frozenPfs;
+            }
+        }
+        if (frozenPfs == 0) {
+            jobs.get(random.nextInt(0, jobs.size() - 1)).setFrozen(true);
+        }
+    }
+
+    private void skillsToFeatures(List<Feature> features, List<Skill> skills) {
+        for (Skill s : skills) {
+            if (shouldMutate()) {
+                Feature f = features.get(random.nextInt(0, features.size() - 1));
+
+                if (!f.getRequiredSkills().contains(s))
+                    f.getRequiredSkills().add(s);
+            }
+        }
+        for (Feature f : features) {
+            if (f.getRequiredSkills().isEmpty()) {
+                f.getRequiredSkills().add(skills.get(random.nextInt(0, skills.size() - 1)));
+            }
+        }
+    }
+
+    private void skillsToEmployees(List<Employee> employees, List<Skill> skills) {
+        for (Skill s : skills) {
+            if (shouldMutate()) {
+                Employee e = employees.get(random.nextInt(0, employees.size() - 1));
+
+                if (!e.getSkills().contains(s))
+                    e.getSkills().add(s);  // TODO: implement
+            }
+        }
+        for (Employee e : employees) {
+            if (e.getSkills().isEmpty()) {
+                e.getSkills().add(skills.get(random.nextInt(0, skills.size() - 1)));
+            }
+        }
+    }
+
+    private void dependencies(List<Feature> features) {
+        if (shouldMutate()) {
+            Feature f1 = features.get(random.nextInt(0, features.size() - 1));
+            Feature f2 = features.get(random.nextInt(0, features.size() - 1));
+
+            if (!f1.equals(f2)) f2.getPreviousFeatures().add(f1);
+        }
+    }
+
+    private boolean shouldMutate() {
+        return random.nextDouble() <= MUTATION_PROBABILITY;
+    }
+
+    private String name(String type) {
+        return String.format("%s-%d", type, random.nextInt(0, MANY));
+    }
+}
