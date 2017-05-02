@@ -3,7 +3,9 @@ import logic.PlanningSolution;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by kredes on 28/04/2017.
@@ -17,6 +19,7 @@ public class RandomThings {
     private static final int VERY_FEW = 5;
 
     private static final double MUTATION_PROBABILITY = 0.25;
+
 
     public Skill skill() {
         return new Skill(name("S"));
@@ -77,6 +80,40 @@ public class RandomThings {
         }
     }
 
+    public void violatePrecedences(PlanningSolution solution) {
+        List<PlannedFeature> jobs = solution.getPlannedFeatures();
+        Map<Feature, PlannedFeature> dependences = new HashMap<>();
+
+        for (PlannedFeature pf : jobs) {
+            dependences.put(pf.getFeature(), pf);
+        }
+
+        boolean hasMutated = true;
+        for (PlannedFeature pf : jobs) {
+            if (!pf.getFeature().getPreviousFeatures().isEmpty()) {
+                hasMutated = false;
+                break;
+            }
+        }
+
+        while (!hasMutated && !jobs.isEmpty()) {
+            for (PlannedFeature pf : jobs) {
+                Feature f = pf.getFeature();
+                for (Feature d : f.getPreviousFeatures()) {
+                    if (shouldMutate()) {
+                        PlannedFeature depPf = dependences.get(d);
+                        pf.setBeginHour(depPf.getBeginHour());
+                        pf.setEndHour(depPf.getEndHour());
+                        pf.setFrozen(true);
+                        hasMutated = true;
+                    }
+                }
+            }
+        }
+    }
+
+
+
     private void skillsToFeatures(List<Feature> features, List<Skill> skills) {
         for (Skill s : skills) {
             if (shouldMutate()) {
@@ -110,11 +147,25 @@ public class RandomThings {
     }
 
     private void dependencies(List<Feature> features) {
-        if (shouldMutate()) {
+        boolean mutated = false;
+        for (Feature f1 : features) {
+            if (shouldMutate()) {
+                Feature f2 = features.get(random.nextInt(0, features.size() - 1));
+
+                if (!f1.equals(f2)) {
+                    f2.getPreviousFeatures().add(f1);
+                    mutated = true;
+                }
+            }
+        }
+        while (!mutated) {
             Feature f1 = features.get(random.nextInt(0, features.size() - 1));
             Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
-            if (!f1.equals(f2)) f2.getPreviousFeatures().add(f1);
+            if (!f1.equals(f2)) {
+                f2.getPreviousFeatures().add(f1);
+                mutated = true;
+            }
         }
     }
 

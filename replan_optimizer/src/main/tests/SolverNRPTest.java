@@ -1,11 +1,14 @@
-import entities.*;
+import entities.Employee;
+import entities.Feature;
+import entities.Skill;
 import logic.PlanningSolution;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import wrapper.SolverNRP;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by kredes on 27/03/2017.
@@ -37,24 +40,15 @@ public class SolverNRPTest {
      *  - Expected: The generated solution should not have any PlannedFeature.
      */
     @Test
-    public void notEnoughSkilledResourcesForFeature() {
-        Skill commonSkill = new Skill("Common skill");
-        Skill nonCommonSkill = new Skill("Non-common skill");
+    public void featureIsNotPlannedIfThereIsNoSkilledResource() {
+        List<Skill> skills = random.skillList(2);
+        Feature f = random.feature();
+        Employee e = random.employee();
 
-        List<Skill> featureSkills = new ArrayList<>();
-        featureSkills.add(commonSkill);
-        featureSkills.add(nonCommonSkill);
-        List<Feature> features = Arrays.asList(
-                new Feature("Test Feature", PriorityLevel.FIVE, 100.0, null, featureSkills)
-        );
+        f.getRequiredSkills().addAll(skills);
+        e.getSkills().add(skills.get(0));
 
-        List<Skill> employeeSkills = new ArrayList<>();
-        employeeSkills.add(commonSkill);
-        List<Employee> employees = Arrays.asList(
-                new Employee("Test Employee", 41.0, employeeSkills)
-        );
-
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        PlanningSolution solution = solver.executeNRP(3, 40.0, asList(f), asList(e));
 
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
@@ -64,7 +58,7 @@ public class SolverNRPTest {
      * to work on them at the same time.
      */
     @Test
-    public void precencesAreRespected() {
+    public void featurePrecedencesAreRespected() {
         Skill s1 = random.skill();
 
         List<Feature> features = random.featureList(2);
@@ -82,7 +76,7 @@ public class SolverNRPTest {
 
         validator.validateDependencies(solution);
     }
-    
+
     @Test
     public void featureDependingOnItselfIsNotPlanned() {
         Skill s1 = random.skill();
@@ -123,24 +117,37 @@ public class SolverNRPTest {
     }
 
     @Test
-    public void testTest() {
-        Skill s1 = random.skill();
-        List<Feature> features = random.featureList(2);
-        List<Employee> employees = random.employeeList(2);
+    public void frozenPlannedFeaturesAreNotReplaned() {
+        List<Skill> skills = random.skillList(7);
+        List<Feature> features = random.featureList(5);
+        List<Employee> employees = random.employeeList(7);
 
-        Feature f0 = features.get(0);
-        Feature f1 = features.get(1);
+        random.mix(features, skills, employees);
 
-        f0.getRequiredSkills().add(s1);
-        f1.getRequiredSkills().add(s1);
+        PlanningSolution s1 = solver.executeNRP(3, 40.0, features, employees);
 
-        employees.get(0).getSkills().add(s1);
-        employees.get(1).getSkills().add(s1);
+        random.freeze(s1);
 
-        f1.getPreviousFeatures().add(f0);
+        PlanningSolution s2 = solver.executeNRP(3, 40.0, features, employees, s1);
 
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        validator.validateFrozen(s1, s2);
+    }
 
-        validator.validateDependencies(solution);
+    @Test
+    public void frozenPlannedFeaturesViolatingPrecedencesAreReplannedToo() {
+        List<Skill> skills = random.skillList(5);
+        List<Feature> features = random.featureList(5);
+        List<Employee> employees = random.employeeList(10);
+
+        random.mix(features, skills, employees);
+
+        PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
+        PlanningSolution s1Prime = new PlanningSolution(s1);
+
+        random.violatePrecedences(s1Prime);
+
+        PlanningSolution s2 = solver.executeNRP(3, 40.0, features, employees, s1Prime);
+
+        validator.validateFrozen(s1, s2);
     }
 }
