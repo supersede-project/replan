@@ -1,16 +1,11 @@
-import entities.Employee;
-import entities.Feature;
-import entities.PriorityLevel;
-import entities.Skill;
+import entities.*;
 import logic.PlanningSolution;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import wrapper.SolverNRP;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by kredes on 27/03/2017.
@@ -18,28 +13,7 @@ import java.util.List;
 public class SolverNRPTest {
     private static SolverNRP solver;
     private static RandomThings random;
-
-    /*   -----------------
-        | UTILITY METHODS |
-         -----------------
-     */
-    private void validateDependencies(PlanningSolution solution) {
-
-    }
-
-    private void validateSkills(PlanningSolution solution) {
-
-    }
-
-    private void validateFrozen(PlanningSolution solution) {
-
-    }
-
-    private void validateAll(PlanningSolution solution) {
-        validateDependencies(solution);
-        validateFrozen(solution);
-        validateSkills(solution);
-    }
+    private static Validator validator;
 
     private <T> List<T> asList(T... elements) {
         return Arrays.asList(elements);
@@ -50,6 +24,7 @@ public class SolverNRPTest {
     public static void setUpBeforeClass() {
         solver = new SolverNRP();
         random = new RandomThings();
+        validator = new Validator();
     }
 
     /**
@@ -101,7 +76,7 @@ public class SolverNRPTest {
 
         PlanningSolution solution = solver.executeNRP(3, 40, features, employees);
 
-        validateDependencies(solution);
+        validator.validateDependencies(solution);
     }
 
     @Test
@@ -120,8 +95,9 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
+
     @Test
-    public void featureDependeciesDeadlock() {
+    public void featuresCausingDependencyDeadlockAreNotPlanned() {
         Skill s1 = random.skill();
         List<Feature> features = random.featureList(2);
         List<Employee> employees = random.employeeList(2);
@@ -140,5 +116,27 @@ public class SolverNRPTest {
 
         PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
+    }
+
+    @Test
+    public void testTest() {
+        Skill s1 = random.skill();
+        List<Feature> features = random.featureList(2);
+        List<Employee> employees = random.employeeList(2);
+
+        Feature f0 = features.get(0);
+        Feature f1 = features.get(1);
+
+        f0.getRequiredSkills().add(s1);
+        f1.getRequiredSkills().add(s1);
+
+        employees.get(0).getSkills().add(s1);
+        employees.get(1).getSkills().add(s1);
+
+        f1.getPreviousFeatures().add(f0);
+
+        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+
+        validator.validateDependencies(solution);
     }
 }
