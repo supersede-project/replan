@@ -51,6 +51,7 @@ public class SolverNRPTest {
         PlanningSolution solution = solver.executeNRP(3, 40.0, asList(f), asList(e));
 
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
+        validator.validateSkills(solution);
     }
 
     /**
@@ -146,8 +147,45 @@ public class SolverNRPTest {
 
         random.violatePrecedences(s1Prime);
 
-        PlanningSolution s2 = solver.executeNRP(3, 40.0, features, employees, s1Prime);
+        try {
+            validator.validateDependencies(s1Prime);
+            Assert.assertTrue("Called Random.violatePrecedences(solution) but precedences are valid.", false);
+        } catch (AssertionError e) {
+            // OK
+        }
+
+        PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1Prime);
 
         validator.validateFrozen(s1, s2);
+    }
+
+    @Test
+    public void randomProblemValidatesAllConstraints() {
+        List<Skill> skills = random.skillList(5);
+        List<Feature> features = random.featureList(5);
+        List<Employee> employees = random.employeeList(10);
+
+        random.mix(features, skills, employees);
+
+        PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+
+        validator.validateAll(solution);
+    }
+
+    @Test
+    public void randomReplanValidatesAllConstraints() {
+        List<Skill> skills = random.skillList(5);
+        List<Feature> features = random.featureList(5);
+        List<Employee> employees = random.employeeList(10);
+
+        random.mix(features, skills, employees);
+
+        PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
+
+        random.freeze(s1);
+
+        PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1);
+
+        validator.validateAll(s1, s2);
     }
 }
