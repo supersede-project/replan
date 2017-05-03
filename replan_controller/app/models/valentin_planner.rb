@@ -5,8 +5,8 @@ class ValentinPlanner
     # Your code here
   # uri = "http://replan-optimizer.herokuapp.com/replan"
   # uri = "http://platform.supersede.eu:8280/replan_optimizer/replan"
-    uri = "http://62.14.219.13:8280/replan_optimizer/replan"
-  # uri = "http://localhost:8280/replan_optimizer/replan"
+  # uri = "http://62.14.219.13:8280/replan_optimizer/replan"
+    uri = "http://localhost:8280/replan_optimizer/replan"
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer (#{uri}) with payload = #{payload}\n"
     response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
