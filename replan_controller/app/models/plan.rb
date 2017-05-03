@@ -18,29 +18,25 @@ class Plan < ApplicationRecord
     pplan = release.plan
     plan = Plan.new(release: release)
     unless pplan.nil? 
-      if pplan.deprecated?
-        pplan.destroy
-      else
-        pplan.update_columns(release_id: nil)
-        plan.prev_plan = pplan
-      end
+      pplan.release = nil
+      pplan.save
+      plan.prev_plan = pplan
     end
     plan.save
     return plan
   end
   
   def deprecate
-    self.updated_at = DateTime.now
-    self.save
-  end
-  
-  def deprecated?
-    self.created_at != self.updated_at
+    unless self.prev_plan.nil? 
+      self.prev_plan.deprecate
+    end
+    self.destroy
   end
   
   def cancel
     unless self.prev_plan.nil? 
-      self.prev_plan.update_columns(release_id: self.release.id)
+      self.prev_plan.release = self.release
+      self.prev_plan.save
     end
     self.destroy
   end

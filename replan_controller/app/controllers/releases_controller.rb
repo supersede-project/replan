@@ -44,7 +44,7 @@ class ReleasesController < ApplicationController
 
   def get_release_plan
     # Your code here
-    force_new = @release.plan.nil? || @release.plan.deprecated? ||
+    force_new = @release.plan.nil? ||
                 (!params[:force_new].nil? && params[:force_new] == "true")
     @plan = Plan.get_plan(@release, force_new)
     render json: @plan
