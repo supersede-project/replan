@@ -124,7 +124,16 @@ public class Feature {
 	
 	@Override
 	public String toString() {
-		return getName();
+		List<String> dependencesNames = new ArrayList<>();
+		for (Feature f : getPreviousFeatures())
+			dependencesNames.add(f.getName());
+
+		List<String> requiredSkillsNames = new ArrayList<>();
+		for (Skill s : getRequiredSkills())
+			requiredSkillsNames.add(s.getName());
+
+		return String.format("%s. Required skills: [%s]. Dependences: [%s].",
+				getName(), String.join(", ", requiredSkillsNames), String.join(", ", dependencesNames));
 	}
 	
 	@Override

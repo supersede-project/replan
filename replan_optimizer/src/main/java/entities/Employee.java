@@ -95,7 +95,11 @@ public class Employee {
 	 */
 	@Override 
 	public String toString() {
-		return getName();
+		List<String> skillNames = new ArrayList<>();
+		for (Skill s : getSkills())
+			skillNames.add(s.getName());
+
+		return String.format("%s. Skills: [%s].", getName(), String.join(", ", skillNames));
 	}
 	
 	/**
