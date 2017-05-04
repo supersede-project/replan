@@ -3,10 +3,9 @@ import entities.Feature;
 import entities.PlannedFeature;
 import entities.Skill;
 import logic.PlanningSolution;
+import org.junit.Assert;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -75,5 +74,15 @@ public class Validator {
         validateDependencies(current);
         validateFrozen(previous, current);
         validateSkills(current);
+    }
+
+    public void validateNoUnassignedSkills(List<Skill> skills, List<Employee> employees) {
+        Set<Skill> assignedSkills = new HashSet<>();
+        for (Employee e : employees)
+            for (Skill s : e.getSkills())
+                assignedSkills.add(s);
+
+        for (Skill s : skills)
+            Assert.assertTrue(assignedSkills.contains(s));
     }
 }

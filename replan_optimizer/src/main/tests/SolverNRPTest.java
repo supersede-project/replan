@@ -188,4 +188,33 @@ public class SolverNRPTest {
 
         validator.validateAll(s1, s2);
     }
+
+
+
+    @Test
+    public void ideal() {
+        int nbIterations = 50;
+        int totalPlannedFeatures = 0;
+
+        for (int i = 0; i < nbIterations; ++i) {
+            List<Skill> skills = random.skillList(30);
+            List<Feature> features = random.featureList(20);
+            List<Employee> employees = random.employeeList(50);
+
+            random.mix(features, skills, employees);
+
+            validator.validateNoUnassignedSkills(skills, employees);
+
+            PlanningSolution s1 = solver.executeNRP(10, 40.0, features, employees);
+
+            validator.validateAll(s1);
+
+            /*System.out.println(
+                    String.format("\n\nPlanned features: %d out of %d\n",
+                            s1.getPlannedFeatures().size(), features.size())
+            );*/
+            totalPlannedFeatures += s1.getPlannedFeatures().size();
+        }
+        System.out.println("\n\nPlanification average: " + totalPlannedFeatures/nbIterations);
+    }
 }

@@ -1,11 +1,9 @@
 import entities.*;
 import logic.PlanningSolution;
+import org.junit.Assert;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by kredes on 28/04/2017.
@@ -27,8 +25,10 @@ public class RandomThings {
 
     public List<Skill> skillList (int nbElems) {
         List<Skill> skills = new ArrayList<>();
-        for (int i = 0; i < nbElems; ++i) {
-            skills.add(skill());
+        while (skills.size() < nbElems) {
+            Skill s = skill();
+            if (!skills.contains(s))
+                skills.add(s);
         }
         return skills;
     }
@@ -39,20 +39,24 @@ public class RandomThings {
 
     public List<Feature> featureList(int nbElems) {
         List<Feature> features = new ArrayList<>();
-        for (int i = 0; i < nbElems; ++i) {
-            features.add(feature());
+        while (features.size() < nbElems) {
+            Feature f = feature();
+            if (!features.contains(f))
+                features.add(f);
         }
         return features;
     }
 
     public Employee employee() {
-        return new Employee(name("E"), 41.0, new ArrayList<>());
+        return new Employee(name("E"), 40.0, new ArrayList<>());
     }
 
     public List<Employee> employeeList(int nbElems) {
         List<Employee> employees = new ArrayList<>();
-        for (int i = 0; i < nbElems; ++i) {
-            employees.add(employee());
+        while (employees.size() < nbElems) {
+            Employee e = employee();
+            if (!employees.contains(e))
+                employees.add(e);
         }
         return employees;
     }
@@ -131,22 +135,37 @@ public class RandomThings {
     }
 
     private void skillsToEmployees(List<Employee> employees, List<Skill> skills) {
+        Set<Skill> assignedSkills = new HashSet<>();
         for (Skill s : skills) {
             if (shouldMutate()) {
                 Employee e = employees.get(random.nextInt(0, employees.size() - 1));
 
-                if (!e.getSkills().contains(s))
-                    e.getSkills().add(s);  // TODO: implement
+                if (!e.getSkills().contains(s)) {
+                    e.getSkills().add(s);
+                    assignedSkills.add(s);
+                }
             }
         }
         for (Employee e : employees) {
             if (e.getSkills().isEmpty()) {
-                e.getSkills().add(skills.get(random.nextInt(0, skills.size() - 1)));
+                Skill s = skills.get(random.nextInt(0, skills.size() - 1));
+                e.getSkills().add(s);
+                assignedSkills.add(s);
             }
         }
+
+        for (Skill s : skills) {
+            if (!assignedSkills.contains(s)) {
+                Employee e = employees.get(random.nextInt(0, employees.size() - 1));
+                e.getSkills().add(s);
+                assignedSkills.add(s);
+            }
+        }
+
+        Assert.assertTrue(assignedSkills.size() == skills.size());
     }
 
-    private void dependencies(List<Feature> features) {
+    public void dependencies(List<Feature> features) {
         boolean mutated = false;
         for (Feature f1 : features) {
             if (shouldMutate()) {

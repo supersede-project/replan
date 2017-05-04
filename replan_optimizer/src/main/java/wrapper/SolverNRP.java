@@ -90,7 +90,7 @@ public class SolverNRP {
 
         algorithm = new NSGAIIBuilder<PlanningSolution>(problem, crossover, mutation)
                 .setSelectionOperator(selection)
-                .setMaxIterations(500)
+                .setMaxIterations(1000)
                 .setPopulationSize(100)
                 .build();
 
