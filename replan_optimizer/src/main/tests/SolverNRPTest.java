@@ -5,8 +5,13 @@ import logic.PlanningSolution;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.QuickChart;
+import org.knowm.xchart.XYChart;
 import wrapper.SolverNRP;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -193,28 +198,62 @@ public class SolverNRPTest {
 
     @Test
     public void ideal() {
-        int nbIterations = 50;
-        int totalPlannedFeatures = 0;
+        int nbIterations = 20;
+
+        List<Integer> iterations = new ArrayList<>();
+        List<Integer> nbPlannedFeatures = new ArrayList<>();
+
+        List<Skill> skills = random.skillList(10);
+        List<Feature> features = random.featureList(20);
+        List<Employee> employees = random.employeeList(50);
+
+        random.mix(features, skills, employees);
+
+        validator.validateNoUnassignedSkills(skills, employees);
 
         for (int i = 0; i < nbIterations; ++i) {
-            List<Skill> skills = random.skillList(30);
-            List<Feature> features = random.featureList(20);
-            List<Employee> employees = random.employeeList(50);
-
-            random.mix(features, skills, employees);
-
-            validator.validateNoUnassignedSkills(skills, employees);
+            /* I have to do this because of the null skill added by EntitiesEvaluator */
+            removeNullSkillsFromEmployees(employees);
+            removeNullSkillsFromFeatures(features);
 
             PlanningSolution s1 = solver.executeNRP(10, 40.0, features, employees);
 
             validator.validateAll(s1);
 
-            /*System.out.println(
-                    String.format("\n\nPlanned features: %d out of %d\n",
-                            s1.getPlannedFeatures().size(), features.size())
-            );*/
-            totalPlannedFeatures += s1.getPlannedFeatures().size();
+            iterations.add(++i);
+            nbPlannedFeatures.add(s1.getPlannedFeatures().size());
         }
-        System.out.println("\n\nPlanification average: " + totalPlannedFeatures/nbIterations);
+        XYChart chart = QuickChart.getChart(
+                "Test chart",
+                "Iteration",
+                "Number of features planned",
+                "-",
+                iterations,
+                nbPlannedFeatures
+        );
+
+        try {
+            BitmapEncoder.saveBitmapWithDPI(chart,
+                    "C:\\Users\\kredes\\Desktop\\Proyectos\\replan\\replan_optimizer\\src\\main\\tests\\charts\\test",
+                    BitmapEncoder.BitmapFormat.PNG, 300);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeNullSkillsFromEmployees(List<Employee> employees) {
+        Skill nil = new Skill("null");
+        for (Employee e : employees) {
+            if (e.getSkills().contains(nil))
+                e.getSkills().remove(nil);
+        }
+    }
+
+    private void removeNullSkillsFromFeatures(List<Feature> features) {
+        Skill nil = new Skill("null");
+        for (Feature f : features) {
+            if (f.getRequiredSkills().contains(nil))
+                f.getRequiredSkills().remove(nil);
+        }
     }
 }
