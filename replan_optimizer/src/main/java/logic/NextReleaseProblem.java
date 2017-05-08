@@ -3,22 +3,17 @@
  */
 package logic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import entities.*;
+import entities.parameters.IterationParameters;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
-import entities.Employee;
-import entities.PlannedFeature;
-import entities.EmployeeWeekAvailability;
-import entities.Skill;
-import entities.Feature;
-import entities.parameters.IterationParameters;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Vavou
@@ -279,6 +274,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 				}
 			}
+
 				
 			// Checks the employee availability
 			Employee currentEmployee = currentPlannedFeature.getEmployee();
@@ -369,7 +365,27 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			violatedConstraints++;
 			overall -= 1.0;
 		}
-		
+
+
+		// Check if the employees assigned to the planned features have the required skills
+		for (PlannedFeature plannedFeature : solution.getPlannedFeatures()) {
+			List<Skill> featureSkills = plannedFeature.getFeature().getRequiredSkills();
+			List<Skill> employeeSkills = plannedFeature.getEmployee().getSkills();
+			for (Skill featureSkill : featureSkills) {
+				boolean hasSkill = false;
+				for (Skill employeeSkill : employeeSkills) {
+					if (featureSkill.equals(employeeSkill)) {
+						hasSkill = true;
+						break;
+					}
+				}
+				if (!hasSkill) {
+                    violatedConstraints++;
+                    overall -= 1.0;
+				}
+			}
+		}
+
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);
 		overallConstraintViolation.setAttribute(solution, overall);
 		if (violatedConstraints > 0) {

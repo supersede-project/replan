@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170302134435) do
+ActiveRecord::Schema.define(version: 20170427141239) do
 
   create_table "dependencies", id: false, force: :cascade do |t|
     t.integer "feature_id"
@@ -56,6 +56,8 @@ ActiveRecord::Schema.define(version: 20170302134435) do
     t.integer  "release_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "plan_id"
+    t.index ["plan_id"], name: "index_plans_on_plan_id"
     t.index ["release_id"], name: "index_plans_on_release_id"
   end
 

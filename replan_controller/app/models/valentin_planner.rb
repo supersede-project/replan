@@ -3,9 +3,13 @@ class ValentinPlanner
     
   def self.plan(release)
     # Your code here
+  # uri = "http://replan-optimizer.herokuapp.com/replan"
+  # uri = "http://platform.supersede.eu:8280/replan_optimizer/replan"
   # uri = "http://62.14.219.13:8280/replan_optimizer/replan"
     uri = "http://localhost:8280/replan_optimizer/replan"
-    response = RestClient.post uri, self.build_payload(release),  {content_type: :json, accept: :json}
+    payload = self.build_payload(release)
+    puts "\nCalling replan_optimizer (#{uri}) with payload = #{payload}\n"
+    response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
     self.build_plan(release, JSON.parse(response.body)["jobs"])
   end
   
@@ -30,13 +34,12 @@ class ValentinPlanner
         duration: feature.effort * feature.project.hours_per_effort_unit,
         priority: { level: feature.priority, score: feature.priority },
         required_skills: feature.required_skills.map {|s| {name: s.id.to_s} },
-        depends_on: feature.depends_on.map {|d| self.build_feature(d) }
+        depends_on: feature.depends_on.map {|d| self.build_feature(d) unless d.release.nil? || d.release != feature.release}.compact
       }
     end
     
     def self.build_plan(release, vjobs)
-      release.plan.destroy if !release.plan.nil?
-      plan = Plan.create(release: release)
+      plan = Plan.replan(release)
       vjobs.each do |j|
         Job.create(starts: j["beginHour"].to_i.business_hours.after(release.starts_at), 
                    ends: j["endHour"].to_i.business_hours.after(release.starts_at),
