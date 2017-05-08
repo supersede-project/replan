@@ -450,8 +450,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					{
 						overall -= 0.1;
 					}
-					}
 				}
+			}
 		}
 
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);

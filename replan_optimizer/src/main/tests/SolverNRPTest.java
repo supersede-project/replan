@@ -193,7 +193,7 @@ public class SolverNRPTest {
 
     @Test
     public void ideal() {
-        int nbIterations = 50;
+        /*int nIbterations = 20;
         int totalPlannedFeatures = 0;
 
         for (int i = 0; i < nbIterations; ++i) {
@@ -208,13 +208,8 @@ public class SolverNRPTest {
             PlanningSolution s1 = solver.executeNRP(10, 40.0, features, employees);
 
             validator.validateAll(s1);
-
-            /*System.out.println(
-                    String.format("\n\nPlanned features: %d out of %d\n",
-                            s1.getPlannedFeatures().size(), features.size())
-            );*/
             totalPlannedFeatures += s1.getPlannedFeatures().size();
         }
-        System.out.println("\n\nPlanification average: " + totalPlannedFeatures/nbIterations);
+        System.out.println("\n\nPlanification average: " + totalPlannedFeatures/nbIterations);*/
     }
 }

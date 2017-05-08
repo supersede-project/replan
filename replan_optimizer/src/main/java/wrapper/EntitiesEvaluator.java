@@ -94,7 +94,6 @@ public class EntitiesEvaluator {
     public Feature featureAddSkill(Feature f){
         List<Skill> skills;
 
-        // What the actual fuck. This won't ever throw an exception
         try {
             skills = f.getRequiredSkills();
         }
