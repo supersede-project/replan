@@ -45,7 +45,8 @@ class ReleasesController < ApplicationController
   def get_release_plan
     # Your code here
     force_new = @release.plan.nil? ||
-                (!params[:force_new].nil? && params[:force_new] == "true")
+                (!params[:force_new].nil? && (params[:force_new] == "true" ||
+                                              params[:force_new] == "yes"))
     @plan = Plan.get_plan(@release, force_new)
     render json: @plan
   end

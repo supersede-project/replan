@@ -1,7 +1,13 @@
 # print RestClient.get("#{endpoint}/projects/#{i}").body
 
-endpoint = "http://62.14.219.13:8280/replan"
-#endpoint = "http://platform.supersede.eu:8280/replan"
+#endpoint = "http://62.14.219.13:8280/replan"
+endpoint = "http://platform.supersede.eu:8280/replan"
+
+Plan.destroy_all
+Release.destroy_all
+Feature.destroy_all
+Resource.destroy_all
+Skill.destroy_all
 
 ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'skills'")
 ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 'resources'")
@@ -11,11 +17,7 @@ ActiveRecord::Base.connection.execute("DELETE from sqlite_sequence where name = 
 [1,2,3].each do |i|
 
    p = Project.find(i)
-   p.releases.destroy_all
-   p.features.destroy_all
-   p.resources.destroy_all
-   p.skills.destroy_all
-   puts i
+   puts p.name
    ## Skills
    skills = JSON.parse(RestClient.get("#{endpoint}/projects/#{i}/skills").body)
    skills.each do |s|
