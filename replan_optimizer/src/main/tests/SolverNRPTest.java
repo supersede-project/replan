@@ -5,13 +5,8 @@ import logic.PlanningSolution;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.knowm.xchart.BitmapEncoder;
-import org.knowm.xchart.QuickChart;
-import org.knowm.xchart.XYChart;
 import wrapper.SolverNRP;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,6 +25,24 @@ public class SolverNRPTest {
     private <T> List<T> asList(T... elements) {
         return Arrays.asList(elements);
     }
+
+    private void removeNullSkillsFromEmployees(List<Employee> employees) {
+        Skill nil = new Skill("null");
+        for (Employee e : employees) {
+            if (e.getSkills().contains(nil))
+                e.getSkills().remove(nil);
+        }
+    }
+
+    private void removeNullSkillsFromFeatures(List<Feature> features) {
+        Skill nil = new Skill("null");
+        for (Feature f : features) {
+            if (f.getRequiredSkills().contains(nil))
+                f.getRequiredSkills().remove(nil);
+        }
+    }
+
+
 
 
     @BeforeClass
@@ -198,13 +211,14 @@ public class SolverNRPTest {
 
     @Test
     public void ideal() {
+        /*
         int nbIterations = 20;
 
         List<Integer> iterations = new ArrayList<>();
         List<Integer> nbPlannedFeatures = new ArrayList<>();
 
         List<Skill> skills = random.skillList(10);
-        List<Feature> features = random.featureList(20);
+        List<Feature> features = random.featureList(50);
         List<Employee> employees = random.employeeList(50);
 
         random.mix(features, skills, employees);
@@ -212,7 +226,7 @@ public class SolverNRPTest {
         validator.validateNoUnassignedSkills(skills, employees);
 
         for (int i = 0; i < nbIterations; ++i) {
-            /* I have to do this because of the null skill added by EntitiesEvaluator */
+            // I have to do this because of the null skill added by EntitiesEvaluator
             removeNullSkillsFromEmployees(employees);
             removeNullSkillsFromFeatures(features);
 
@@ -220,17 +234,15 @@ public class SolverNRPTest {
 
             validator.validateAll(s1);
 
-            iterations.add(++i);
+            iterations.add(i);
             nbPlannedFeatures.add(s1.getPlannedFeatures().size());
         }
-        XYChart chart = QuickChart.getChart(
-                "Test chart",
-                "Iteration",
-                "Number of features planned",
-                "-",
-                iterations,
-                nbPlannedFeatures
-        );
+
+        XYChart chart = new XYChartBuilder().width(1024).height(512).title("Test chart")
+                .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
+        chart.addSeries("-", iterations, nbPlannedFeatures);
+        chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
+                .setXAxisMax((double) nbIterations).setYAxisMax((double) features.size());
 
         try {
             BitmapEncoder.saveBitmapWithDPI(chart,
@@ -239,21 +251,6 @@ public class SolverNRPTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    private void removeNullSkillsFromEmployees(List<Employee> employees) {
-        Skill nil = new Skill("null");
-        for (Employee e : employees) {
-            if (e.getSkills().contains(nil))
-                e.getSkills().remove(nil);
-        }
-    }
-
-    private void removeNullSkillsFromFeatures(List<Feature> features) {
-        Skill nil = new Skill("null");
-        for (Feature f : features) {
-            if (f.getRequiredSkills().contains(nil))
-                f.getRequiredSkills().remove(nil);
-        }
+        */
     }
 }

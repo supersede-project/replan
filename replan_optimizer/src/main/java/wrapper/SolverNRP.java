@@ -10,6 +10,7 @@ import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.mocell.MOCellBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -24,6 +25,20 @@ import java.util.Set;
 
 public class SolverNRP {
 
+    public enum AlgorithmType {
+        NSGAII("NSGA-II"), MOCell("MOCell");
+
+        private String name;
+
+        AlgorithmType(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
     /*
         TODO: If you have whatever number of features that fit exactly into the available hours it won't plan them.
         Most likely because of a < where there should be a <=. The problem is caused by hoursPerWeek,
@@ -31,6 +46,53 @@ public class SolverNRP {
         ACTUALLY not, the employee availability also causes trouble.
     */
 
+    private Algorithm<List<PlanningSolution>> algorithm;
+    private AlgorithmType algorithmType;
+
+
+    public SolverNRP() {
+        algorithm = null;
+        algorithmType = AlgorithmType.NSGAII;
+    }
+
+    public SolverNRP(AlgorithmType algorithmType) {
+        this();
+        this.algorithmType = algorithmType;
+    }
+
+
+    private Algorithm<List<PlanningSolution>> createAlgorithm(AlgorithmType algorithmType, NextReleaseProblem problem) {
+        CrossoverOperator<PlanningSolution> crossover;
+        MutationOperator<PlanningSolution> mutation;
+        SelectionOperator<List<PlanningSolution>, PlanningSolution> selection;
+
+        crossover = new PlanningCrossoverOperator(problem);
+        mutation = new PlanningMutationOperator(problem);
+        selection = new BinaryTournamentSelection<>(new PlanningSolutionDominanceComparator());
+
+        switch (algorithmType) {
+            case NSGAII:
+                return new NSGAIIBuilder<PlanningSolution>(problem, crossover, mutation)
+                        .setSelectionOperator(selection)
+                        .setMaxIterations(500)
+                        .setPopulationSize(100)
+                        .build();
+            case MOCell:
+                return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
+                        .setSelectionOperator(selection)
+                        .setMaxEvaluations(5000)
+                        .setPopulationSize(200)
+                        .build();
+            default:
+                return createAlgorithm(AlgorithmType.NSGAII, problem);
+        }
+    }
+
+    /* ---------------------------- */
+    public AlgorithmType getAlgorithmType() {
+        return algorithmType;
+    }
+    /* ---------------------------- */
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
@@ -77,22 +139,7 @@ public class SolverNRP {
 
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 
-        Algorithm<List<PlanningSolution>> algorithm;
-        CrossoverOperator<PlanningSolution> crossover;
-        MutationOperator<PlanningSolution> mutation;
-        SelectionOperator<List<PlanningSolution>, PlanningSolution> selection;
-
-        crossover = new PlanningCrossoverOperator(problem);
-
-        mutation = new PlanningMutationOperator(problem);
-
-        selection = new BinaryTournamentSelection<>(new PlanningSolutionDominanceComparator());
-
-        algorithm = new NSGAIIBuilder<PlanningSolution>(problem, crossover, mutation)
-                .setSelectionOperator(selection)
-                .setMaxIterations(500)
-                .setPopulationSize(100)
-                .build();
+        algorithm = createAlgorithm(algorithmType, problem);
 
         new AlgorithmRunner.Executor(algorithm).execute();
 
