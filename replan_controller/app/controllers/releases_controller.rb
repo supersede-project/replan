@@ -20,6 +20,13 @@ limitations under the License.
 =end
 class ReleasesController < ApplicationController
   before_action :set_release, except: [:add_new_release_to_project, :get_releases]
+  
+  def notify_completed_jobs
+    # Fake implementation!
+    output = params[:_json].map.with_index{ |j, i| 
+        {"not_#{i}" => "Job ##{j[:job_id]} completed @ #{j[:completed_at].to_datetime}"}}
+    render json: output
+  end
 
   def add_new_release_to_project
     @release = @project.releases.build(release_params)

@@ -19,6 +19,9 @@ Rails.application.routes.draw do
     match full_path, to: "#{opts.fetch(:controller_name)}##{opts[:action_name]}", via: http_method
   end
   
+  # new methods in v.2.1
+  add_ui_route 'PUT', '/projects/{projectId}/releases/{releaseId}/plan', controller_name: 'releases', action_name: 'notify_completed_jobs'
+  
   # new methods in v.2
   add_ui_route 'GET', '/projects', controller_name: 'project', action_name: 'get_projects'
   add_ui_route 'POST', '/projects', controller_name: 'project', action_name: 'create_project'
