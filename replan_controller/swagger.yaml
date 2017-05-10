@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
-  version: "2.0.0"
+  version: "2.1.0"
 # the domain of the service
 host: 62.14.219.13:8280
 # array of all schemes that your API supports
@@ -20,7 +20,6 @@ paths:
         This operation retrieves a list of projects.
       operationId: getProjects
       tags:
-        - New in v.2
         - Projects
       responses:
         200:
@@ -48,7 +47,6 @@ paths:
           schema:
             $ref: '#/definitions/NewProjectData'
       tags:
-        - New in v.2
         - Projects
       responses:
         200:
@@ -129,7 +127,6 @@ paths:
           required: true
       tags:
         - Projects
-        - New in v.2
       responses:
         200:
           description: Success
@@ -195,7 +192,6 @@ paths:
             $ref: '#/definitions/NewFeatureData'
       tags:
         - Features
-        - New in v.2
       responses:
         200:
           description: A new Feature
@@ -297,7 +293,6 @@ paths:
           required: true
       tags:
         - Features
-        - New in v.2
       responses:
         200:
           description: Success
@@ -868,6 +863,46 @@ paths:
             $ref: '#/definitions/Error'
         404:
           description: Project or Release not found
+    put:
+      summary: Communicates completed jobs
+      description: |
+        This operation communicates plan's jobs that has been completed
+      operationId: notifyCompletedJobs
+      parameters:
+        - name: projectId
+          in: path
+          type: string
+          description: ID of the project (e.g. "1" or "siemens")
+          required: true
+        - name: releaseId
+          in: path
+          type: number
+          format: int64
+          description: ID of the realese
+          required: true
+        - name: body
+          in: body
+          description: Array of {job_id, compteted_at}
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CompletedJob'
+      tags:
+        - Releases
+        - Plan
+        - New in v2.1
+      responses:
+        200:
+          description: Success. Returns a (probably new) Release Plan
+          schema:
+            $ref: '#/definitions/Plan'
+        422:
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+        404:
+          description: Project or Release not found
   /projects/{projectId}/skills:
     get:
       summary: Get project skills
@@ -1427,6 +1462,8 @@ definitions:
   Job:
     type: object
     properties:
+      id:
+        type: integer
       starts:
         type: string
         format: date-time
@@ -1457,6 +1494,17 @@ definitions:
         description: array of jobs
         items:
           $ref: '#/definitions/Job'
+  CompletedJob:
+    type: object
+    required:
+    - job_id
+    - completed_at
+    properties:
+      job_id:
+        type: integer
+      completed_at:
+        type: string
+        format: date-time
   Error:
     type: object
     properties:
