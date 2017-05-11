@@ -1,3 +1,5 @@
+package java;
+
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
@@ -10,6 +12,7 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import wrapper.SolverNRP;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -76,6 +79,8 @@ public class AlgorithmPerformanceTest {
         List<Integer> iterations = new ArrayList<>();
         List<Integer> nbPlannedFeatures = new ArrayList<>();
 
+        int totalPlannedFeatures = 0;
+
         for (int i = 0; i < nbIterations; ++i) {
             /* I have to do this because of the null skill added by EntitiesEvaluator */
             removeNullSkillsFromEmployees(employees);
@@ -88,20 +93,29 @@ public class AlgorithmPerformanceTest {
 
             iterations.add(i);
             nbPlannedFeatures.add(solution.getPlannedFeatures().size());
+            totalPlannedFeatures += solution.getPlannedFeatures().size();
         }
         String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Dummy");
         XYChart chart = new XYChartBuilder().width(1024).height(512).title(title)
                 .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
         chart.addSeries("-", iterations, nbPlannedFeatures);
+
+        List<Double> average = new ArrayList<>();
+        for (int i = 0; i < nbIterations; ++i)
+            average.add((double) totalPlannedFeatures / nbIterations);
+
+        chart.addSeries("Average", iterations, average);
         chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
                 .setXAxisMax((double) iterations.size() - 1).setYAxisMax((double) features.size() - 1);
 
         try {
-            String base = "../../test/charts/";
+            String base = "C:/Users/kredes/Desktop/Proyectos/replan/replan_optimizer/src/main/test/charts";
             String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
                     dateFormat.format(Calendar.getInstance().getTime()));
 
             String fullPath = String.format("%s/%s", base, filename);
+            File f = new File(fullPath);
+            f.getParentFile().mkdirs();
 
             BitmapEncoder.saveBitmapWithDPI(chart, fullPath, BitmapEncoder.BitmapFormat.PNG, 300);
         } catch (IOException e) {
@@ -134,10 +148,43 @@ public class AlgorithmPerformanceTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-        SolverNRP solver1 = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
-        SolverNRP solver2 = new SolverNRP(SolverNRP.AlgorithmType.MOCell);
 
-        runWith(solver1, 20, features, skills, employees);
-        runWith(solver2, 20, features, skills, employees);
+        SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+        //runWith(solver, 20, features, skills, employees);
+
+        solver = new SolverNRP(SolverNRP.AlgorithmType.MOCell);
+        runWith(solver, 20, features, skills, employees);
+
+        //solver = new SolverNRP(SolverNRP.AlgorithmType.PESA2);
+        //runWith(solver, 20, features, skills, employees);
+/*
+        // Too slow (1:39 min one iteration)
+        solver = new SolverNRP(SolverNRP.AlgorithmType.SPEA2);
+        runWith(solver, 2, features, skills, employees);
+
+        // Never ends
+        solver = new SolverNRP(SolverNRP.AlgorithmType.SMSEMOA);
+        runWith(solver, 20, features, skills, employees);*/
+    }
+
+    @Test
+    public void inputTest() {
+        try {
+            Entities.fromFile(
+                    new File("C:/Users/kredes/Desktop/Proyectos/replan/replan_optimizer/src/main/test/input/test.yaml"),
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void manyFeaturesFewEmployees() {
+        Skill s1 = random.skill();
+        Skill s2 = random.skill();
+        Skill s3 = random.skill();
+
+
     }
 }

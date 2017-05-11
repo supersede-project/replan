@@ -12,6 +12,9 @@ import logic.operators.PlanningMutationOperator;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.mocell.MOCellBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
+import org.uma.jmetal.algorithm.multiobjective.pesa2.PESA2Builder;
+import org.uma.jmetal.algorithm.multiobjective.smsemoa.SMSEMOABuilder;
+import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
@@ -26,7 +29,7 @@ import java.util.Set;
 public class SolverNRP {
 
     public enum AlgorithmType {
-        NSGAII("NSGA-II"), MOCell("MOCell");
+        NSGAII("NSGA-II"), MOCell("MOCell"), SPEA2("SPEA2"), PESA2("PESA2"), SMSEMOA("SMSEMOA");
 
         private String name;
 
@@ -80,7 +83,24 @@ public class SolverNRP {
             case MOCell:
                 return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(5000)
+                        .setMaxEvaluations(50000)
+                        .setPopulationSize(5000)
+                        .build();
+            case SPEA2:
+                return new SPEA2Builder<PlanningSolution>(problem, crossover, mutation)
+                        .setSelectionOperator(selection)
+                        .setMaxIterations(500)
+                        .setPopulationSize(200)
+                        .build();
+            case PESA2:
+                return new PESA2Builder<PlanningSolution>(problem, crossover, mutation)
+                        .setMaxEvaluations(500)
+                        .setPopulationSize(200)
+                        .build();
+            case SMSEMOA:
+                return new SMSEMOABuilder<PlanningSolution>(problem, crossover, mutation)
+                        .setSelectionOperator(selection)
+                        .setMaxEvaluations(500)
                         .setPopulationSize(200)
                         .build();
             default:
