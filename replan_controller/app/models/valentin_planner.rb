@@ -23,7 +23,7 @@ class ValentinPlanner
       nrp[:features] = release.features.map {|f| self.build_feature(f) }
       nrp[:resources] = release.resources.map do |r|
         { name: r.id.to_s, 
-          availability: r.availability,
+          availability: r.availability*0.01*nrp[:hoursPerWeek],
           skills: r.skills.map {|s| {name: s.id.to_s} } }
       end
       nrp.to_json
