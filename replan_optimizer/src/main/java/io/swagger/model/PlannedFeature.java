@@ -1,12 +1,8 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.model.Feature;
-import io.swagger.model.Resource;
+
+import java.util.Objects;
 
 
 
@@ -17,6 +13,9 @@ import io.swagger.model.Resource;
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
 
 public class PlannedFeature   {
+
+  private boolean frozen;
+
   private Double beginHour = null;
 
   private Double endHour = null;
@@ -25,10 +24,32 @@ public class PlannedFeature   {
 
   private Feature feature = null;
 
+    public PlannedFeature() {}
+
+    public PlannedFeature(Double beginHour, Double endHour, Resource resource, Feature feature) {
+        this.beginHour = beginHour;
+        this.endHour = endHour;
+        this.resource = resource;
+        this.feature = feature;
+    }
+
+
+
+
   public PlannedFeature beginHour(Double beginHour) {
     this.beginHour = beginHour;
     return this;
   }
+
+  @ApiModelProperty(value = "")
+  public boolean isFrozen() {
+    return frozen;
+  }
+
+  public void setFrozen(boolean frozen) {
+    this.frozen = frozen;
+  }
+
 
    /**
    * Get beginHour

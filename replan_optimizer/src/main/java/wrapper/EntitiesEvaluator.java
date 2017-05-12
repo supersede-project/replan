@@ -94,8 +94,12 @@ public class EntitiesEvaluator {
     public Feature featureAddSkill(Feature f){
         List<Skill> skills;
 
-        try { skills = f.getRequiredSkills(); }
-        catch (Exception e) { skills = new ArrayList<>(); }
+        try {
+            skills = f.getRequiredSkills();
+        }
+        catch (Exception e) {
+            skills = new ArrayList<>();
+        }
 
         skills.add(new Skill("null"));
 

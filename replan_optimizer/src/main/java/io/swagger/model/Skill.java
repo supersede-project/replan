@@ -1,10 +1,8 @@
 package io.swagger.model;
 
-import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import java.util.Objects;
 
 
 
@@ -16,6 +14,15 @@ import io.swagger.annotations.ApiModelProperty;
 
 public class Skill   {
   private String name = null;
+
+
+  public Skill() {}
+
+  public Skill(String name) {
+      this.name = name;
+  }
+
+
 
   public Skill name(String name) {
     this.name = name;

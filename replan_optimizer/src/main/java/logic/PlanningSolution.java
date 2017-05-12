@@ -4,22 +4,17 @@
  */
 package logic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
-
+import entities.Employee;
+import entities.EmployeeWeekAvailability;
+import entities.Feature;
+import entities.PlannedFeature;
+import entities.parameters.DefaultAlgorithmParameters;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
-import entities.Employee;
-import entities.EmployeeWeekAvailability;
-import entities.PlannedFeature;
-import entities.parameters.DefaultAlgorithmParameters;
-import entities.Feature;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author Vavou
@@ -125,7 +120,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	}
 
 	/**
-	 * @param employeesPlannings the employeesPlannings to set
+	 * @param employeesPlanning the employeesPlannings to set
 	 */
 	public void setEmployeesPlanning(Map<Employee, List<EmployeeWeekAvailability>> employeesPlanning) {
 		this.employeesPlanning = employeesPlanning;
@@ -153,14 +148,15 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	 * @param problem
 	 */
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
-		super(problem);
+	    super(problem);
 	    numberOfViolatedConstraints = 0;
 
 	    undoneFeatures = new CopyOnWriteArrayList<Feature>();
 		undoneFeatures.addAll(problem.getFeatures());
 		this.plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
 		for (PlannedFeature plannedFeature : plannedFeatures) {
-			scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
+			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
+			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
 		}
 	    initializeObjectiveValues();
 	}

@@ -1,13 +1,8 @@
 package logic;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
 import logic.comparators.PlanningSolutionDominanceComparator;
+
+import java.util.*;
 
 public class PopulationFilter {
 	
@@ -35,7 +30,7 @@ public class PopulationFilter {
 	/**
 	 * Returns only the bests solutions
 	 * Uses the <code>PlanningSolutionDominanceComparator</code>
-	 * @param sortedPopulation The population with only the best solutions
+	 * @param population The population with only the best solutions
 	 */
 	public static Set<PlanningSolution> getBestSolutions(List<PlanningSolution> population) {
 		Set<PlanningSolution> bestSolutions = new HashSet<PlanningSolution>();

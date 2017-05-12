@@ -1,9 +1,12 @@
 package wrapper.parser;
 
-import entities.*;
+import entities.Employee;
 import entities.Feature;
+import entities.PriorityLevel;
 import entities.Skill;
-import io.swagger.model.*;
+import io.swagger.model.Resource;
+import logic.NextReleaseProblem;
+import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,20 +66,39 @@ public class Transform2NRPEntities {
     /*Feature*/
     public Feature Feature2Entities(io.swagger.model.Feature f) {
        // String name, PriorityLevel priority, Double duration, List<Feature> previousFeatures, List< Skill > requiredSkills
-        Feature feature = new Feature(f.getName(),
-                                      PriorityLevel2Entities(f.getPriority()),
-                                      f.getDuration(),
-                                      FeatureList2Entities(f.getDepends_on()),
-                                      SkillList2Entities(f.getRequired_skills()));
+        Feature feature = null;
+
+        feature = new Feature(f.getName(),
+                PriorityLevel2Entities(f.getPriority()),
+                f.getDuration(),
+                FeatureList2Entities(f.getDepends_on()),
+                SkillList2Entities(f.getRequired_skills()));
+
         return feature;
     }
 
     public List<Feature> FeatureList2Entities(List<io.swagger.model.Feature> listf) {
         List<Feature> featureList = new ArrayList<>();
         for (io.swagger.model.Feature f: listf){
-                featureList.add(Feature2Entities(f));
+            featureList.add(Feature2Entities(f));
         }
         return featureList;
     }
 
+    public PlanningSolution planningSolutionToEntity(io.swagger.model.PlanningSolution swaggerSolution, NextReleaseProblem problem) {
+        List<entities.PlannedFeature> plannedFeatures = new ArrayList<>();
+        for (io.swagger.model.PlannedFeature pf : swaggerSolution.getJobs()) {
+            entities.PlannedFeature newPf = new entities.PlannedFeature(
+                    Feature2Entities(pf.getFeature()),
+                    Resource2Employee(pf.getResource())
+            );
+            newPf.setBeginHour(pf.getBeginHour());
+            newPf.setEndHour(pf.getEndHour());
+            newPf.setFrozen(pf.isFrozen());
+
+            plannedFeatures.add(newPf);
+        }
+
+        return new PlanningSolution(problem, plannedFeatures);
+    }
 }
