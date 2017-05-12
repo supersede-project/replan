@@ -443,15 +443,13 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			}
 
 			/* Penalize for every feature that was already planned but was assigned another resource */
-			if (overall > 0) {	// There's no point in doing all this work if the solution already sucks
-				for (PlannedFeature pf : solution.getPlannedFeatures()) {
-					if (previousFeatures.containsKey(pf.getFeature()) &&
-						!previousFeatures.get(pf.getFeature()).equals(pf.getEmployee()))
-					{
-						overall -= 0.1;
-					}
-				}
-			}
+            for (PlannedFeature pf : solution.getPlannedFeatures()) {
+                if (previousFeatures.containsKey(pf.getFeature()) &&
+                    !previousFeatures.get(pf.getFeature()).equals(pf.getEmployee()))
+                {
+                    overall -= 0.1;
+                }
+            }
 		}
 
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);

@@ -5,4 +5,4 @@ build
 *.js
 *.css
 package-list
-src/main/tests/charts
+src/main/test/charts
