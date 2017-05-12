@@ -208,4 +208,27 @@ public class SolverNRPTest {
 
         validator.validateAll(s1, s2);
     }
+
+    @Test
+    public void featureWithNoRequiredSkillsCanBeDoneByAnSkilledEmployee() {
+        Feature f = random.feature();
+        Employee e = random.employee();
+        Skill s = random.skill();
+
+        e.getSkills().add(s);
+
+        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
+
+        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+    }
+
+    @Test
+    public void featureWithNoRequiredSkillsCanBeDoneByANonSkilledEmployee() {
+        Feature f = random.feature();
+        Employee e = random.employee();
+
+        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
+
+        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+    }
 }
