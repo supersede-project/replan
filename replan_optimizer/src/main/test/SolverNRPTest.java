@@ -1,5 +1,3 @@
-package java;
-
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
@@ -203,56 +201,11 @@ public class SolverNRPTest {
         PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
 
         random.freeze(s1);
+        removeNullSkillsFromFeatures(features);
+        removeNullSkillsFromEmployees(employees);
 
         PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1);
 
         validator.validateAll(s1, s2);
-    }
-
-
-
-    @Test
-    public void ideal() {
-        /*
-        int nbIterations = 20;
-
-        List<Integer> iterations = new ArrayList<>();
-        List<Integer> nbPlannedFeatures = new ArrayList<>();
-
-        List<Skill> skills = random.skillList(10);
-        List<Feature> features = random.featureList(50);
-        List<Employee> employees = random.employeeList(50);
-
-        random.mix(features, skills, employees);
-
-        validator.validateNoUnassignedSkills(skills, employees);
-
-        for (int i = 0; i < nbIterations; ++i) {
-            // I have to do this because of the null skill added by EntitiesEvaluator
-            removeNullSkillsFromEmployees(employees);
-            removeNullSkillsFromFeatures(features);
-
-            PlanningSolution s1 = solver.executeNRP(10, 40.0, features, employees);
-
-            validator.validateAll(s1);
-
-            iterations.add(i);
-            nbPlannedFeatures.add(s1.getPlannedFeatures().size());
-        }
-
-        XYChart chart = new XYChartBuilder().width(1024).height(512).title("Test chart")
-                .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
-        chart.addSeries("-", iterations, nbPlannedFeatures);
-        chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
-                .setXAxisMax((double) nbIterations).setYAxisMax((double) features.size());
-
-        try {
-            BitmapEncoder.saveBitmapWithDPI(chart,
-                    "C:\\Users\\kredes\\Desktop\\Proyectos\\replan\\replan_optimizer\\src\\main\\tests\\charts\\test",
-                    BitmapEncoder.BitmapFormat.PNG, 300);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        */
     }
 }

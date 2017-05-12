@@ -1,5 +1,3 @@
-package java;
-
 import io.swagger.model.*;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 

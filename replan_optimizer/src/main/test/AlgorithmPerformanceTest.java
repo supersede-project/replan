@@ -1,5 +1,3 @@
-package java;
-
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
@@ -165,26 +163,5 @@ public class AlgorithmPerformanceTest {
         // Never ends
         solver = new SolverNRP(SolverNRP.AlgorithmType.SMSEMOA);
         runWith(solver, 20, features, skills, employees);*/
-    }
-
-    @Test
-    public void inputTest() {
-        try {
-            Entities.fromFile(
-                    new File("C:/Users/kredes/Desktop/Proyectos/replan/replan_optimizer/src/main/test/input/test.yaml"),
-                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>()
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void manyFeaturesFewEmployees() {
-        Skill s1 = random.skill();
-        Skill s2 = random.skill();
-        Skill s3 = random.skill();
-
-
     }
 }

@@ -1,5 +1,3 @@
-package java;
-
 import io.swagger.api.ReplanApiController;
 import io.swagger.model.*;
 import org.junit.Assert;
