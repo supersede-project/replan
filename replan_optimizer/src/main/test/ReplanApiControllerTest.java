@@ -13,11 +13,13 @@ import java.util.List;
 public class ReplanApiControllerTest {
     private static ReplanApiController apiController;
     private static RandomSwaggerThings random;
+    private static SwaggerValidator validator;
 
     @BeforeClass
     public static void setUpBeforeClass() {
         apiController = new ReplanApiController();
         random = new RandomSwaggerThings();
+        validator = new SwaggerValidator();
     }
 
     @Test
@@ -33,7 +35,7 @@ public class ReplanApiControllerTest {
 
         random.freeze(s1);
 
-        problem.setPreviousPlan(s1);
+        //problem.setPreviousPlan(s1);
         PlanningSolution s2 = apiController.replan(problem).getBody();
 
 
@@ -42,5 +44,19 @@ public class ReplanApiControllerTest {
                 Assert.assertTrue(s2.getJobs().contains(pf));
             }
         }
+    }
+
+    @Test
+    public void randomProblemValidatesAllConstraints() {
+        List<Skill> skills = random.skillList(5);
+        List<Feature> features = random.featureList(5);
+        List<Resource> resources = random.resourceList(10);
+
+        random.mix(features, skills, resources);
+
+        NextReleaseProblem problem = new NextReleaseProblem(4, 50.0, features, resources);
+        PlanningSolution solution = apiController.replan(problem).getBody();
+
+        validator.validateAll(solution);
     }
 }

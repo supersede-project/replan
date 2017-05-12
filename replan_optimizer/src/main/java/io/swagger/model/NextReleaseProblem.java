@@ -55,6 +55,7 @@ public class NextReleaseProblem   {
 
 
     // Not @Generated
+    /*
     @ApiModelProperty(value = "")
     public PlanningSolution getPreviousPlan() {
         return previousPlan;
@@ -63,7 +64,7 @@ public class NextReleaseProblem   {
     public void setPreviousPlan(PlanningSolution plan) {
         previousPlan = plan;
     }
-
+    */
 
 
    /**
