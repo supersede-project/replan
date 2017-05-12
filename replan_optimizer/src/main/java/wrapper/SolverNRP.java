@@ -97,7 +97,7 @@ public class SolverNRP {
                         .setPopulationSize(200)
                         .build();
             default:
-                return createAlgorithm(AlgorithmType.NSGAII, problem);
+                return createAlgorithm(AlgorithmType.MOCell, problem);
         }
     }
 
