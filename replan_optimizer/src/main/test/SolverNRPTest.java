@@ -26,6 +26,24 @@ public class SolverNRPTest {
         return Arrays.asList(elements);
     }
 
+    private void removeNullSkillsFromEmployees(List<Employee> employees) {
+        Skill nil = new Skill("null");
+        for (Employee e : employees) {
+            if (e.getSkills().contains(nil))
+                e.getSkills().remove(nil);
+        }
+    }
+
+    private void removeNullSkillsFromFeatures(List<Feature> features) {
+        Skill nil = new Skill("null");
+        for (Feature f : features) {
+            if (f.getRequiredSkills().contains(nil))
+                f.getRequiredSkills().remove(nil);
+        }
+    }
+
+
+
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -183,33 +201,32 @@ public class SolverNRPTest {
         PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
 
         random.freeze(s1);
+        removeNullSkillsFromFeatures(features);
+        removeNullSkillsFromEmployees(employees);
 
         PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1);
 
         validator.validateAll(s1, s2);
     }
 
+    public void featureWithNoRequiredSkillsCanBeDoneByAnSkilledEmployee() {
+        Feature f = random.feature();
+        Employee e = random.employee();
+        Skill s = random.skill();
 
+        e.getSkills().add(s);
+
+        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
+
+        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+    }
 
     @Test
-    public void ideal() {
-        /*int nIbterations = 20;
-        int totalPlannedFeatures = 0;
+    public void featureWithNoRequiredSkillsCanBeDoneByANonSkilledEmployee() {
+        Feature f = random.feature();
+        Employee e = random.employee();
+        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
 
-        for (int i = 0; i < nbIterations; ++i) {
-            List<Skill> skills = random.skillList(30);
-            List<Feature> features = random.featureList(20);
-            List<Employee> employees = random.employeeList(50);
-
-            random.mix(features, skills, employees);
-
-            validator.validateNoUnassignedSkills(skills, employees);
-
-            PlanningSolution s1 = solver.executeNRP(10, 40.0, features, employees);
-
-            validator.validateAll(s1);
-            totalPlannedFeatures += s1.getPlannedFeatures().size();
-        }
-        System.out.println("\n\nPlanification average: " + totalPlannedFeatures/nbIterations);*/
+        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
     }
 }

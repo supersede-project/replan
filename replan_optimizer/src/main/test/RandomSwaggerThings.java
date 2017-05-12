@@ -44,7 +44,7 @@ public class RandomSwaggerThings {
     }
 
     public Resource resource() {
-        return new Resource(name("Resource"), 41.0, new ArrayList<>());
+        return new Resource(name("Resource"), 40.0, new ArrayList<>());
     }
 
     public List<Resource> resourceList(int nbElems) {
