@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * Created by kredes on 09/05/2017.
  */
+// TODO: I think that this is not a test, it does not verify that the algorithm works fine, it just produces some charts but the test itself cannot fail. Therefore we can, rethink it as a test or place it somewhere else to be executed when we want to generate the charts.
 public class AlgorithmPerformanceTest {
     private static RandomThings random;
     private static Validator validator;
@@ -107,7 +108,8 @@ public class AlgorithmPerformanceTest {
                 .setXAxisMax((double) iterations.size() - 1).setYAxisMax((double) features.size() - 1);
 
         try {
-            String base = "C:/Users/kredes/Desktop/Proyectos/replan/replan_optimizer/src/main/test/charts";
+
+            String base = "src/test/charts";
             String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
                     dateFormat.format(Calendar.getInstance().getTime()));
 
@@ -126,7 +128,8 @@ public class AlgorithmPerformanceTest {
 
 
 
-    @Test
+    // TODO: I commented this test because it takes too much time.
+    //@Test
     public void NSGAIITest() {
         runWith(new SolverNRP(SolverNRP.AlgorithmType.NSGAII), 20);
     }
