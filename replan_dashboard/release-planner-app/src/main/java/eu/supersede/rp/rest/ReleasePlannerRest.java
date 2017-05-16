@@ -427,12 +427,9 @@ public class ReleasePlannerRest{
 	//help methods
 	private String getRightUrl(HttpServletRequest request, String tenant){
 		
-		
 		String restControllerURL = restServerUrlDevelopment;
-		//String restControllerURL = env.getProperty("rest.server.url.development");
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
-		//String supersedeIfProperties = System.getProperty("supersede.if.properties");
 		String supersedeIfProperties = "";
 		
 		for (String arg : arguments) {

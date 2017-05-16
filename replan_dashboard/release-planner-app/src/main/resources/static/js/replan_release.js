@@ -171,7 +171,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	 * Dependencies
 	 */
 
-	var emptyArray = [];
+	$scope.dependencies = [];
 	// prepare the data
 	var sourceDependencyDropDownList =
 	{
@@ -181,14 +181,18 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			             { name: 'name' }
 			             ],
 			             id: 'id',
-			             localdata: emptyArray
+			             localdata: $scope.dependencies
 	};
 	$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList);
 
 	//settings
 	$scope.dropDownListSettingsDependency = { 
-
-			displayMember: "name",
+			renderer: function (index, label, value) 
+			{
+			    var datarecord = $scope.dependencies[index];
+			    return datarecord.name + "-" + datarecord.id +"(Id)";
+			},
+			//displayMember: "name",
 			valueMember: "id",
 			checkboxes: true,
 			enableSelection: true,
@@ -303,10 +307,10 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 										function(response) {
 
 											$scope.releaseFeatures = response.data;
-											var array = [];
+											$scope.dependencies = [];
 											for (var y = 0; y < $scope.releaseFeatures.length; y++) {
 												if($scope.releaseFeatures[y].id !=$location.search().featureId ){
-													array.push($scope.releaseFeatures[y]);
+													$scope.dependencies.push($scope.releaseFeatures[y]);
 												}
 											}
 
@@ -319,7 +323,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 													             { name: 'name' }
 													             ],
 													             id: 'id',
-													             localdata: array
+													             localdata: $scope.dependencies
 											};
 
 											$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList,{
@@ -446,23 +450,23 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 
 				//console.log("update " + new Date());
 				$("#delayWindow").jqxWindow('close');
-				appendReplaneWindows("success", "Re-plan success.");
+				//appendReplaneWindows("success", "Re-plan success.");
 	
-					//1.update feature
-					//2.remove all dependencies
-					//3.add dependencies
-					//4.add features to release	
-	
-					//update feature only name, description, effort, deadline, priority
-					$scope.updateFeature($scope.feature)
-					.then(
-							function(response) {
-								addRemoveSkills();
-							},
-							function(response) {
-								appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-							}
-					);
+				//1.update feature
+				//2.remove all dependencies
+				//3.add dependencies
+				//4.add features to release	
+
+				//update feature only name, description, effort, deadline, priority
+				$scope.updateFeature($scope.feature)
+				.then(
+						function(response) {
+							addRemoveSkills();
+						},
+						function(response) {
+							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+						}
+				);
 			
 
 			});
@@ -664,66 +668,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				}
 		);
 		
-		
-		
-//		//remove all skills
-//		if($scope.arraySkill_to_remove.length >0){
-//			
-//			/*
-//			 *  remove all skills
-//			 *	add skills
-//			 *	call internalUpdate
-//			 *
-//			 */
-//			$scope.deleteSkillsFromFeature($scope.feature.id, $scope.arraySkill_to_remove)
-//			.then(
-//					function(response) {
-//						if($scope.arraySkill_to_add.length >0){
-//							
-//							$scope.addSkillsToFeature($scope.feature.id, $scope.arraySkill_to_add)
-//							.then(
-//									function(response) {
-//										internalUpdate();
-//									},
-//									function(response) {
-//										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-//									}
-//							);
-//						}else{
-//							internalUpdate();
-//						}
-//					
-//					},
-//					function(response) {
-//						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-//					}
-//			);
-//			
-//		}
-//		/*
-//		 *  
-//		 *	add skills
-//		 *	call internalUpdate
-//		 *
-//		 */
-//		//add skills
-//		else if($scope.arraySkill_to_add.length >0){
-//
-//			$scope.addSkillsToFeature($scope.feature.id, $scope.arraySkill_to_add)
-//			.then(
-//					function(response) {
-//						internalUpdate();
-//					},
-//					function(response) {
-//						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
-//					}
-//			);
-//		}
-//		else{
-//			internalUpdate();
-//		}
-		
-		
 	}
 	
 	function internalUpdate(){
@@ -750,7 +694,8 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 										$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 										.then(
 												function(response) {
-													appendReplaneWindows("success", "Re-plan success.");
+													//appendReplaneWindows("success", "Re-plan success.");
+													$location.path("/release-planner-app/main");
 												},
 												function(response) {
 													appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -766,7 +711,8 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 							$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 							.then(
 									function(response) {
-										appendReplaneWindows("success", "Re-plan success.");
+										//appendReplaneWindows("success", "Re-plan success.");
+										$location.path("/release-planner-app/main");
 									},
 									function(response) {
 										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -793,11 +739,11 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				.then(
 						function(response) {
 							//add feature to release
-							//appendReplaneWindows("success", "Re-plan success.");
 							$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 							.then(
 									function(response) {
-										appendReplaneWindows("success", "Re-plan success.");
+										//appendReplaneWindows("success", "Re-plan success.");
+										$location.path("/release-planner-app/main");
 									},
 									function(response) {
 										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
@@ -817,11 +763,11 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				 *
 				 */
 				//add feature to release
-				//appendReplaneWindows("success", "Re-plan success.");
 				$scope.addFeatureToRelease($scope.release.id, $scope.feature.id)
 				.then(
 						function(response) {
-							appendReplaneWindows("success", "Re-plan success.");
+							//appendReplaneWindows("success", "Re-plan success.");
+							$location.path("/release-planner-app/main");
 						},
 						function(response) {
 							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
