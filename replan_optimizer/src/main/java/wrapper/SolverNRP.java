@@ -75,8 +75,8 @@ public class SolverNRP {
             case MOCell:
                 return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(50000)
-                        .setPopulationSize(5000)
+                        .setMaxEvaluations(50000) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
+                        .setPopulationSize(5000) // TODO: Does it work better by having 5000? or it is the same with 200? as in the other cases. Execution time is also important.
                         .build();
             case SPEA2:
                 return new SPEA2Builder<PlanningSolution>(problem, crossover, mutation)
@@ -131,6 +131,8 @@ public class SolverNRP {
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
+        // TODO: Since we may obtain several solutions, we should return the first one without violations (and if all have violations, and empty one).
+
         clearSolutionIfNotValid(solution);
 
         return ee.planningSolution(solution);
@@ -142,6 +144,7 @@ public class SolverNRP {
     */
     private void clearSolutionIfNotValid(PlanningSolution solution) {
         NumberOfViolatedConstraints<logic.PlanningSolution> numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
+        // TODO: We should know the reason of the violation.
         if (numberOfViolatedConstraints.getAttribute(solution) > 0) {
             solution.getEmployeesPlanning().clear();
             for (PlannedFeature plannedFeature : solution.getPlannedFeatures())
