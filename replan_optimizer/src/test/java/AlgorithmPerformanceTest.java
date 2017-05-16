@@ -150,7 +150,8 @@ public class AlgorithmPerformanceTest {
         validator.validateNoUnassignedSkills(skills, employees);
 
 
-        SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+        SolverNRP solver;
+        //solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
         //runWith(solver, 20, features, skills, employees);
 
         solver = new SolverNRP(SolverNRP.AlgorithmType.MOCell);

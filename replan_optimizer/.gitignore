@@ -1,8 +1,4 @@
 .idea
 build
 .gradle
-*.html
-*.js
-*.css
-package-list
 src/test/charts

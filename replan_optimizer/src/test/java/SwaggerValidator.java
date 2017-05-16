@@ -75,8 +75,7 @@ public class SwaggerValidator {
     public void validateNoUnassignedSkills(List<Skill> skills, List<Resource> resources) {
         Set<Skill> assignedSkills = new HashSet<>();
         for (Resource e : resources)
-            for (Skill s : e.getSkills())
-                assignedSkills.add(s);
+            assignedSkills.addAll(e.getSkills());
 
         for (Skill s : skills)
             Assert.assertTrue(assignedSkills.contains(s));

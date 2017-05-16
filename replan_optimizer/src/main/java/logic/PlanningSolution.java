@@ -271,8 +271,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	 * @return The planned feature or null if it is not yet planned
 	 */
 	public PlannedFeature findPlannedFeature(Feature feature) {
-		for (Iterator<PlannedFeature> iterator = plannedFeatures.iterator(); iterator.hasNext();) {
-			PlannedFeature plannedFeature = iterator.next();
+		for (PlannedFeature plannedFeature : plannedFeatures) {
 			if (plannedFeature.getFeature().equals(feature)) {
 				return plannedFeature;
 			}
@@ -450,7 +449,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	@Override
 	public int hashCode() {
 		return getPlannedFeatures().size();
-	};
+	}
 	
 	@Override
 	public boolean equals(Object obj) {

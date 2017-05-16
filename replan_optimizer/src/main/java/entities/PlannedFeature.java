@@ -156,11 +156,7 @@ public class PlannedFeature {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		
-		sb.append(getFeature()).append(" done by ").append(getEmployee())
-			.append(" from ").append(getBeginHour()).append(" to ").append(getEndHour());
-		
-		return sb.toString();
+		return String.valueOf(getFeature()) + " done by " + getEmployee() +
+				" from " + getBeginHour() + " to " + getEndHour();
 	}
 }

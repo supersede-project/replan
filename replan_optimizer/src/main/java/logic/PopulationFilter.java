@@ -12,7 +12,7 @@ public class PopulationFilter {
 	 * @param population the population to sort
 	 */
 	private static void sortByDominance(List<PlanningSolution> population) {	
-		Collections.sort(population, new PlanningSolutionDominanceComparator());
+		population.sort(new PlanningSolutionDominanceComparator());
 	}
 	
 	/**
@@ -42,10 +42,8 @@ public class PopulationFilter {
 		PlanningSolution bestSolution = getBestSolution(population);
 		
 		Comparator<PlanningSolution> comparator = new PlanningSolutionDominanceComparator();
-		Iterator<PlanningSolution> iterator = population.iterator();
-		
-		while (iterator.hasNext()) {
-			PlanningSolution currentSolution = (PlanningSolution) iterator.next();
+
+		for (PlanningSolution currentSolution : population) {
 			if (comparator.compare(currentSolution, bestSolution) == 0) {
 				bestSolutions.add(currentSolution);
 			}

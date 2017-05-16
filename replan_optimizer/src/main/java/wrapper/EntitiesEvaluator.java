@@ -28,20 +28,17 @@ public class EntitiesEvaluator {
     public NextReleaseProblem nextReleaseProblemAddSkills(int nbWeeks, Number hoursPerweek,
                                                           List<Feature> features, List<Employee> employees) {
 
-        NextReleaseProblem problem = new NextReleaseProblem(this.featuresAddSkills(features),
+        return new NextReleaseProblem(this.featuresAddSkills(features),
                                                             this.employeesAddSkills(employees),
                                                             new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
-        return problem;
     }
 
     public NextReleaseProblem nextReleaseProblemDeleteSkills(int nbWeeks, Number hoursPerweek,
                                                              List<Feature> features, List<Employee> employees) {
 
-        NextReleaseProblem problem = new NextReleaseProblem(this.featuresDeleteSkills(features),
+        return new NextReleaseProblem(this.featuresDeleteSkills(features),
                                                             this.employeesDeleteSkills(employees),
                                                             new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
-
-        return problem;
     }
 
     public List<Employee> employeesAddSkills(List<Employee> employees) {
@@ -117,8 +114,7 @@ public class EntitiesEvaluator {
         List<Skill> skills = f.getRequiredSkills();
         skills.remove(new Skill("null"));
 
-        Feature feature = new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills);
-        return feature;
+        return new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills);
     }
 
     private List<PlannedFeature> plannedFeaturesDeleteSkills(List<PlannedFeature> features) {
@@ -147,9 +143,7 @@ public class EntitiesEvaluator {
             System.out.print("FEATURES" + plannedFeature.getBeginHour() + "  " + plannedFeature.getEndHour());
         }
 
-        PlanningSolutionWrapper psw = new PlanningSolutionWrapper(solution,plannedFeatures);
-
-        return psw;
+        return new PlanningSolutionWrapper(solution,plannedFeatures);
     }
 
 

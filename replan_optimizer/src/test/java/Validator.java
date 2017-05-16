@@ -79,8 +79,7 @@ public class Validator {
     public void validateNoUnassignedSkills(List<Skill> skills, List<Employee> employees) {
         Set<Skill> assignedSkills = new HashSet<>();
         for (Employee e : employees)
-            for (Skill s : e.getSkills())
-                assignedSkills.add(s);
+            assignedSkills.addAll(e.getSkills());
 
         for (Skill s : skills)
             Assert.assertTrue(assignedSkills.contains(s));
