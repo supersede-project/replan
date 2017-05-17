@@ -1,5 +1,5 @@
 /**
- * 
+ * @author Vavou
  */
 package logic;
 
@@ -15,276 +15,136 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author Vavou
- * 
- * Objectives: 
- * 0: Doing the high score in priority
- * 1: The shortest endDate
- *
- */
+// Objectives: 0: Doing the high score in priority; 1: The shortest endDate
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
 
-	/* --- Attributes --- */
-	
-	/**
-	 * Generated Id
-	 */
-	private static final long serialVersionUID = 3302475694747789178L;
+	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
+    public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
+    public final static int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
 
-
-	private PlanningSolution previousSolution;
-	
-	/**
-	 * Features available for the iteration
-	 */
+	// PROBLEM
 	private List<Feature> features;
-	
-	/**
-	 * Employees available for the iteration
-	 */
 	private List<Employee> employees;
-	
-	/**
-	 * Number of violated constraints
-	 */
+	private Map<Skill, List<Employee>> skilledEmployees; // Employees sorted by skill
+	private PlanningSolution previousSolution;
+	private int nbWeeks; // The number of weeks of the iteration
+    private double nbHoursByWeek; // The number of worked hours by week
+
+	// SOLUTION
 	private NumberOfViolatedConstraints<PlanningSolution> numberOfViolatedConstraints;
-	
-	/**
-	 * Number of violated constraints
-	 */
 	private OverallConstraintViolation<PlanningSolution> overallConstraintViolation;
-	
-	/**
-	 * The solution quality attribute
-	 */
 	private SolutionQuality solutionQuality;
-	
-	/**
-	 * Employees sorted by skill 
-	 * An employee is in a the lists of all his skills
-	 */
-	private Map<Skill, List<Employee>> skilledEmployees;
+	private double precedenceConstraintOverall; //The overall of a violated constraint
+	private double worstScore; //The priority score if there is no planned feature
+	private double worstEndDate; //The worst end date, if there is no planned feature
 
-	/**
-	 * The number of weeks of the iteration
-	 */
-	private int nbWeeks;
-	
-	/**
-	 * The number of worked hours by week
-	 */
-	private double nbHoursByWeek;
-	
-	/**
-	 * The overall of a violated constraint
-	 */
-	private double precedenceConstraintOverall;
-	
-	/**
-	 * The priority score if there is no planned feature
-	 */
-	private double worstScore;
-	
-	/**
-	 * The worst end date, if there is no planned feature
-	 */
-	private double worstEndDate;
-	
-	/**
-	 * The index of the priority score objective in the objectives list
-	 */
-	public final static int INDEX_PRIORITY_OBJECTIVE = 0;
-	
-	/**
-	 * The index of the end date objective in the objectives list
-	 */
-	public final static int INDEX_END_DATE_OBJECTIVE = 1;
-	
-	
-	/* --- Getters and setters --- */
-
+    // GETTERS / SETTERS
 	public PlanningSolution getPreviousSolution() {
 		return previousSolution;
 	}
-
 	public void setPreviousSolution(PlanningSolution previousSolution) {
 		this.previousSolution = previousSolution;
 	}
-
-	/**
-	 * @return the features
-	 */
 	public List<Feature> getFeatures() {
 		return features;
 	}
-
-	/**
-	 * @param features the features to set
-	 */
 	public void setFeatures(List<Feature> features) {
 		this.features = features;
 	}
-	
-	/**
-	 * Returns the number of weeks of the iteration
-	 * @return The number of weeks of the iteration
-	 */
 	public int getNbWeeks() {
 		return nbWeeks;
 	}
-	
-	/**
-	 * Returns the number of worked hours by week
-	 * @return the number of worked hours by week
-	 */
 	public double getNbHoursByWeek() {
 		return nbHoursByWeek;
 	}
-	
-	/**
-	 * Return the number of employees
-	 * @return the number of employees
-	 */
 	public int getNumberOfEmployees() {
 		return employees.size();
 	}
-	
-	/**
-	 * @return the numberOfViolatedConstraints
-	 */
 	public NumberOfViolatedConstraints<PlanningSolution> getNumberOfViolatedConstraints() {
 		return numberOfViolatedConstraints;
 	}
-
-	/**
-	 * @return the employees with a skill
-	 */
 	public List<Employee> getSkilledEmployees(Skill skill) {
 		return skilledEmployees.get(skill);
 	}
-	
-	/**
-	 * @return the list of the employees
-	 */
 	public List<Employee> getEmployees() {
 		return employees;
 	}
-	
-	/**
-	 * @return the worstScore
-	 */
 	public double getWorstScore() {
 		return worstScore;
 	}
 
+    // Constructor (empty)
+    public NextReleaseProblem() {
+        setName("Next Release Problem");
+        setNumberOfVariables(1);
+        setNumberOfObjectives(2);
+        skilledEmployees = new HashMap<>();
+        features = new ArrayList<>();
+        numberOfViolatedConstraints = new NumberOfViolatedConstraints<PlanningSolution>();
+        overallConstraintViolation = new OverallConstraintViolation<>();
+        solutionQuality = new SolutionQuality();
+    }
 
-	/* --- Constructors --- */
-
-	/**
-	 * Empty problem for convenience
-	 * Edit: Not happening. It is accessed everywhere and will cause a shitton of NullPointerException
-	 */
-	public NextReleaseProblem() {
-		// Nothing here
-	}
-	
-	/**
-	 * Constructor
-	 * @param features features of the iteration
-	 * @param employees employees available during the iteration
-	 * @param iterationParam The parameters of the iteration
-	 */
+    // Constructor (normal)
 	public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam) {
+	    this();
+
 		this.employees = employees;
 		this.nbWeeks = iterationParam.getNumberOfWeek();
 		this.nbHoursByWeek = iterationParam.getHoursByWeek();
 		
-		skilledEmployees = new HashMap<>();
-		for (Employee employee : employees) {
-			for (Skill skill : employee.getSkills()) {
-				List<Employee> employeesList = skilledEmployees.get(skill);
-				if (employeesList == null) {
-					employeesList = new ArrayList<>();
-					skilledEmployees.put(skill, employeesList);
-				}
-				employeesList.add(employee);
-			}
-		}
-		
-		this.features = new ArrayList<>();
-		for (Feature feature : features) {
-			if (skilledEmployees.get(feature.getRequiredSkills().get(0)) != null) {
-				if (features.containsAll(feature.getPreviousFeatures())) {
+        // build the skill / employee mapping
+		for (Employee employee : employees)
+			for (Skill skill : employee.getSkills())
+                skilledEmployees.computeIfAbsent(skill, k -> new ArrayList<>()).add(employee);
+
+		// TODO: If a feature is not included because 1. lack of skills or 2. the dependee is not included; this information should be noted somewhere and send back to the controller once the plan is produced).
+        // checks that features can be satisfied by the skills of the resources and the dependencies are included
+		for (Feature feature : features)
+            // TODO: It seems that only checks one skill per feature? the correct condition should be: exists a resource with all the skills required by the feature.
+		    if (skilledEmployees.get(feature.getRequiredSkills().get(0)) != null) // 1.
+				if (features.containsAll(feature.getPreviousFeatures())) // 2.
 					this.features.add(feature);
-				}
-			}
-		}
-		
+
 		worstEndDate = nbWeeks * nbHoursByWeek;
-		setNumberOfVariables(1);
-		setName("Next Release Problem");
-		setNumberOfObjectives(2);
-		initializeWorstScore();
-		initializeNumberOfConstraint();
-		
-		numberOfViolatedConstraints = new NumberOfViolatedConstraints<PlanningSolution>();
-		overallConstraintViolation = new OverallConstraintViolation<>();
-		solutionQuality = new SolutionQuality();
+
+        initializeWorstScore();
+        initializeNumberOfConstraint();
 	}
 
-	/**
-	 * Constructor
-	 * @param features features of the iteration
-	 * @param employees employees available during the iteration
-	 * @param iterationParam The parameters of the iteration
-	 * @param iterationParam a previously generated solution for this problem
-	 */
-	public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam, PlanningSolution previousSolution) {
+    // Constructor (with previous plan)
+    public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam, PlanningSolution previousSolution) {
 		this(features, employees, iterationParam);
 		this.previousSolution = previousSolution;
 	}
 	
-	
-	/* --- Methods --- */
-	
-	/**
-	 * Initializes the worst score 
-	 * Corresponding to the addition of each feature priority score
-	 */
+    // Initializes the worst score
 	private void initializeWorstScore() {
 		worstScore = 0.0;
-		for (Feature feature : features) {
+		for (Feature feature : features)
 			worstScore += feature.getPriority().getScore();
-		}
 	}
 	
-	/**
-	 * Initializes the number of constraints for the problem
-	 * Corresponding to the number of precedences more one for the time overflow
-	 */
+	// Initializes the number of constraints for the problem
 	private void initializeNumberOfConstraint() {
 		int numberOfConstraints = 0;
 		
-		//Precedences
-		for (Feature feature : features) {
+		// 1 for each dependency
+		for (Feature feature : features)
 			numberOfConstraints += feature.getPreviousFeatures().size();
-		}
 		
 		precedenceConstraintOverall = 1.0 / numberOfConstraints;
 		
-		// Global overflow
+		// 1 for passing the deadline of the release
 		numberOfConstraints++;
 		
 		setNumberOfConstraints(numberOfConstraints);
 	}
 
-
 	@Override
 	public PlanningSolution createSolution() {
 		return new PlanningSolution(this);
 	}
-
 
 	@Override
 	public void evaluate(PlanningSolution solution) {
@@ -307,7 +167,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				}
 			}
 
-				
 			// Checks the employee availability
 			Employee currentEmployee = currentPlannedFeature.getEmployee();
 			List<EmployeeWeekAvailability> employeeTimeSlots = employeesTimeSlots.get(currentEmployee);
@@ -336,11 +195,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				System.err.println("go");
 				currentWeek++;
 			}
-			
-			
-			
-			
-			
+
 			do {
 				currentWeekAvailability = employeeTimeSlots.get(employeeTimeSlots.size() - 1);
 				double newBeginHourInWeek = Math.max(newBeginHour, currentWeekAvailability.getEndHour());
