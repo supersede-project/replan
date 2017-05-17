@@ -162,9 +162,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			// Checks the previous features end hour
 			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
-				if (previousPlannedFeature != null) {
+				if (previousPlannedFeature != null)
 					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
-				}
 			}
 
 			// Checks the employee availability
@@ -225,8 +224,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.setEmployeesPlanning(employeesTimeSlots);
 		solution.setEndDate(endPlanningHour);
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
-		solution.setObjective(INDEX_END_DATE_OBJECTIVE, 
-				plannedFeatures.size() == 0 ? worstEndDate : endPlanningHour);
+		solution.setObjective(INDEX_END_DATE_OBJECTIVE, plannedFeatures.size() == 0 ? worstEndDate : endPlanningHour);
 		computeQuality(solution);
 	}
 
@@ -237,21 +235,16 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 		
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
-
 			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
-
 			if (	previousSolution != null &&
 					previousSolution.findPlannedFeature(currentFeature.getFeature()) != null &&
 					previousSolution.getPlannedFeatures().contains(currentFeature))
-			{
 				continue;
-			}
 
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
-				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour()) {
+				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour())
 					precedencesViolated++;
-				}
 			}
 		}
 		
@@ -262,7 +255,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			violatedConstraints++;
 			overall -= 1.0;
 		}
-
 
 		// Check if the employees assigned to the planned features have the required skills
 		for (PlannedFeature plannedFeature : solution.getPlannedFeatures()) {
@@ -313,10 +305,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		}
 	}
 	
-	/**
-	 * Updates the quality attribute of the solution
-	 * @param solution The solution to evaluate quality
-	 */
+	// Updates the quality attribute of the solution
 	private void computeQuality(PlanningSolution solution) {
 		double globalQuality;
 		double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
