@@ -123,23 +123,20 @@ public class AlgorithmPerformanceTest {
         }
     }
 
-
-
-
-
-
     // TODO: I commented this test because it takes too much time.
     //@Test
     public void NSGAIITest() {
         runWith(new SolverNRP(SolverNRP.AlgorithmType.NSGAII), 20);
     }
 
-    @Test
+    // TODO: I commented this test because it does not work on the development server.
+    //@Test
     public void MOCellTest() {
         runWith(new SolverNRP(SolverNRP.AlgorithmType.MOCell), 20);
     }
 
-    @Test
+    // TODO: I commented this test because it does not work on the development server.
+    //@Test
     public void runAllWithSameInput() {
         List<Skill> skills = random.skillList(10);
         List<Feature> features = random.featureList(50);

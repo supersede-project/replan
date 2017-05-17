@@ -2,9 +2,9 @@ group 'SUPERSEDE'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'war'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'war'
 
 war {
     baseName = 'replan_optimizer'
@@ -14,11 +14,11 @@ war {
 sourceCompatibility = 1.8
 
 repositories {
-	maven { url "http://repo.spring.io/snapshot" }
-	maven { url "http://repo.spring.io/milestone" }
-	maven { url "https://repo.spring.io/release" }
-	maven { url "http://repo.spring.io/libs-snapshot" }
-	mavenCentral()
+    maven { url "http://repo.spring.io/snapshot" }
+    maven { url "http://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/release" }
+    maven { url "http://repo.spring.io/libs-snapshot" }
+    mavenCentral()
 }
 
 buildscript {
