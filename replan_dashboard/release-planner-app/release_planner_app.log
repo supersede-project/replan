@@ -1,0 +1,129 @@
+2017-05-18 14:35:01.381  INFO 9640 --- [main] eu.supersede.rp.Application              : Starting Application on MD1B33KC with PID 9640 (D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app\bin started by z002z80a in D:\supersede\workspace_jqxWidgets\replan\replan_dashboard\release-planner-app)
+2017-05-18 14:35:01.625 DEBUG 9640 --- [main] eu.supersede.rp.Application              : Running with Spring Boot v1.4.1.RELEASE, Spring v4.3.3.RELEASE
+2017-05-18 14:35:01.626  INFO 9640 --- [main] eu.supersede.rp.Application              : No active profile set, falling back to default profiles: default
+2017-05-18 14:35:01.793  INFO 9640 --- [main] ationConfigEmbeddedWebApplicationContext : Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55b5f5d2: startup date [Thu May 18 14:35:01 CEST 2017]; root of context hierarchy
+2017-05-18 14:35:05.045  INFO 9640 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2017-05-18 14:35:05.177  INFO 9640 --- [main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode!
+2017-05-18 14:35:06.204  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration' of type [class org.springframework.transaction.annotation.ProxyTransactionManagementConfiguration$$EnhancerBySpringCGLIB$$2819436] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:06.335  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration' of type [class org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration$$EnhancerBySpringCGLIB$$9b2f5c70] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:06.357  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'objectPostProcessor' of type [class org.springframework.security.config.annotation.configuration.AutowireBeanFactoryObjectPostProcessor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:06.364  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@60928a61' of type [class org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:06.382  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration' of type [class org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration$$EnhancerBySpringCGLIB$$c003ff22] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:06.414  INFO 9640 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'methodSecurityMetadataSource' of type [class org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2017-05-18 14:35:07.310  INFO 9640 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat initialized with port(s): 8083 (http)
+2017-05-18 14:35:07.617  INFO 9640 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 5825 ms
+2017-05-18 14:35:09.359  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2017-05-18 14:35:09.362  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'springSessionRepositoryFilter' to: [/*]
+2017-05-18 14:35:09.362  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2017-05-18 14:35:09.362  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2017-05-18 14:35:09.363  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2017-05-18 14:35:09.366  INFO 9640 --- [localhost-startStop-1] .s.DelegatingFilterProxyRegistrationBean : Mapping filter: 'springSecurityFilterChain' to: [/*]
+2017-05-18 14:35:09.367  INFO 9640 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Mapping servlet: 'dispatcherServlet' to [/]
+2017-05-18 14:35:09.448  INFO 9640 --- [main] ceBasedMultiTenantConnectionProviderImpl : Found tenant: atos
+2017-05-18 14:35:09.449  INFO 9640 --- [main] ceBasedMultiTenantConnectionProviderImpl : Found tenant: siemens
+2017-05-18 14:35:09.450  INFO 9640 --- [main] ceBasedMultiTenantConnectionProviderImpl : Found tenant: senercon
+2017-05-18 14:35:09.543  INFO 9640 --- [main] .f.m.CurrentTenantIdentifierResolverImpl : release-planner-app.multitenancy.default = atos
+2017-05-18 14:35:09.732  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:09.759  INFO 9640 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2017-05-18 14:35:10.221  INFO 9640 --- [main] org.hibernate.Version                    : HHH000412: Hibernate Core {5.0.11.Final}
+2017-05-18 14:35:10.224  INFO 9640 --- [main] org.hibernate.cfg.Environment            : HHH000206: hibernate.properties not found
+2017-05-18 14:35:10.227  INFO 9640 --- [main] org.hibernate.cfg.Environment            : HHH000021: Bytecode provider name : javassist
+2017-05-18 14:35:10.326  INFO 9640 --- [main] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2017-05-18 14:35:10.754  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : initialSize is larger than maxActive, setting initialSize to: 3
+2017-05-18 14:35:10.756  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : minIdle is larger than maxActive, setting minIdle to: 3
+2017-05-18 14:35:10.757  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-05-18 14:35:11.402  INFO 9640 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2017-05-18 14:35:11.739  INFO 9640 --- [main] o.h.e.j.e.i.LobCreatorBuilderImpl        : HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2017-05-18 14:35:11.742  INFO 9640 --- [main] org.hibernate.type.BasicTypeRegistry     : HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@6ba355e4
+2017-05-18 14:35:12.084  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:13.051  INFO 9640 --- [main] e.supersede.fe.integration.ProxyWrapper  : release-planner-app.multitenancy.names = atos,siemens,senercon
+2017-05-18 14:35:13.054  INFO 9640 --- [main] e.supersede.fe.integration.ProxyWrapper  : Tenants: 3
+2017-05-18 14:35:15.266  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : initialSize is larger than maxActive, setting initialSize to: 3
+2017-05-18 14:35:15.268  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : minIdle is larger than maxActive, setting minIdle to: 3
+2017-05-18 14:35:15.269  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-05-18 14:35:15.543  INFO 9640 --- [main] e.s.fe.multitenant.MultiJpaProvider      : Loading database: jdbc:postgresql://localhost/siemens
+2017-05-18 14:35:15.545  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:15.545  INFO 9640 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2017-05-18 14:35:15.664  INFO 9640 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2017-05-18 14:35:15.849  INFO 9640 --- [main] o.h.e.j.e.i.LobCreatorBuilderImpl        : HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2017-05-18 14:35:15.850  INFO 9640 --- [main] org.hibernate.type.BasicTypeRegistry     : HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@6ba355e4
+2017-05-18 14:35:15.860  WARN 9640 --- [main] o.h.j.i.EntityManagerFactoryRegistry     : HHH000436: Entity manager factory name (default) is already registered.  If entity manager will be clustered or passivated, specify a unique value for property 'hibernate.ejb.entitymanager_factory_name'
+2017-05-18 14:35:15.861  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:15.995  INFO 9640 --- [main] e.s.fe.multitenant.MultiJpaProvider      : Loading database: jdbc:postgresql://localhost/atos
+2017-05-18 14:35:15.997  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:15.998  INFO 9640 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2017-05-18 14:35:16.101  INFO 9640 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2017-05-18 14:35:16.324  INFO 9640 --- [main] o.h.e.j.e.i.LobCreatorBuilderImpl        : HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2017-05-18 14:35:16.325  INFO 9640 --- [main] org.hibernate.type.BasicTypeRegistry     : HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@6ba355e4
+2017-05-18 14:35:16.338  WARN 9640 --- [main] o.h.j.i.EntityManagerFactoryRegistry     : HHH000436: Entity manager factory name (default) is already registered.  If entity manager will be clustered or passivated, specify a unique value for property 'hibernate.ejb.entitymanager_factory_name'
+2017-05-18 14:35:16.339  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:16.340  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : initialSize is larger than maxActive, setting initialSize to: 3
+2017-05-18 14:35:16.341  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : minIdle is larger than maxActive, setting minIdle to: 3
+2017-05-18 14:35:16.342  WARN 9640 --- [main] o.a.tomcat.jdbc.pool.ConnectionPool      : maxIdle is larger than maxActive, setting maxIdle to: 3
+2017-05-18 14:35:16.646  INFO 9640 --- [main] e.s.fe.multitenant.MultiJpaProvider      : Loading database: jdbc:postgresql://localhost/senercon
+2017-05-18 14:35:16.647  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Building JPA container EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:16.648  INFO 9640 --- [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2017-05-18 14:35:16.746  INFO 9640 --- [main] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.PostgreSQLDialect
+2017-05-18 14:35:16.885  INFO 9640 --- [main] o.h.e.j.e.i.LobCreatorBuilderImpl        : HHH000424: Disabling contextual LOB creation as createClob() method threw error : java.lang.reflect.InvocationTargetException
+2017-05-18 14:35:16.885  INFO 9640 --- [main] org.hibernate.type.BasicTypeRegistry     : HHH000270: Type registration [java.util.UUID] overrides previous : org.hibernate.type.UUIDBinaryType@6ba355e4
+2017-05-18 14:35:16.895  WARN 9640 --- [main] o.h.j.i.EntityManagerFactoryRegistry     : HHH000436: Entity manager factory name (default) is already registered.  If entity manager will be clustered or passivated, specify a unique value for property 'hibernate.ejb.entitymanager_factory_name'
+2017-05-18 14:35:16.895  INFO 9640 --- [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2017-05-18 14:35:17.106  INFO 9640 --- [main] b.a.s.AuthenticationManagerConfiguration : 
+
+Using default security password: b9c9e7fa-2637-4f66-8790-11d036493717
+
+2017-05-18 14:35:17.585  INFO 9640 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Creating filter chain: org.springframework.security.web.util.matcher.AnyRequestMatcher@1, [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@12db2921, org.springframework.security.web.context.SecurityContextPersistenceFilter@71077d1, org.springframework.security.web.header.HeaderWriterFilter@3986b56, org.springframework.security.web.csrf.CsrfFilter@32ff3c98, eu.supersede.fe.security.SecurityConfiguration$1@f6e9c18, org.springframework.security.web.authentication.logout.LogoutFilter@633328d3, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@630a647c, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@42210d27, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@75225415, org.springframework.security.web.session.SessionManagementFilter@41628b4f, org.springframework.security.web.access.ExceptionTranslationFilter@21132086, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7b5afde5]
+2017-05-18 14:35:18.004  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55b5f5d2: startup date [Thu May 18 14:35:01 CEST 2017]; root of context hierarchy
+2017-05-18 14:35:18.185  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/replan/projects/tenant/**],methods=[GET || POST || PUT || DELETE]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.get(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-05-18 14:35:18.188  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/replan/projects/dev],methods=[GET]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.dev(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-05-18 14:35:18.189  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/replan/projects/hello],methods=[GET]}" onto public java.lang.String eu.supersede.rp.rest.ReleasePlannerRest.hello(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-05-18 14:35:18.192  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/replan/projects/production],methods=[GET]}" onto public org.springframework.http.ResponseEntity<?> eu.supersede.rp.rest.ReleasePlannerRest.production(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse) throws java.io.IOException
+2017-05-18 14:35:18.194  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/test]}" onto public java.lang.String eu.supersede.rp.rest.TestRest.test()
+2017-05-18 14:35:18.199  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2017-05-18 14:35:18.202  INFO 9640 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2017-05-18 14:35:18.334  INFO 9640 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-05-18 14:35:18.335  INFO 9640 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-05-18 14:35:18.484  INFO 9640 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2017-05-18 14:35:19.519  INFO 9640 --- [main] o.s.w.s.v.velocity.VelocityConfigurer    : ClasspathResourceLoader with name 'springMacro' added to configured VelocityEngine
+2017-05-18 14:35:19.536  INFO 9640 --- [main] o.s.ui.velocity.SpringResourceLoader     : SpringResourceLoader for Velocity: using resource loader [org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@55b5f5d2: startup date [Thu May 18 14:35:01 CEST 2017]; root of context hierarchy] and resource loader paths [classpath:/templates/]
+2017-05-18 14:35:20.148  WARN 9640 --- [main] o.s.b.a.v.VelocityAutoConfiguration      : Cannot find template location: classpath:/templates/ (please add some templates, check your Velocity configuration, or set spring.velocity.checkTemplateLocation=false)
+2017-05-18 14:35:20.202  WARN 9640 --- [main] arterDeprecationWarningAutoConfiguration : spring-boot-starter-redis is deprecated as of Spring Boot 1.4, please migrate to spring-boot-starter-data-redis
+2017-05-18 14:35:20.593  INFO 9640 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2017-05-18 14:35:20.608  INFO 9640 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147483647
+2017-05-18 14:35:20.633  INFO 9640 --- [main] s.a.ScheduledAnnotationBeanPostProcessor : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2017-05-18 14:35:20.764  INFO 9640 --- [main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat started on port(s): 8083 (http)
+2017-05-18 14:35:20.776  INFO 9640 --- [main] eu.supersede.rp.Application              : Started Application in 20.151 seconds (JVM running for 23.128)
+2017-05-18 14:36:35.060  INFO 9640 --- [http-nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization started
+2017-05-18 14:36:35.091  INFO 9640 --- [http-nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : FrameworkServlet 'dispatcherServlet': initialization completed in 30 ms
+2017-05-18 14:36:36.025 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:36.025 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:36.027 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:36.028 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/features?status=pending
+2017-05-18 14:36:36.028 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:36.030 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/releases
+2017-05-18 14:36:36.596 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200
+2017-05-18 14:36:36.621 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:36.622 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:36.623 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/releases/16/features
+2017-05-18 14:36:36.827 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200
+2017-05-18 14:36:37.043 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200
+2017-05-18 14:36:39.638 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:39.639 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:39.640 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/releases/16/features
+2017-05-18 14:36:40.000 DEBUG 9640 --- [http-nio-8083-exec-8] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200
+2017-05-18 14:36:40.020 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:40.021 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:40.022 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/releases
+2017-05-18 14:36:40.127 DEBUG 9640 --- [http-nio-8083-exec-7] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200
+2017-05-18 14:36:40.140 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : restController URL http://supersede.es.atos.net:8280
+2017-05-18 14:36:40.141 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : method: GET
+2017-05-18 14:36:40.142 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : replaced url: http://supersede.es.atos.net:8280/replan/projects/siemens/releases/16/plan
+2017-05-18 14:36:40.556 DEBUG 9640 --- [http-nio-8083-exec-10] eu.supersede.rp.rest.ReleasePlannerRest  : Reponse code: 200

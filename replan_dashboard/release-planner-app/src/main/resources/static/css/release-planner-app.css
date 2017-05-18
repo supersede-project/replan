@@ -126,6 +126,10 @@
 .graph-data {
   fill: #337ab7;
   stroke-width: 1; 
-/*   cursor: move; */
-font-size: 0.8vw;
+  /*   cursor: move; */
+  font-size: 0.8vw;
+}
+
+.legend {
+  margin-left: 15px;
 }

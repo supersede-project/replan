@@ -15,7 +15,7 @@
             	<h4>{{messageFeatures}}</h4>
             </div>
  			<div class="col-xs-6" ng-show="showFeatures">
- 				<jqx-list-box id ="featureListBox" jqx-settings="settings" jqx-on-select="selectItem(event)"></jqx-list-box>
+ 				<jqx-list-box id ="featureListBox" jqx-settings="featureListBoxSettings" jqx-on-select="selectItem(event)"></jqx-list-box>
             </div>
             
             <!-- releases -->
@@ -26,8 +26,7 @@
 		         <ul class="media-list">
                    <li class="media border" ng-repeat="release in releases">   
   		             <div class="media-body" ng-model="release" ng-click="showReleaseDetails(release)" ng-attr-id="{{'release_' + release.id}}">
-                         <h4 class="media-heading">{{release.name + '-' + release.id}}&nbsp;<small>{{release.deadline | date}}</small></h4>
-                       
+                         <h4 class="media-heading">{{release.name + '-' + release.id +  '(Id)'}}&nbsp;<small>{{release.deadline | date}}</small></h4>
                          <p>{{release.description}}</p>
                      </div>
                      <div class="media-right media-middle">

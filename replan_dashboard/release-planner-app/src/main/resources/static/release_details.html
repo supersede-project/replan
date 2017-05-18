@@ -13,14 +13,16 @@
 <!--  	   	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
 <!-- 			<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
 <!-- 		</a> -->
-		<div class="row">
-	        <div class="col-xs-12" ng-show="!showReleasePlan">
+	    <div class="row">
+	      <div class="col-xs-12" ng-show="!showReleasePlan">
 	            <h4>{{messageReleasePlan}}</h4>
 	        </div>
-    	</div>
+	    </div>
         <div class="row">
-        	<h4 ng-show="showReleasePlan">{{release.name}} - {{release.id}}</h4>
-	        <div class="col-xs-12" >
+       	 <h4 ng-show="showReleasePlan">{{release.name + '-' + release.id +'(Id)'}}</h4>
+	    </div>
+	    <div class="row">
+             <div class="col-xs-12" >
             		<svg id ="chart" version="1.2" class="graph" aria-labelledby="title">
 		
 <!-- 					<defs> -->
@@ -68,13 +70,26 @@
 				 	</g>
 				 	<g id="dependencies" class="graph-data">
 				 	</g>
+				 	<g id="legend">
+				 	</g>
+				 	
 				</svg>
             </div>
+<!--             <div class="row legend"><b>Legend:</b> -->
             
+<!-- 		   		<ul class="col-xs-12" ng-repeat="job in plan.jobs"> -->
+<!-- 	       			<li>{{job.feature.id + ' = ' + job.feature.name}}</li> -->
+<!-- 	        	</ul> -->
+<!-- 	        </div> -->
+			<div class="col-xs-12 margin-bottom-5px" >
+				<jqx-grid id="featuresJqxgrid" jqx-create="blncreateFeaturesJqxgrid" jqx-settings="featuresJqxgridSettings"></jqx-grid>
+			</div>     
 	     	<div class="col-xs-12">
 			     <div class="text-right" ng-show="showReleasePlan">
-			     	<jqx-button type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
-			     	<jqx-button type="submit" class="my-button margin-left-5px margin-right-minus15px" ng-click="accept()">Accept</jqx-button>
+			     	<jqx-button id="acceptJqxButton" type="submit" class="my-button margin-left-5px" ng-click="accept()">Accept</jqx-button>
+			     	<jqx-button id="forceTOReplanJqxButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(true)">Forse to replan</jqx-button>
+			     	<jqx-button id="previousPlanButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(false)">Previous plan</jqx-button>
+			     	<jqx-button id="cancelJqxButton" type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
 			    </div>  
 			</div>
         </div>

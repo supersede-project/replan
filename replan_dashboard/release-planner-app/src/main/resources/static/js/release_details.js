@@ -13,7 +13,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			method: 'GET',
 			url: url
 		});
-	} 
+	}; 
 
 	$scope.getReleasePlan = function (releaseId) {
 
@@ -22,15 +22,46 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			method: 'GET',
 			url: url
 		});
-	}
+	};
 
 	$scope.getReleases = function () {
 		return $http({
 			method: 'GET',
 			url: baseURL + '/releases'
 		});
-	}
+	};
+	
+	//remove feature to release
+	$scope.removeFeatureFromRelease = function (releaseId, featureIds){
 
+		var url =  baseURL + '/releases/'+ releaseId + '/features';
+		for(var i=0 ; i< featureIds.length; i++){
+			if(i == 0){
+				url = url + "?featureId=" + featureIds[i];
+			}
+			else{
+				url = url + "," + featureIds[i];
+			}
+		}  
+
+		return $http({
+			method: 'DELETE',
+			url: url
+		});	 
+
+	};
+	
+	$scope.forceReleasePlan = function (releaseId, force) {
+
+		var strForce = force.toString();
+		
+		var url = baseURL + '/releases/' + releaseId + '/plan?force_new='+strForce;
+		return $http({
+			method: 'GET',
+			url: url
+		});
+	};
+	
 
 	/*
 	 * All methods
@@ -45,6 +76,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	$scope.releaseFeatures = [];
 
 	var CONSTANT = {
+			
 			"xStart": 90,
 			"xEnd": 630,
 			"xStartAsString": "90",
@@ -69,10 +101,11 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	var mappingXDateJSONObject = {};
 	mappingXDateJSONObject["Xinterval"] = 0;
 	mappingXDateJSONObject["Yinterval"] = 0;
+	
 	//name -> y
 	//1472688000000 -> x
 	$scope.startPoint = function (releaseId) {
-
+		
 		$scope.getReleaseFeatures(releaseId)
 		.then(
 				function(response) {
@@ -95,11 +128,19 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 										function(response) {
 											
 											//var mydata = JSON.parse('{"id":214,"created_at":"2016-10-13T08:30:25.455Z","release_id":1,"jobs":[{"starts":"2016-10-14","ends":"2016-10-16","feature":{"id":1,"code":111,"name":"Fix auto upload","description":"Bla, bla, bla","effort":"2.0","deadline":"2016-11-11","priority":5,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-17","ends":"2016-10-19","feature":{"id":2,"code":222,"name":"New login","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-12","priority":4,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-20","ends":"2016-10-22","feature":{"id":3,"code":334,"name":"Enrollment refactoring","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-13","priority":3,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-23","ends":"2016-10-25","feature":{"id":4,"code":454,"name":"New channel","description":"Bla, bla, bla","effort":"4.0","deadline":"2016-10-18","priority":2,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-26","ends":"2016-10-28","feature":{"id":5,"code":556,"name":"Email reply","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-20","priority":1,"release":{"release_id":1}},"resource":{"id":3,"name":"Calvin","description":"Calvin California","availability":"90.0","skills":[{"id":1,"name":"Java","description":"Java Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}}]}');
-											
+										
+											addDependenciesTOPlan(response.data);
 											$scope.plan = response.data;
-											//alert("release-plan: " + $scope.plan);
+											
 											$scope.showReleasePlan = true;
+											
 											$scope.draw();
+											
+											$scope.initFeaturesJqxgrid();
+						
+											//to add tooltip to buttons use the code below
+											//$("#cancelJqxButton").jqxTooltip({ position: 'top', content: 'This is a jqxButton.', theme: 'shinyblack' });
+											
 										},
 										function(response) {
 											$scope.showReleasePlan = false;
@@ -120,24 +161,111 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				}
 		);
 	}
-
-	//remove feature to release
-	$scope.removeFeatureFromRelease = function (releaseId, featureIds){
-
-		var url =  baseURL + '/releases/'+ releaseId + '/features';
-		for(var i=0 ; i< featureIds.length; i++){
-			if(i == 0){
-				url = url + "?featureId=" + featureIds[i];
+	
+	function addDependenciesTOPlan(plan) {
+		
+		for(var i = 0; i<plan.jobs.length; ++i){ 
+			var dependencies = '';
+			
+			for(var j = 0; j<plan.jobs[i].depends_on.length; ++j){
+				if(j==0){
+					dependencies = dependencies + plan.jobs[i].depends_on[j].feature_id;
+				}
+				else{
+					dependencies = dependencies +','+ plan.jobs[i].depends_on[j].feature_id;
+				}
 			}
-			else{
-				url = url + "," + featureIds[i];
-			}
-		}  
-
-		return $http({
-			method: 'DELETE',
-			url: url
-		});	 
+			var job = plan.jobs[i];
+			job.dependencies = dependencies;
+		}
+	}
+	
+	$scope.initFeaturesJqxgrid = function(){
+		
+		$scope.blncreateFeaturesJqxgrid = false;
+		
+		// prepare the data
+		var source =
+		{
+			datatype: "json",
+			datafields: [
+			    { name: 'id', map : 'feature>id', type: 'number' },
+				{ name: 'name', map : 'feature>name', type: 'string'},
+			    { name: 'starts', type: 'string'},
+			    { name: 'ends', type: 'string' },
+			    { name: 'dependencies', type: 'string' }
+			    
+			    
+			],
+			id: 'id',
+			localdata: $scope.plan.jobs
+		};
+		
+		
+		var dataAdapter = new $.jqx.dataAdapter(source);
+		 // create tooltip.
+        $("#featuresJqxgrid").jqxTooltip();
+       
+        
+		$scope.featuresJqxgridSettings =
+		{
+			width: '100%',
+			autoheight: true,
+			source: dataAdapter,
+			 enabletooltips: true,
+			//editable: true,
+			// trigger cell hover.
+            cellhover: function (element, pageX, pageY)
+            {
+                // update tooltip.
+                $("#featuresJqxgrid").jqxTooltip({ content: element.innerHTML });
+                // open tooltip.
+                $("#featuresJqxgrid").jqxTooltip('open', pageX + 15, pageY + 15);
+            },
+			columns: [
+			    { text: 'Id', datafield: 'id', width: 60 },
+			    { text: 'Name', datafield: 'name' },
+			    { text: 'Start', datafield: 'starts' },
+			    { text: 'End', datafield: 'ends' },
+			    { text: 'Dependencies', datafield: 'dependencies' },
+			    
+			    { text: '', datafield: 'Remove', columntype: 'button', width: 67, 
+			    	cellsrenderer: function () {
+			    		return "Remove";
+			    	},
+			      	buttonclick: function (row) {
+		                
+			      		if(row != -1){
+			      			
+			      			//update grid
+			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.plan.jobs[row].id);
+							//add feature id to remove
+			      			$scope.featuresTORemove.push($scope.plan.jobs[row].feature.id);
+			      			
+			      			//remove from scope
+							$scope.plan.jobs.splice(row, 1);
+							//redraw the chart
+							$scope.draw();
+					 	}
+		            }	
+				},
+				{ text: '', datafield: 'Edit', columntype: 'button', width: 67, 
+			    	cellsrenderer: function () {
+                    return "Edit";
+			    	},
+			      	buttonclick: function (row) {
+		                
+			      		if(row != -1){
+			      			var featureId = $scope.plan.jobs[row].feature.id
+			      			$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
+					 	}
+		            }	
+				},
+				
+			]
+		};
+		
+		$scope.blncreateFeaturesJqxgrid = true;
 
 	};
 
@@ -145,10 +273,11 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 		//adapt CONSTANT by chart element
 		var chart = document.getElementById("chart");
-		var newValue = chart.parentNode.clientWidth - CONSTANT.xStart;
-		CONSTANT["xEnd"] = newValue;
-		CONSTANT["xEndAsString"] = ""+newValue;
-
+		var xEnd = chart.parentNode.clientWidth - CONSTANT.xStart;
+		CONSTANT["xEnd"] = xEnd;
+		CONSTANT["xEndAsString"] = ""+xEnd;
+		
+		//clear the svg elements
 		var ids = ["yGrid", "ydxGrid", "xGrid", "verticalLineGrid", "verticalDeadLineLineGrid", "verticalLabelLineGrid", "horizontalLineGrid", "horizontalLabelLineGrid", "data"];
 		for(var i = 0; i< ids.length; i++){
 
@@ -163,13 +292,15 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var deadLineRelease = new Date($scope.release.deadline);
 		//calculate min Day  
 		var dates = [];
-		var resources = [];
+		var resourceNames = [];
+		var resourceIds = [];
 		var jobs = $scope.plan.jobs;
 		dates.push(deadLineRelease)
 		for (var i = 0; i < jobs.length; i++) {
 			dates.push(new Date(jobs[i].starts));
 			dates.push(new Date(jobs[i].ends));
-			resources.push(jobs[i].resource.name);
+			resourceNames.push(jobs[i].resource.name);
+			resourceIds.push(jobs[i].resource.id);
 		}
 		dates.sort();
 		//get IndexDeadLine
@@ -186,35 +317,36 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var timeDiff = Math.abs(maxDate.getTime() - minDate.getTime());
 		var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 		var numberOfInterval = diffDays + CONSTANT.plusNumberVerticalGrid;
-		var interval =  (CONSTANT.xEnd - CONSTANT.xStart) / numberOfInterval;
-		mappingXDateJSONObject["Xinterval"] = interval;
+		var xinterval =  (CONSTANT.xEnd - CONSTANT.xStart) / numberOfInterval;
+		mappingXDateJSONObject["Xinterval"] = xinterval;
 
 		var timeDiffDeadLine = Math.abs(deadLineRelease.getTime() - minDate.getTime());
 		var diffDaysDeadLine = Math.ceil(timeDiffDeadLine / (1000 * 3600 * 24));
 
 
 		//draw vertical lines
-		drawVerticalGridLines(interval, numberOfInterval, diffDaysDeadLine);
+		drawVerticalGridLines(xinterval, numberOfInterval, diffDaysDeadLine);
 		//draw vertical days
 		var nextMaxDayPlus1 = new Date(maxDate.getTime());
 		nextMaxDayPlus1.setDate(maxDate.getDate()+1);
 
 		var dateArray = getDates(minDate, nextMaxDayPlus1); 
-		drawLabelVerticalGridLines(interval, numberOfInterval, dateArray);
+		drawLabelVerticalGridLines(xinterval, numberOfInterval, dateArray);
 
 		//draw horizontal lines
-		var uniques = resources.unique();
+		var uniqueResourceNames = resourceNames.unique();
 
-		numberOfInterval = uniques.length + CONSTANT.plusNumberHorizontallGrid;
-		interval =  (CONSTANT.yEnd - CONSTANT.yStart) / numberOfInterval;
-		mappingXDateJSONObject["Yinterval"] = interval;
-		drawHorizontalGridLines(interval, numberOfInterval);
-		drawLabelHorizontalGridLines(interval,numberOfInterval,uniques);
-
-		drawData($scope.plan.jobs);
+		numberOfInterval = uniqueResourceNames.length + CONSTANT.plusNumberHorizontallGrid;
+		var yinterval =  (CONSTANT.yEnd - CONSTANT.yStart) / numberOfInterval;
+		mappingXDateJSONObject["Yinterval"] = yinterval;
+		drawHorizontalGridLines(yinterval, numberOfInterval);
+		drawLabelHorizontalGridLines(yinterval,numberOfInterval,uniqueResourceNames);
+		
+		drawData(jobs);
 
 	}
-
+	
+	
 	/**
 	 * draw methods
 	 */
@@ -242,7 +374,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 		var xGrid = document.getElementById("xGrid");
 		xGrid.appendChild(element); 	
-
+	
 	}
 
 	function drawHorizontalGridLines(interval, numberOfInterval) {
@@ -265,7 +397,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		}
 	}
 
-	function drawLabelHorizontalGridLines(interval, numberOfInterval, uniques) {
+	function drawLabelHorizontalGridLines(interval, numberOfInterval, uniqueResourceNames) {
 		var y = CONSTANT.yStart;
 
 		for(var i = 0; i< numberOfInterval-1; i++){
@@ -280,20 +412,21 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			element.setAttribute("x", ""+x);
 			element.setAttribute("y", ""+y);
 
-			var result = font_size_to_fit(uniques[i], CONSTANT.fontfamily, CONSTANT.xStart);
+			var result = font_size_to_fit(uniqueResourceNames[i], CONSTANT.fontfamily, CONSTANT.xStart);
 			if(result < CONSTANT.fontsize){
 				element.setAttribute("style", "font-size: " + result + "px");
 			}
 
-			element.textContent  = uniques[i];
+			element.textContent  = uniqueResourceNames[i];
 
-			mappingXDateJSONObject[uniques[i]] = y;
+			mappingXDateJSONObject[uniqueResourceNames[i]] = y;
 
 			var horizontalLineGrid = document.getElementById("horizontalLabelLineGrid");
 			horizontalLineGrid.appendChild(element); 	
 
 		}
 	}
+
 
 	function drawVerticalGridLines(interval, numberOfInterval, indexDeadLine) {
 
@@ -414,90 +547,90 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	}
 
 	function drawData(jobs) {
+		
 		var data = document.getElementById("data");
 
 		for(var i = jobs.length-1; i>=0; i--){
 
 			//rectangle
-			var OFFSET_RECT = mappingXDateJSONObject.Xinterval/2;
-			var job = jobs[i];
-
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-			var date = new Date(job.starts);
-			date.setHours(0,0,0,0);
 			
-			var newX = mappingXDateJSONObject[""+date.getTime()];
-			var newY = mappingXDateJSONObject[""+job.resource.name]-(mappingXDateJSONObject.Yinterval/2);
-			element.setAttribute("id", ""+ job.feature.id);
-			element.setAttribute("x", "" + newX);
-			element.setAttribute("y", "" + newY);
-
 			var startDate = new Date(jobs[i].starts);
+			var timeSpentPercStartDate = ((startDate.getHours() + 1)/24);
+			
+			var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+			
+			var date0000 = new Date(jobs[i].starts);
+			date0000.setHours(0,0,0,0);
+			
+			var newX = mappingXDateJSONObject[""+date0000.getTime()];
+			var newX2 = newX + timeSpentPercStartDate * mappingXDateJSONObject.Xinterval;
+			
+			var newY = mappingXDateJSONObject[""+jobs[i].resource.name]-(mappingXDateJSONObject.Yinterval/2);
+			element.setAttribute("id", ""+ jobs[i].feature.id);
+			element.setAttribute("x", "" + newX2);
+			element.setAttribute("y", "" + newY);
+			
+			
+			
 			var endDate = new Date(jobs[i].ends);
+			timeSpentPercEndDate = ((endDate.getHours() + 1)/24);
 			var timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
 			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
 
 			var width = 0;
-			if(diffDays > 1){
-				width = (mappingXDateJSONObject.Xinterval * diffDays) - OFFSET_RECT;
-			}else{
-				width = (mappingXDateJSONObject.Xinterval * diffDays);
-			}
+			var width2 = 0;
+		
+			width = ((mappingXDateJSONObject.Xinterval * diffDays));
+			width2 = width - (timeSpentPercEndDate * mappingXDateJSONObject.Xinterval);
+			element.setAttribute("width", "" + width2);
 			
-			element.setAttribute("width", "" + width);
-			var height = (2 * (mappingXDateJSONObject.Yinterval/2)) - OFFSET_RECT;
+			var height = (2 * (mappingXDateJSONObject.Yinterval/2));
 			
 			element.setAttribute("height", "" + height );
 			element.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			element.setAttribute("ng-mousedown", "selectElement($event)");
 			element.setAttribute("style", "cursor: move;stroke:rgb(135,206,235)");
-			var name = job.feature.name;
-			console.log("name: "+ name + " x1: " + newX  + " y1: "+ newY + " width: " + width + " height: "+ height );
+			//var name = jobs[i].feature.name;
+			mappingXDateJSONObject["x1"+ jobs[i].feature.id] = newX2;
+			mappingXDateJSONObject["y1"+ jobs[i].feature.id] = newY +(height/2);
+			mappingXDateJSONObject["x2"+ jobs[i].feature.id] = newX2 + width2;
+			mappingXDateJSONObject["y2"+ jobs[i].feature.id] = newY+ (height/2);
+			//console.log("name: " + jobs[i].feature.name + " id: "+ jobs[i].feature.id + " x1: " + newX2  + " y1: "+ newY + " width: " + width + " height: "+ height + " x2: " + mappingXDateJSONObject["x2"+ jobs[i].feature.id]  + " y2: "+ mappingXDateJSONObject["y2"+ jobs[i].feature.id] );
+			
+			
 			
 			data.appendChild(element);
 			$compile(element)($scope);
 
 			//text
 			var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			var newXText = newX + (width/2);
+			var newXText = newX2 + (width2/2);
 			var newYText = newY + (mappingXDateJSONObject.Yinterval/2);
-			element.setAttribute("id", "text_"+job.feature.id);
+			element.setAttribute("id", "text_"+jobs[i].feature.id);
 			element.setAttribute("x", newXText);
 			element.setAttribute("y", newYText);
 			element.setAttribute("alignment-baseline", "middle");
 			element.setAttribute("text-anchor", "middle");
-			element.setAttribute("fill", "white");
+			element.setAttribute("fill", "black");
 			element.setAttribute("transform", "matrix(1 0 0 1 0 0)");
 			element.setAttribute("style", "word-break: keep-all;");
 			element.setAttribute("ondblclick", "showReplanRelease(event)");
-			//element.textContent  = job.feature.name;
-
-			var myText = document.getElementById("myText");
-			//var name = job.feature.name;
-			for (var x = name.length-3; x>0; x-=3){
-				myText.textContent = name.substring(0,x);
-				//if ( myText.clientWidth <= width){
-					var truncateName  = name.substring(0,x)+"...";
-					element.innerHTML   = "<title>" + job.feature.id + " " + name + "</title>" + truncateName;
-					break;
-				//}
-			}
-			myText.textContent ="";
-
-			data.appendChild(element);
-			//antonino oggi
-			$compile(element)($scope);
-
-
-			var dependenciesTag = document.getElementById("dependencies");
+			element.textContent  = jobs[i].feature.id;
 			
+			data.appendChild(element);
+			$compile(element)($scope);
+		}
 
+		var dependenciesTag = document.getElementById("dependencies");
+		//draw dependency after
+		for(var i = jobs.length-1; i>=0; i--){
+			
 			//dependencies
 			//check if the job feature has dependencies
 			for (var z = 0; z < $scope.releaseFeatures.length; z++) {
 				var releaseFeature = $scope.releaseFeatures[z];
 				//if has dependency
-				if(job.feature.id == releaseFeature.id && releaseFeature.depends_on.length > 0){
+				if(jobs[i].feature.id == releaseFeature.id && releaseFeature.depends_on.length > 0){
 
 					for (var a = 0; a < releaseFeature.depends_on.length; a++) {
 
@@ -505,40 +638,25 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 						for(var p = jobs.length-1; p>=0; p--){
 							var jobEnd = jobs[p];
 							if(jobEnd.feature.id == releaseFeature.depends_on[a].id){
-								var lineXstart = newX;
-								var lineYstart = newY + mappingXDateJSONObject.Yinterval/2;
-
-								var startDateJobEnd = new Date(jobEnd.starts);
-								startDateJobEnd.setHours(0,0,0,0);
-								var endDateJobEnd = new Date(jobEnd.ends);
-								endDateJobEnd.setHours(0,0,0,0);
-
-								var newXJobEnd = mappingXDateJSONObject[""+endDateJobEnd.getTime()];
-								var newYJobEnd = mappingXDateJSONObject[""+jobEnd.resource.name]-(mappingXDateJSONObject.Yinterval/2);
-
-								var timeDiffJobEnd = Math.abs(endDate.getTime() - startDateJobEnd.getTime());
-								var diffDaysJobEnd = Math.ceil(timeDiffJobEnd / (1000 * 3600 * 24)); 
-
-
+								
+								var lineXstart = mappingXDateJSONObject["x1"+ jobs[i].feature.id];
+								var lineYstart = mappingXDateJSONObject["y1"+ jobs[i].feature.id];
 								var element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
 								element.setAttribute("x1", ""+lineXstart);
 								element.setAttribute("y1", ""+lineYstart);
 
 
 								//draw line
-								var lineXend = newXJobEnd + OFFSET_RECT;
-								var lineYend = newYJobEnd + mappingXDateJSONObject.Yinterval/2 + OFFSET_RECT;
+								var lineXend = mappingXDateJSONObject["x2"+ releaseFeature.depends_on[a].id];
+								var lineYend = mappingXDateJSONObject["y2"+ releaseFeature.depends_on[a].id];
 
 								element.setAttribute("x2", ""+lineXend);
 								element.setAttribute("y2", ""+lineYend);
 								//element.setAttribute("style", "stroke:rgb(255,0,0);stroke-linecap:round;stroke-dasharray='5,10,5'");
 								element.setAttribute("stroke", "rgb(255,0,0)");
 								element.setAttribute("stroke-dasharray", "5,5,5");
-								//element.setAttribute("marker-end", "url(#markerArrow)");
-
-								//data.appendChild(element);
-								//$compile(element)($scope);
-								console.log("name: "+ name + " x1d: " + lineXstart  + " y1d: "+lineYstart + " x2d: " + lineXend + " y2d: "+ lineYend );
+							
+								//console.log("name: "+ name + " x1d: " + lineXstart  + " y1d: "+lineYstart + " x2d: " + lineXend + " y2d: "+ lineYend );
 								
 								dependenciesTag.appendChild(element);
 								$compile(element)($scope);
@@ -550,8 +668,14 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 					break;
 				}
 			}
+
 		}
+		
+		
+		
 	}
+	
+	
 
 	/**
 	 *  add drag and drop in chart
@@ -609,41 +733,45 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 	$scope.deselectElement = function($evt){
 
+//		if(selectedElement != 0){
+//
+//			if(!isRemovable($evt)){
+//
+//				$scope.draw();
+//			}
+//			else{
+//
+//				var jobs = $scope.plan.jobs;
+//
+//				//get index to remove
+//				var index = -1;
+//				for(var i = 0; i < jobs.length; i++)
+//				{
+//					if(jobs[i].feature.id == parseInt(selectedElement.id) ){
+//						index = i;
+//						$scope.featuresTORemove.push(jobs[i].feature.id);
+//						break;
+//					}
+//				}
+//
+//				//remove index
+//				if(index != -1){
+//					$scope.plan.jobs.splice(index, 1);
+//
+//					selectedElement.removeAttributeNS(null, "ng-mousemove");
+//					selectedElement.removeAttributeNS(null, "ng-mousedown");
+//					selectedElement.removeAttributeNS(null, "ng-mouseup");
+//					$compile(selectedElement)($scope);
+//					selectedElement = 0;
+//
+//					$scope.draw();
+//				}
+//
+//			}				
+//		}
+		
 		if(selectedElement != 0){
-
-			if(!isRemovable($evt)){
-
-				$scope.draw();
-			}
-			else{
-
-				var jobs = $scope.plan.jobs;
-
-				//get index to remove
-				var index = -1;
-				for(var i = 0; i < jobs.length; i++)
-				{
-					if(jobs[i].feature.id == parseInt(selectedElement.id) ){
-						index = i;
-						$scope.featuresTORemove.push(jobs[i].feature.id);
-						break;
-					}
-				}
-
-				//remove index
-				if(index != -1){
-					$scope.plan.jobs.splice(index, 1);
-
-					selectedElement.removeAttributeNS(null, "ng-mousemove");
-					selectedElement.removeAttributeNS(null, "ng-mousedown");
-					selectedElement.removeAttributeNS(null, "ng-mouseup");
-					$compile(selectedElement)($scope);
-					selectedElement = 0;
-
-					$scope.draw();
-				}
-
-			}				
+			$scope.draw();
 		}
 	}
 
@@ -684,6 +812,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		.then(
 				function(response) {
 					$scope.featuresTORemove = [];
+					addDependenciesTOPlan(response.data);
 					$scope.plan = response.data;
 					$scope.showReleasePlan = true;
 
@@ -705,21 +834,8 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			.then(
 					function(response) {
 						
-						
 						$scope.featuresTORemove = [];
 						$location.path("/release-planner-app/main");
-						//To solve the bug (after feature is removed -> the feature doesn´t appear in main screen feature list)
-//						$scope.getReleasePlan($scope.release.id)
-//						.then(
-//								function(response) {
-//									$scope.featuresTORemove = [];
-//									$location.path("/release-planner-app/main");
-//								},
-//								function(response) {
-//									$scope.showReleasePlan = false;
-//									$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
-//								}
-//						);
 
 					},
 					function(response) {
@@ -732,7 +848,18 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		}
 
 	};
-
+	
+	$scope.forceTOReplan = function(bln) {
+		$scope.forceReleasePlan($scope.release.id, bln)
+		.then(
+				function(response) {
+					$scope.startPoint($location.search().releaseId);
+				},
+				function(response) {
+					alert("Error: "+response.status + " " + response.statusText);
+				}
+		);   
+	};
 
 	/**
 	 * Help methods
