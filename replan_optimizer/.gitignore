@@ -3,3 +3,7 @@ build
 out
 .gradle
 src/test/charts
+*.html
+*.css
+*.js
+package-list
