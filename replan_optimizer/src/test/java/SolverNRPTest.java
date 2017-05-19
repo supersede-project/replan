@@ -209,6 +209,7 @@ public class SolverNRPTest {
         validator.validateAll(s1, s2);
     }
 
+    @Test
     public void featureWithNoRequiredSkillsCanBeDoneByAnSkilledEmployee() {
         Feature f = random.feature();
         Employee e = random.employee();
@@ -228,5 +229,28 @@ public class SolverNRPTest {
         PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
 
         Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+    }
+
+    @Test
+    public void featureWithRequiredSkillsCanBeDoneOnlyByTheSkilledEmployee() {
+        List<Skill> skills = random.skillList(2);
+        List<Feature> features = random.featureList(1);
+        List<Employee> employees = random.employeeList(2);
+
+        // 1 employee with 1 skill
+        employees.get(0).getSkills().add(skills.get(0));
+
+        // 1 employee with 2 skills
+        employees.get(1).getSkills().add(skills.get(0));
+        employees.get(1).getSkills().add(skills.get(1));
+
+        // 1 feature requires 2 skills
+        features.get(0).getRequiredSkills().add(skills.get(0));
+        features.get(0).getRequiredSkills().add(skills.get(1));
+
+        PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
+
+        Assert.assertTrue(solution.getPlannedFeatures().size() == 1 && // is planned
+                solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }
 }
