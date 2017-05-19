@@ -150,15 +150,20 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 			
 		solution.resetHours();
-		
+
+		// TODO: I'm not sure that this is part of the evaluation, I think this is part of the solution creation.
+		// NOTE this for is to build the employeesTimeSlots and (by the way, calculate the endPlanningHour).
 		for (PlannedFeature currentPlannedFeature : plannedFeatures) {
 			newBeginHour = 0.0;
 			Feature currentFeature = currentPlannedFeature.getFeature();
 				
 			// Checks the dependencies end hour
+            // TODO: this part assumes that dependee features have been processed before. I.e., the order matters.
+            // NOTE: the order of the list of features seems to be the other in which the features are implemented in the timeline.
 			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature != null)
+				    // TODO: this part assumes that hours are absolute values. But they are relative to the availability of the resource.
 					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 			}
 
@@ -183,9 +188,12 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			double remainFeatureHours = currentPlannedFeature.getFeature().getDuration();
 			double leftHoursInWeek;
 			EmployeeWeekAvailability currentWeekAvailability;
-			
+
+			// TODO: this should be currentEmployee.getWeekAvailability() instead of nbHoursByWeek because the current week of the employee depends on his availability.
 			currentWeek = ((int) newBeginHour) / (int)nbHoursByWeek;
-			
+
+            // TODO: this should be currentEmployee.getWeekAvailability() instead of nbHoursByWeek
+            // TODO: is this redundant? I think it will never enter.
 			while (newBeginHour > (currentWeek + 1) * nbHoursByWeek) {
 				System.err.println("go");
 				currentWeek++;
@@ -219,9 +227,18 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		
 		solution.setEmployeesPlanning(employeesTimeSlots);
 		solution.setEndDate(endPlanningHour);
+
+		// TODO From here to the end is the evaluation of the solution.
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
+		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
 		solution.setObjective(INDEX_END_DATE_OBJECTIVE, plannedFeatures.size() == 0 ? worstEndDate : endPlanningHour);
-		computeQuality(solution);
+
+		// TODO: maybe these values can be the values of the objectives.
+        double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
+        double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
+
+        // TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
+        solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
 	}
 
 	@Override
@@ -299,15 +316,5 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		if (violatedConstraints > 0) {
 			solutionQuality.setAttribute(solution, 0.0);
 		}
-	}
-	
-	// Updates the quality attribute of the solution
-	private void computeQuality(PlanningSolution solution) {
-		double globalQuality;
-		double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
-		double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
-		
-		globalQuality = (endDateQuality + priorityQuality) / 2;
-		solutionQuality.setAttribute(solution, globalQuality);
 	}
 }
