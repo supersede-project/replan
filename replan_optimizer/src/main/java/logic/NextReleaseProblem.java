@@ -25,7 +25,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	// PROBLEM
 	private List<Feature> features;
 	private List<Employee> employees;
-	private Map<Skill, List<Employee>> skilledEmployees; // Employees sorted by skill
 	private PlanningSolution previousSolution;
 	private int nbWeeks; // The number of weeks of the iteration
     private double nbHoursByWeek; // The number of worked hours by week
@@ -63,8 +62,12 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NumberOfViolatedConstraints<PlanningSolution> getNumberOfViolatedConstraints() {
 		return numberOfViolatedConstraints;
 	}
-	public List<Employee> getSkilledEmployees(Skill skill) {
-		return skilledEmployees.get(skill);
+	public List<Employee> getSkilledEmployees(List<Skill> reqSkills) {
+        ArrayList<Employee> skilledEmployees = new ArrayList<>();
+        for (Employee employee : employees)
+            if(employee.getSkills().containsAll(reqSkills))
+                skilledEmployees.add(employee);
+		return skilledEmployees;
 	}
 	public List<Employee> getEmployees() {
 		return employees;
@@ -78,7 +81,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         setName("Next Release Problem");
         setNumberOfVariables(1);
         setNumberOfObjectives(2);
-        skilledEmployees = new HashMap<>();
         features = new ArrayList<>();
         numberOfViolatedConstraints = new NumberOfViolatedConstraints<PlanningSolution>();
         overallConstraintViolation = new OverallConstraintViolation<>();
@@ -93,16 +95,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		this.nbWeeks = iterationParam.getNumberOfWeek();
 		this.nbHoursByWeek = iterationParam.getHoursByWeek();
 		
-        // build the skill / employee mapping
-		for (Employee employee : employees)
-			for (Skill skill : employee.getSkills())
-                skilledEmployees.computeIfAbsent(skill, k -> new ArrayList<>()).add(employee);
-
 		// TODO: If a feature is not included because 1. lack of skills or 2. the dependee is not included; this information should be noted somewhere and send back to the controller once the plan is produced).
         // checks that features can be satisfied by the skills of the resources and the dependencies are included
 		for (Feature feature : features)
-            // TODO: It seems that only checks one skill per feature? the correct condition should be: exists a resource with all the skills required by the feature.
-		    if (skilledEmployees.get(feature.getRequiredSkills().get(0)) != null) // 1.
+		    if (getSkilledEmployees(feature.getRequiredSkills()).size() > 0) // 1.
 				if (features.containsAll(feature.getPreviousFeatures())) // 2.
 					this.features.add(feature);
 
@@ -159,7 +155,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			newBeginHour = 0.0;
 			Feature currentFeature = currentPlannedFeature.getFeature();
 				
-			// Checks the previous features end hour
+			// Checks the dependencies end hour
 			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature != null)

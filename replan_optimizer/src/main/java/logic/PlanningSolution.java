@@ -180,7 +180,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
         for (int i = 0 ; i < numFeaturesToPlan ; i++) {
             featureToDo = undoneFeatures.get(randomGenerator.nextInt(0, undoneFeatures.size()-1));
-            skilledEmployees = problem.getSkilledEmployees(featureToDo.getRequiredSkills().get(0));
+            skilledEmployees = problem.getSkilledEmployees(featureToDo.getRequiredSkills());
             scheduleAtTheEnd(featureToDo, skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size()-1)));
         }
     }
@@ -193,7 +193,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		int i = 0;
 		while (i < numFeaturesToPlan && possibleFeatures.size() > 0) {
 			featureToDo = possibleFeatures.get(randomGenerator.nextInt(0, possibleFeatures.size()-1));
-			skilledEmployees = problem.getSkilledEmployees(featureToDo.getRequiredSkills().get(0));
+			skilledEmployees = problem.getSkilledEmployees(featureToDo.getRequiredSkills());
 			scheduleAtTheEnd(featureToDo, skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size()-1)));
 			possibleFeatures = updatePossibleFeatures();
 			i++;
@@ -221,6 +221,12 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 			undoneFeatures.remove(feature);
 			plannedFeatures.add(new PlannedFeature(feature, e));
 		}
+
+		/* DAVID: my proposal
+		if (isAlreadyPlanned(feature)) plannedFeatures.remove(findPlannedFeature(feature));
+		else undoneFeatures.remove(feature);
+        plannedFeatures.add(new PlannedFeature(feature, e));
+        */
 	}
 	
 	// Schedule a random undone feature to a random place in the planning
@@ -233,7 +239,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		if (undoneFeatures.size() <= 0)
 			return;
 		Feature newFeature = undoneFeatures.get(randomGenerator.nextInt(0, undoneFeatures.size() -1));
-		List<Employee> skilledEmployees = problem.getSkilledEmployees(newFeature.getRequiredSkills().get(0));
+		List<Employee> skilledEmployees = problem.getSkilledEmployees(newFeature.getRequiredSkills());
 		Employee newEmployee = skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size()-1));
 		schedule(insertionPosition, newFeature, newEmployee);
 	}
