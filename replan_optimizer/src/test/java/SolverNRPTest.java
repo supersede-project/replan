@@ -190,10 +190,11 @@ public class SolverNRPTest {
         validator.validateAll(solution);
     }
 
+    // TODO: It won't pass the frozen validation if the solution is cleared because of constraint violation as all planned features are removed, including frozen ones
     @Test
     public void randomReplanValidatesAllConstraints() {
         List<Skill> skills = random.skillList(5);
-        List<Feature> features = random.featureList(5);
+        List<Feature> features = random.featureList(15);
         List<Employee> employees = random.employeeList(10);
 
         random.mix(features, skills, employees);

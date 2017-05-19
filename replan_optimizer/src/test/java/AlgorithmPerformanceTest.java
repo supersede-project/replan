@@ -1,22 +1,12 @@
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
-import logic.PlanningSolution;
-import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.knowm.xchart.BitmapEncoder;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
 import wrapper.SolverNRP;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -69,19 +59,19 @@ public class AlgorithmPerformanceTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-        runWith(solver, nbIterations, features, skills, employees);
+       // runWith(solver, nbIterations, features, skills, employees);
     }
 
     private void runWith(SolverNRP solver, int nbIterations, List<Feature> features, List<Skill> skills,
                          List<Employee> employees) {
 
-        List<Integer> iterations = new ArrayList<>();
+       /* List<Integer> iterations = new ArrayList<>();
         List<Integer> nbPlannedFeatures = new ArrayList<>();
 
         int totalPlannedFeatures = 0;
 
         for (int i = 0; i < nbIterations; ++i) {
-            /* I have to do this because of the null skill added by EntitiesEvaluator */
+            // I have to do this because of the null skill added by EntitiesEvaluator
             removeNullSkillsFromEmployees(employees);
             removeNullSkillsFromFeatures(features);
 
@@ -120,7 +110,7 @@ public class AlgorithmPerformanceTest {
             BitmapEncoder.saveBitmapWithDPI(chart, fullPath, BitmapEncoder.BitmapFormat.PNG, 300);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     // TODO: I commented this test because it takes too much time.

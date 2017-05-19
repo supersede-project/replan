@@ -59,7 +59,11 @@ public class Validator {
     public void validateFrozen(PlanningSolution previous, PlanningSolution current) {
         for (PlannedFeature pf : previous.getPlannedFeatures()) {
             if (pf.isFrozen()) {
-                assertTrue(String.format(FROZEN_FAIL_MESSAGE, pf.toString()), current.getPlannedFeatures().contains(pf));
+                try {
+                    assertTrue(String.format(FROZEN_FAIL_MESSAGE, pf.toString()), current.getPlannedFeatures().contains(pf));
+                } catch (AssertionError e) {
+                    throw e;
+                }
             }
         }
     }

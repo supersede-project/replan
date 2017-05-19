@@ -23,6 +23,7 @@ public class ReplanApiControllerTest {
     }
 
     // TODO: Check why this test does not pass.
+    // Because we no longer accept a previous plan
     //@Test
     public void frozenJobsAreNotReplaned() {
         List<Skill> skills = random.skillList(7);
