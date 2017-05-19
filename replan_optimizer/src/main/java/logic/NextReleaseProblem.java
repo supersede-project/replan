@@ -152,7 +152,17 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double endPlanningHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
-			
+
+		for (PlannedFeature pf : plannedFeatures) {
+		    for (Feature f : pf.getFeature().getPreviousFeatures()) {
+		        PlannedFeature prev = solution.findPlannedFeature(f);
+		        if (prev != null) {
+                    String s = "Don't mind me, I'm just passing by for some testing";
+                }
+            }
+        }
+
+		// TODO: What's the point of this? It seems that every planned feature is 'reset' before even getting here
 		solution.resetHours();
 		
 		for (PlannedFeature currentPlannedFeature : plannedFeatures) {
@@ -160,6 +170,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			Feature currentFeature = currentPlannedFeature.getFeature();
 				
 			// Checks the previous features end hour
+            // TODO: What if previousFeature hasn't been treated yet? Its end hour will be 0.0. Previous features are not guaranteed to be before the current one in the array.
 			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature != null)
