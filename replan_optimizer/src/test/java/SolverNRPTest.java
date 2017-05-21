@@ -250,6 +250,8 @@ public class SolverNRPTest {
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
 
+        //System.out.print(solution.toString());
+
         Assert.assertTrue(solution.getPlannedFeatures().size() == 1 && // is planned
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }

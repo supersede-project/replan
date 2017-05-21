@@ -139,9 +139,10 @@ public class EntitiesEvaluator {
 
         List<PlannedFeature> plannedFeatures = this.plannedFeaturesDeleteSkills(solution.getPlannedFeatures());
 
-        for(PlannedFeature plannedFeature: plannedFeatures) {
-            System.out.print("FEATURES" + plannedFeature.getBeginHour() + "  " + plannedFeature.getEndHour());
-        }
+        // commented because this is just output to console.
+        //for(PlannedFeature plannedFeature: plannedFeatures) {
+        //    System.out.print("FEATURES" + plannedFeature.getBeginHour() + "  " + plannedFeature.getEndHour());
+        //}
 
         return new PlanningSolutionWrapper(solution,plannedFeatures);
     }
