@@ -10,6 +10,8 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -334,8 +336,76 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 			sb.append(lineSeparator);
 		}
 		
-		sb.append("End Date: ").append(getEndDate()).append(System.getProperty("line.separator"));
+		sb.append("End Date: ").append(getEndDate()).append(lineSeparator);
 		
 		return sb.toString();
 	}
+
+	public String toR() {
+        StringBuilder sb = new StringBuilder();
+        String lineSeparator = System.getProperty("line.separator");
+        List<PlannedFeature> plannedFeatures = getPlannedFeatures();
+        List<Employee> resources = getResources();
+        //Collections.sort(plannedFeatures);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date curDate = new Date();
+        final int OneHour = 60 * 60 * 1000;
+
+        sb.append("dataGroups <- data.frame(").append(lineSeparator);
+
+        sb.append("  id = 1:").append(getPlannedFeatures().size()).append(',').append(lineSeparator);
+
+        sb.append("  content = c(");
+        for (PlannedFeature feature : plannedFeatures) sb.append(quote(feature.getFeature().getName())).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append("),").append(lineSeparator);
+
+        sb.append("  start = c(");
+        for (PlannedFeature feature : plannedFeatures) sb.append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append("),").append(lineSeparator);
+
+        sb.append("  end = c(");
+        for (PlannedFeature feature : plannedFeatures) sb.append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getEndHour())))).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append("),").append(lineSeparator);
+
+        sb.append("  group = c(");
+        for (PlannedFeature feature : plannedFeatures) sb.append(quote(feature.getEmployee().getName())).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append("),").append(lineSeparator);
+
+        sb.append("  type = c(");
+        for (PlannedFeature feature : plannedFeatures) sb.append(quote("range")).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append(")").append(lineSeparator);
+
+        sb.append(")").append(lineSeparator);
+
+        sb.append("groups <- data.frame(").append(lineSeparator);
+
+        sb.append("  id = c(");
+        for (Employee e : resources) sb.append(quote(e.getName())).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append("),").append(lineSeparator);
+
+        sb.append("  content = c(");
+        for (Employee e : resources) sb.append(quote(e.getName())).append(", ");
+        sb.deleteCharAt(sb.length()-2); // remove last ','
+        sb.append(")").append(lineSeparator);
+
+        sb.append(")").append(lineSeparator);
+        return sb.toString();
+    }
+
+    private String quote(String s) {
+	    return "\"".concat(s).concat("\"");
+    }
+
+    private List<Employee> getResources() {
+	    ArrayList<Employee> employees = new ArrayList<>();
+        for (PlannedFeature feature : getPlannedFeatures())
+            if(!employees.contains(feature.getEmployee())) employees.add(feature.getEmployee());
+        return employees;
+    }
 }

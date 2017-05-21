@@ -42,9 +42,6 @@ public class SolverNRPTest {
         }
     }
 
-
-
-
     @BeforeClass
     public static void setUpBeforeClass() {
         solver = new SolverNRP();
@@ -255,4 +252,96 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().size() == 1 && // is planned
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }
+
+    //@Test
+    public void averageUseCaseTest() {
+        List<Skill> skills = random.skillList(5);
+        List<Feature> features = random.featureList(20);
+        List<Employee> employees = random.employeeList(4);
+
+        // resource skills
+        employees.get(0).getSkills().add(skills.get(0));
+        employees.get(0).getSkills().add(skills.get(3));
+
+        employees.get(1).getSkills().add(skills.get(0));
+        employees.get(1).getSkills().add(skills.get(1));
+        employees.get(1).getSkills().add(skills.get(3));
+
+        employees.get(2).getSkills().add(skills.get(0));
+        employees.get(2).getSkills().add(skills.get(1));
+        employees.get(2).getSkills().add(skills.get(2));
+
+        employees.get(3).getSkills().add(skills.get(2));
+        employees.get(3).getSkills().add(skills.get(4));
+        employees.get(3).getSkills().add(skills.get(3));
+
+        // dependencies
+        features.get(3).getPreviousFeatures().add(features.get(0));
+        features.get(3).getPreviousFeatures().add(features.get(1));
+
+        features.get(7).getPreviousFeatures().add(features.get(3));
+
+        features.get(10).getPreviousFeatures().add(features.get(2));
+
+        features.get(11).getPreviousFeatures().add(features.get(7));
+
+        features.get(16).getPreviousFeatures().add(features.get(10));
+
+        features.get(19).getPreviousFeatures().add(features.get(16));
+
+        // required skills by features
+        features.get(0).getRequiredSkills().add(skills.get(0));
+        features.get(0).getRequiredSkills().add(skills.get(1));
+
+        features.get(1).getRequiredSkills().add(skills.get(2));
+
+        features.get(2).getRequiredSkills().add(skills.get(3));
+
+        features.get(3).getRequiredSkills().add(skills.get(3));
+        features.get(3).getRequiredSkills().add(skills.get(4));
+
+        features.get(4).getRequiredSkills().add(skills.get(0));
+
+        features.get(5).getRequiredSkills().add(skills.get(0));
+        features.get(5).getRequiredSkills().add(skills.get(1));
+
+        features.get(6).getRequiredSkills().add(skills.get(0));
+        features.get(6).getRequiredSkills().add(skills.get(3));
+
+        features.get(7).getRequiredSkills().add(skills.get(0));
+
+        features.get(8).getRequiredSkills().add(skills.get(1));
+
+        features.get(9).getRequiredSkills().add(skills.get(0));
+
+        features.get(10).getRequiredSkills().add(skills.get(3));
+
+        features.get(11).getRequiredSkills().add(skills.get(1));
+        features.get(11).getRequiredSkills().add(skills.get(3));
+
+        features.get(12).getRequiredSkills().add(skills.get(2));
+        features.get(12).getRequiredSkills().add(skills.get(4));
+
+        features.get(13).getRequiredSkills().add(skills.get(0));
+
+        features.get(14).getRequiredSkills().add(skills.get(1));
+
+        features.get(15).getRequiredSkills().add(skills.get(0));
+
+        features.get(16).getRequiredSkills().add(skills.get(3));
+
+        features.get(17).getRequiredSkills().add(skills.get(0));
+
+        features.get(18).getRequiredSkills().add(skills.get(3));
+
+        features.get(19).getRequiredSkills().add(skills.get(0));
+        features.get(19).getRequiredSkills().add(skills.get(3));
+
+        PlanningSolution solution = solver.executeNRP(10, 40.0, features, employees);
+
+        System.out.print(solution.toR());
+
+        Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
+    }
+
 }
