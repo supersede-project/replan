@@ -53,7 +53,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 	$scope.dataAdapter = new $.jqx.dataAdapter(source);
 
 	//settings
-	$scope.settings = { 
+	$scope.featureListBoxSettings = { 
 			source: $scope.dataAdapter,
 			valueMember: "id",
 			displayMember: "name", 
@@ -61,11 +61,24 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 			height: '400',
 			allowDrag: true,
 			renderer: function (index, label, value) {
-
 				var datarecord = $scope.features[index];
-				var glyphicon = '<span class="glyphicon glyphicon-wrench" style="font-size:15px;"></span>';
-				var table = '<table style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;" rowspan="3">' + glyphicon + '</td><td><b>' + label  + '</b></td></tr> <tr><td>Id:'+ datarecord.id +' Effort: '+ datarecord.effort +' Priority:'+ datarecord.priority + '</td></tr></table>';
-				return table;
+				
+				if(typeof datarecord !== 'undefined'){
+					
+					var glyphicon = '<span class="glyphicon glyphicon-wrench" style="font-size:15px;"></span>';
+					var idTable = "table_feature"+datarecord.id;
+					var labelTruncate = "";
+					if(label.length > 25) {
+						labelTruncate = label.substring(0,24)+"...";
+					}else{
+						labelTruncate = label;
+					}
+					var table = '<table id=' + idTable +' style="color: inherit; font-size: inherit; font-style: inherit;"><tr><td style="width: 35px;" rowspan="3">' + glyphicon + '</td><td style="white-space: nowrap; text-overflow:ellipsis; overflow: hidden; max-width:1px;"><b>' + labelTruncate + '</b></td></tr> <tr><td>Id:'+ datarecord.id +' Effort: '+ datarecord.effort +' Priority:'+ datarecord.priority + '</td></tr></table>';
+					return table;
+				}else{
+					return '<div></div>';
+				} 
+			
 			}
 
 	};
@@ -146,6 +159,20 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 					//$location.path("/release-planner-app/replan_release");
 					break;
 				}
+			}
+			else{
+				var source =
+				{
+					datatype: "json",
+					datafields: [
+					             { name: 'id' },
+					             { name: 'name' }
+					             ],
+					             id: 'id',
+					             localdata: $scope.features
+				};
+
+				$scope.dataAdapter = new $.jqx.dataAdapter(source);
 			}
 		}
 	}
@@ -234,6 +261,10 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 
 								if(response1.data.length > 0){
 
+									for(var i = 0; i<response1.data.length; ++i){ 
+										  var feature = response1.data[i];
+										  feature.nameId = '' + feature.name + '-' + feature.id + '(Id)';
+									}
 									var releaseID = response1.data[0].release.release_id;
 
 									// prepare the data
@@ -242,7 +273,7 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 											datatype: "json",
 											datafields: [
 											             { name: 'id' },
-											             { name: 'name' }
+											             { name: 'nameId' }
 											             ],
 											             id: 'id',
 											             localdata: response1.data
@@ -255,9 +286,8 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 
 									$("#"+id).jqxDropDownList({
 										source: dataAdapterFeaturesDropDownList,
-										displayMember: "name",
+										displayMember: "nameId",
 										valueMember: "id",
-										//checkboxes: true,
 										enableSelection: false,
 										selectedIndex: 0,
 										width: '93%',

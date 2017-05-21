@@ -15,7 +15,7 @@
 	        </div>
 	    </div>
         <div class="row" ng-show="showFeature">
-        	<h4>{{feature.name}} - {{feature.id}}</h4>
+        	<h4>{{feature.name + '-' + feature.id +'(Id)'}}</h4>
 	 		<div class="col-xs-12">
 				<form id="featureForm" name="featureForm" class="form-horizontal" ng-submit="replanRelease()" novalidate>
 	
