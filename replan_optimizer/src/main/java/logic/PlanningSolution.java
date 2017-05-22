@@ -24,6 +24,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	private List<Feature> undoneFeatures; // not included features
     private Map<Employee, List<EmployeeWeekAvailability>> employeesPlanning; // The employees' week planning
 	private double endDate; // The end hour of the solution. It's updated only when isUpToDate field is true
+    private NextReleaseProblem NRP;
 
     // GETTERS / SETTERS
 	public double getEndDate() {
@@ -59,6 +60,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     // constructor (normal)
 	public PlanningSolution(NextReleaseProblem problem) {
 		super(problem);
+
+        NRP=problem;
 	    numberOfViolatedConstraints = 0;
 
 	    initializePlannedFeatureVariables();
@@ -68,6 +71,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     // constructor (with previous plan)
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
+
+	    NRP=problem;
 	    numberOfViolatedConstraints = 0;
 
 	    undoneFeatures = new CopyOnWriteArrayList<Feature>();
@@ -85,6 +90,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		super(origin.problem);
 
 	    numberOfViolatedConstraints = origin.numberOfViolatedConstraints;
+	    NRP=origin.NRP;
 	    
 	    plannedFeatures = new CopyOnWriteArrayList<>();
 	    for (PlannedFeature plannedFeature : origin.getPlannedFeatures()) {
@@ -346,55 +352,31 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         String lineSeparator = System.getProperty("line.separator");
         List<PlannedFeature> plannedFeatures = getPlannedFeatures();
         List<Employee> resources = getResources();
-        //Collections.sort(plannedFeatures);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date curDate = new Date();
         final int OneHour = 60 * 60 * 1000;
 
-        sb.append("dataGroups <- data.frame(").append(lineSeparator);
+        for (PlannedFeature feature : plannedFeatures)
+        	sb      .append("features[nrow(features)+1,] <- c(")
+                    .append(quote(feature.getFeature().getName())).append(", ") // id
+                    .append(quote(feature.getFeature().getName())).append(", ") // content
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ") // start
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getEndHour())))).append(", ") // end
+                    .append(quote(feature.getEmployee().getName())).append(", ") // group
+                    .append(quote("range")).append(", ") // type
+                    .append(feature.getFeature().getPriority().ordinal()+1).append(", ") // priority
+                    .append((int)feature.getFeature().getDuration()).append(")").append(lineSeparator); // effort
 
-        sb.append("  id = 1:").append(getPlannedFeatures().size()).append(',').append(lineSeparator);
+        sb.append(lineSeparator);
 
-        sb.append("  content = c(");
-        for (PlannedFeature feature : plannedFeatures) sb.append(quote(feature.getFeature().getName())).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append("),").append(lineSeparator);
+        for (Employee e : resources)
+            sb      .append("resources[nrow(resources)+1,] <- c(")
+                    .append(quote(e.getName())).append(", ") // id
+                    .append(quote(e.getName())).append(", ") // content
+                    .append(e.getWeekAvailability()).append(")").append(lineSeparator); // availability
 
-        sb.append("  start = c(");
-        for (PlannedFeature feature : plannedFeatures) sb.append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append("),").append(lineSeparator);
-
-        sb.append("  end = c(");
-        for (PlannedFeature feature : plannedFeatures) sb.append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getEndHour())))).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append("),").append(lineSeparator);
-
-        sb.append("  group = c(");
-        for (PlannedFeature feature : plannedFeatures) sb.append(quote(feature.getEmployee().getName())).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append("),").append(lineSeparator);
-
-        sb.append("  type = c(");
-        for (PlannedFeature feature : plannedFeatures) sb.append(quote("range")).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append(")").append(lineSeparator);
-
-        sb.append(")").append(lineSeparator);
-
-        sb.append("groups <- data.frame(").append(lineSeparator);
-
-        sb.append("  id = c(");
-        for (Employee e : resources) sb.append(quote(e.getName())).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append("),").append(lineSeparator);
-
-        sb.append("  content = c(");
-        for (Employee e : resources) sb.append(quote(e.getName())).append(", ");
-        sb.deleteCharAt(sb.length()-2); // remove last ','
-        sb.append(")").append(lineSeparator);
-
-        sb.append(")").append(lineSeparator);
+        sb.append("nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
+        sb.append("nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
         return sb.toString();
     }
 
