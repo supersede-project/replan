@@ -18,6 +18,12 @@ public class RandomThings {
 
     private static final double MUTATION_PROBABILITY = 0.25;
 
+    private Validator validator;
+
+    RandomThings() {
+        validator = new Validator();
+    }
+
 
     public Skill skill() {
         return new Skill(name("S"));
@@ -166,9 +172,22 @@ public class RandomThings {
     }
 
     public void dependencies(List<Feature> features) {
-        boolean mutated = false;
-        for (Feature f1 : features) {
-            if (random.nextDouble() <= 0.75) {
+        while (true) {
+            removeDependencies(features);
+
+            boolean mutated = false;
+            for (Feature f1 : features) {
+                if (random.nextDouble() <= 0.75) {
+                    Feature f2 = features.get(random.nextInt(0, features.size() - 1));
+
+                    if (!f1.equals(f2)) {
+                        f2.getPreviousFeatures().add(f1);
+                        mutated = true;
+                    }
+                }
+            }
+            while (!mutated) {
+                Feature f1 = features.get(random.nextInt(0, features.size() - 1));
                 Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
                 if (!f1.equals(f2)) {
@@ -176,14 +195,12 @@ public class RandomThings {
                     mutated = true;
                 }
             }
-        }
-        while (!mutated) {
-            Feature f1 = features.get(random.nextInt(0, features.size() - 1));
-            Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
-            if (!f1.equals(f2)) {
-                f2.getPreviousFeatures().add(f1);
-                mutated = true;
+            try {
+                validator.validateNoDependencyDeadlocks(features);
+                break;
+            } catch (AssertionError e) {
+                // Go on
             }
         }
     }
@@ -194,5 +211,10 @@ public class RandomThings {
 
     private String name(String type) {
         return String.format("%s-%d", type, random.nextInt(0, MANY));
+    }
+
+    private void removeDependencies(List<Feature> features) {
+        for (Feature f : features)
+            f.getPreviousFeatures().clear();
     }
 }

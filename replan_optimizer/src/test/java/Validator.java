@@ -24,6 +24,9 @@ public class Validator {
     private static final String FROZEN_FAIL_MESSAGE =
                     "PlannedFeature %s is frozen in the previous plan, but this is not respected in the new plan.";
 
+    private static final String DEADLOCK_MESSAGE =
+                    "Feature %s depends on itself at some point.";
+
 
     public void validateDependencies(PlanningSolution solution) {
         List<PlannedFeature> jobs = solution.getPlannedFeatures();
@@ -59,11 +62,7 @@ public class Validator {
     public void validateFrozen(PlanningSolution previous, PlanningSolution current) {
         for (PlannedFeature pf : previous.getPlannedFeatures()) {
             if (pf.isFrozen()) {
-                try {
-                    assertTrue(String.format(FROZEN_FAIL_MESSAGE, pf.toString()), current.getPlannedFeatures().contains(pf));
-                } catch (AssertionError e) {
-                    throw e;
-                }
+                assertTrue(String.format(FROZEN_FAIL_MESSAGE, pf.toString()), current.getPlannedFeatures().contains(pf));
             }
         }
     }
@@ -75,7 +74,7 @@ public class Validator {
 
     public void validateAll(PlanningSolution previous, PlanningSolution current) {
         validateDependencies(current);
-        //validateFrozen(previous, current);
+        validateFrozen(previous, current);
         validateSkills(current);
     }
 
@@ -86,5 +85,21 @@ public class Validator {
 
         for (Skill s : skills)
             Assert.assertTrue(assignedSkills.contains(s));
+    }
+
+    public void validateNoDependencyDeadlocks(List<Feature> features) {
+        for (Feature f : features) {
+            validateNoDependencyDeadlock(f, f);
+        }
+    }
+
+    public void validateNoDependencyDeadlock(Feature original, Feature recursive) {
+        if (!recursive.getPreviousFeatures().isEmpty()) {
+            Assert.assertFalse(recursive.dependsOn(original));
+
+            for (Feature previous : recursive.getPreviousFeatures()) {
+                validateNoDependencyDeadlock(original, previous);
+            }
+        }
     }
 }

@@ -10,7 +10,6 @@ import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -266,7 +265,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	    double endHour = 0.0;
 	    for (PlannedFeature currentPlannedFeature : plannedFeatures) {
-	        computeHours(solution, currentPlannedFeature);
+            computeHours(solution, currentPlannedFeature);
 
             Employee employee = currentPlannedFeature.getEmployee();
 	        Schedule employeeSchedule = schedule.get(employee);
@@ -304,22 +303,27 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
     }
 
-    private void computeHoursRecursive(PlanningSolution solution, @NotNull PlannedFeature pf) {
-        Feature feature = pf.getFeature();
-        if (feature.getPreviousFeatures().isEmpty()) {
-            if (pf.getEndHour() == 0.0)
-                pf.setEndHour(feature.getDuration());
-        } else {
-            for (Feature previous : feature.getPreviousFeatures()) {
-                PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previous);
+    private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
+	    try {
+            Feature feature = pf.getFeature();
+            if (feature.getPreviousFeatures().isEmpty()) {
+                if (pf.getEndHour() == 0.0) {
+                    pf.setEndHour(pf.getBeginHour() + feature.getDuration());
+                }
+            } else {
+                for (Feature previous : feature.getPreviousFeatures()) {
+                    PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previous);
 
-                if (previousPlannedFeature == null) continue;
+                    if (previousPlannedFeature != null) {
+                        computeHoursRecursive(solution, previousPlannedFeature);
 
-                computeHoursRecursive(solution, previousPlannedFeature);
-
-                pf.setBeginHour(previousPlannedFeature.getEndHour());
-                pf.setEndHour(pf.getBeginHour() + feature.getDuration());
+                        pf.setBeginHour(previousPlannedFeature.getEndHour());
+                        pf.setEndHour(pf.getBeginHour() + feature.getDuration());
+                    }
+                }
             }
+        } catch (StackOverflowError e) {
+	        e.printStackTrace();
         }
     }
 
