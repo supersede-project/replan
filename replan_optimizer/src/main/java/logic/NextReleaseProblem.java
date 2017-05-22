@@ -145,11 +145,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	// TODO: read
 	/*
-	     OK, I think I understand it now. The schedule created doesn't have to be correct, as evaluateConstraints()
-	     will be called right after this method. That's why it doesn't care for the order the plannedFeatures are in.
-	     The order will (most likely) eventually be correct, but this doesn't matter at all here because the whole
-	     point of this method is to calculate the objective indexes. I believe the schedule should be created somewhere
-	     else, but who knows.
+	     OK, I think I understand it now. The way it creates the schedule is wrong, but it doesn't affect the algorithm
+	     result that much because evaluateConstraints() is called right after evaluate() and gives a bad quality to the
+	     wrong ones. It will eventually get to a valid solution (most likely), but only based on the randomness of
+	     the algorithm and not because evaluate() is doing a good job.
 	*/
 	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
