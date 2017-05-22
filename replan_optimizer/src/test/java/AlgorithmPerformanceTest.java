@@ -1,12 +1,22 @@
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
+import logic.PlanningSolution;
+import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
 import wrapper.SolverNRP;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -59,13 +69,13 @@ public class AlgorithmPerformanceTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-       // runWith(solver, nbIterations, features, skills, employees);
+        runWith(solver, nbIterations, features, skills, employees);
     }
 
     private void runWith(SolverNRP solver, int nbIterations, List<Feature> features, List<Skill> skills,
                          List<Employee> employees) {
 
-       /* List<Integer> iterations = new ArrayList<>();
+        List<Integer> iterations = new ArrayList<>();
         List<Integer> nbPlannedFeatures = new ArrayList<>();
 
         int totalPlannedFeatures = 0;
@@ -87,15 +97,15 @@ public class AlgorithmPerformanceTest {
         String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Dummy");
         XYChart chart = new XYChartBuilder().width(1024).height(512).title(title)
                 .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
-        chart.addSeries("-", iterations, nbPlannedFeatures);
+        chart.addSeries("Number of planned features", iterations, nbPlannedFeatures);
 
         List<Double> average = new ArrayList<>();
         for (int i = 0; i < nbIterations; ++i)
             average.add((double) totalPlannedFeatures / nbIterations);
 
-        chart.addSeries("Average", iterations, average);
+        chart.addSeries("Average planned features", iterations, average);
         chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
-                .setXAxisMax((double) iterations.size() - 1).setYAxisMax((double) features.size() - 1);
+                .setXAxisMax((double) iterations.size()).setYAxisMax((double) features.size());
 
         try {
 
@@ -110,7 +120,7 @@ public class AlgorithmPerformanceTest {
             BitmapEncoder.saveBitmapWithDPI(chart, fullPath, BitmapEncoder.BitmapFormat.PNG, 300);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     // TODO: I commented this test because it takes too much time.
@@ -126,11 +136,11 @@ public class AlgorithmPerformanceTest {
     }
 
     // TODO: I commented this test because it does not work on the development server.
-    //@Test
+    @Test
     public void runAllWithSameInput() {
         List<Skill> skills = random.skillList(10);
-        List<Feature> features = random.featureList(50);
-        List<Employee> employees = random.employeeList(50);
+        List<Feature> features = random.featureList(20);
+        List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 

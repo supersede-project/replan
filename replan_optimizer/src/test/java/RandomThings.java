@@ -168,7 +168,7 @@ public class RandomThings {
     public void dependencies(List<Feature> features) {
         boolean mutated = false;
         for (Feature f1 : features) {
-            if (shouldMutate()) {
+            if (random.nextDouble() <= 0.75) {
                 Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
                 if (!f1.equals(f2)) {

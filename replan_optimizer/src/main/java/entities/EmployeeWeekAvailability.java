@@ -67,6 +67,8 @@ public class EmployeeWeekAvailability {
 	public double getBeginHour() {
 		return beginHour;
 	}
+
+	public void setBeginHour(double hour) { beginHour = hour; }
 	
 	/**
 	 * @return the plannedFeatures
@@ -110,4 +112,31 @@ public class EmployeeWeekAvailability {
 			this.plannedFeatures.add(new PlannedFeature(plannedFeature));
 		}
 	}
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        EmployeeWeekAvailability that = (EmployeeWeekAvailability) o;
+
+        if (Double.compare(that.beginHour, beginHour) != 0) return false;
+        if (Double.compare(that.remainHoursAvailable, remainHoursAvailable) != 0) return false;
+        if (Double.compare(that.endHour, endHour) != 0) return false;
+        return plannedFeatures != null ? plannedFeatures.equals(that.plannedFeatures) : that.plannedFeatures == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(beginHour);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(remainHoursAvailable);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(endHour);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        result = 31 * result + (plannedFeatures != null ? plannedFeatures.hashCode() : 0);
+        return result;
+    }
 }

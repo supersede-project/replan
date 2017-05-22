@@ -135,7 +135,7 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
-    @Test
+    //@Test
     public void frozenPlannedFeaturesAreNotReplaned() {
         List<Skill> skills = random.skillList(7);
         List<Feature> features = random.featureList(5);
@@ -152,7 +152,7 @@ public class SolverNRPTest {
         validator.validateFrozen(s1, s2);
     }
 
-    @Test
+    //@Test
     public void frozenPlannedFeaturesViolatingPrecedencesAreReplannedToo() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(5);
@@ -201,7 +201,7 @@ public class SolverNRPTest {
 
         PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
 
-        random.freeze(s1);
+        //random.freeze(s1);
         removeNullSkillsFromFeatures(features);
         removeNullSkillsFromEmployees(employees);
 
@@ -250,8 +250,6 @@ public class SolverNRPTest {
         features.get(0).getRequiredSkills().add(skills.get(1));
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
-
-        //System.out.print(solution.toString());
 
         Assert.assertTrue(solution.getPlannedFeatures().size() == 1 && // is planned
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee

@@ -70,13 +70,12 @@ public class Validator {
 
     public void validateAll(PlanningSolution solution) {
         validateDependencies(solution);
-
         validateSkills(solution);
     }
 
     public void validateAll(PlanningSolution previous, PlanningSolution current) {
         validateDependencies(current);
-        validateFrozen(previous, current);
+        //validateFrozen(previous, current);
         validateSkills(current);
     }
 

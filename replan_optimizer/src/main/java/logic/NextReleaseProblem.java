@@ -10,6 +10,7 @@ import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,23 +143,21 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		return new PlanningSolution(this);
 	}
 
-	@Override
-	public void evaluate(PlanningSolution solution) {
+
+	// TODO: read
+	/*
+	     OK, I think I understand it now. The schedule created doesn't have to be correct, as evaluateConstraints()
+	     will be called right after this method. That's why it doesn't care for the order the plannedFeatures are in.
+	     The order will (most likely) eventually be correct, but this doesn't matter at all here because the whole
+	     point of this method is to calculate the objective indexes. I believe the schedule should be created somewhere
+	     else, but who knows.
+	*/
+	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
 		double endPlanningHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
-		for (PlannedFeature pf : plannedFeatures) {
-		    for (Feature f : pf.getFeature().getPreviousFeatures()) {
-		        PlannedFeature prev = solution.findPlannedFeature(f);
-		        if (prev != null) {
-                    String s = "Don't mind me, I'm just passing by for some testing";
-                }
-            }
-        }
-
-		// TODO: What's the point of this? It seems that every planned feature is 'reset' before even getting here
 		solution.resetHours();
 
 		// TODO: I'm not sure that this is part of the evaluation, I think this is part of the solution creation.
@@ -172,9 +171,13 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             // NOTE: the order of the list of features seems to be the other in which the features are implemented in the timeline.
 			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
-				if (previousPlannedFeature != null)
-				    // TODO: this part assumes that hours are absolute values. But they are relative to the availability of the resource.
-					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
+				if (previousPlannedFeature != null) {
+                    // TODO: this part assumes that hours are absolute values. But they are relative to the availability of the resource.
+                    newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
+                    /*if (previousPlannedFeature.getEndHour() == 0.0) {
+                        String s = "This is definitely wrong";
+                    }*/
+                }
 			}
 
 			// Checks the employee availability
@@ -238,6 +241,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.setEmployeesPlanning(employeesTimeSlots);
 		solution.setEndDate(endPlanningHour);
 
+
 		// TODO From here to the end is the evaluation of the solution.
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
 		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
@@ -249,7 +253,92 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
         // TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
         solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
-	}
+    }
+
+
+
+    @Override
+	public void evaluate(PlanningSolution solution) {
+	    Map<Employee, Schedule> schedule = new HashMap<>();
+	    List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
+
+	    solution.resetHours();
+
+	    double endHour = 0.0;
+	    for (PlannedFeature currentPlannedFeature : plannedFeatures) {
+	        computeHours(solution, currentPlannedFeature);
+
+            Employee employee = currentPlannedFeature.getEmployee();
+	        Schedule employeeSchedule = schedule.get(employee);
+	        if (employeeSchedule == null)
+	            employeeSchedule = new Schedule(employee, nbWeeks, nbHoursByWeek);
+
+	        employeeSchedule.scheduleFeature(currentPlannedFeature);
+            schedule.put(employee, employeeSchedule);
+
+            endHour = Math.max(currentPlannedFeature.getEndHour(), endHour);
+	    }
+
+        Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
+	    for (Map.Entry<Employee, Schedule> entry : schedule.entrySet()) {
+	        Employee e = entry.getKey();
+	        Schedule s = entry.getValue();
+
+	        employeesTimeSlots.put(e, s.getNonEmptyWeeks());
+        }
+
+        solution.setEmployeesPlanning(employeesTimeSlots);
+        solution.setEndDate(endHour);
+
+
+        // TODO From here to the end is the evaluation of the solution.
+        solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
+        // TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
+        solution.setObjective(INDEX_END_DATE_OBJECTIVE, plannedFeatures.size() == 0 ? worstEndDate : endHour);
+
+        // TODO: maybe these values can be the values of the objectives.
+        double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
+        double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
+
+        // TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
+        solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
+    }
+
+    private void computeHoursRecursive(PlanningSolution solution, @NotNull PlannedFeature pf) {
+        Feature feature = pf.getFeature();
+        if (feature.getPreviousFeatures().isEmpty()) {
+            if (pf.getEndHour() == 0.0)
+                pf.setEndHour(feature.getDuration());
+        } else {
+            for (Feature previous : feature.getPreviousFeatures()) {
+                PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previous);
+
+                if (previousPlannedFeature == null) continue;
+
+                computeHoursRecursive(solution, previousPlannedFeature);
+
+                pf.setBeginHour(previousPlannedFeature.getEndHour());
+                pf.setEndHour(pf.getBeginHour() + feature.getDuration());
+            }
+        }
+    }
+
+    private void computeHours(PlanningSolution solution, PlannedFeature pf) {
+        double newBeginHour = 0.0;
+        Feature feature = pf.getFeature();
+        // newBeginHour = maximum end hour of all previous features
+        for (Feature previousFeature : feature.getPreviousFeatures()) {
+            PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
+            if (previousPlannedFeature != null) {
+                double previousActualEndHour =
+                        previousPlannedFeature.getBeginHour() + previousPlannedFeature.getFeature().getDuration();
+                newBeginHour = Math.max(newBeginHour, previousActualEndHour);
+            }
+        }
+
+        pf.setBeginHour(newBeginHour);
+        pf.setEndHour(newBeginHour + feature.getDuration());
+    }
 
 	@Override
 	public void evaluateConstraints(PlanningSolution solution) {
