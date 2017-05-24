@@ -358,6 +358,27 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         Date curDate = new Date();
         final int OneHour = 60 * 60 * 1000;
 
+        sb.append("  features <- data.frame(\n" +
+                "    id=numeric(), \n" +
+                "    content=character(), \n" +
+                "    start=character(), \n" +
+                "    end=character(), \n" +
+                "    group=character(), #resource\n" +
+                "    type=character(), \n" +
+                "    priority=numeric(), \n" +
+                "    effort=numeric(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        sb.append("  resources <- data.frame(\n" +
+                "    id=character(), #same as group in features\n" +
+                "    content=character(), # display name\n" +
+                "    availability=numeric(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
         for (PlannedFeature feature : plannedFeatures)
         	sb      .append("features[nrow(features)+1,] <- c(")
                     .append(quote(feature.getFeature().getName())).append(", ") // id

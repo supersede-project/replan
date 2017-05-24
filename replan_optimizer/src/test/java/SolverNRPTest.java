@@ -337,7 +337,7 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(skills.get(0));
         features.get(19).getRequiredSkills().add(skills.get(3));
 
-        PlanningSolution solution = solver.executeNRP(10, 40.0, features, employees);
+        PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
 
         System.out.print(solution.toR());
 
