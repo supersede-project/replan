@@ -1,11 +1,24 @@
 library(timevis)
+library(shinyjs)
+
 
 source("sampleData.R")
 source("utils.R")
 
 function(input, output, session) {
+  runcodeServer()
+  
+  myFeatures <- reactive({
+    features
+  })
+  
+  myResources <- reactive({
+    resources
+  })
+  
+  
   output$timeline <- renderTimevis({
-    timevis(data = features, groups = resources, options = list(editable = TRUE, stack = FALSE))
+    timevis(data = myFeatures(), groups = myResources(), options = list(editable = TRUE, stack = FALSE))
   })
 
   output$score <- renderPlot({
