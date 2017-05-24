@@ -358,7 +358,11 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         Date curDate = new Date();
         final int OneHour = 60 * 60 * 1000;
 
-        sb.append("  features <- data.frame(\n" +
+        sb.append("userData <- list()").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        sb.append("  userData$features <- data.frame(\n" +
                 "    id=numeric(), \n" +
                 "    content=character(), \n" +
                 "    start=character(), \n" +
@@ -371,7 +375,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
         sb.append(lineSeparator);
 
-        sb.append("  resources <- data.frame(\n" +
+        sb.append("  userData$resources <- data.frame(\n" +
                 "    id=character(), #same as group in features\n" +
                 "    content=character(), # display name\n" +
                 "    availability=numeric(), \n" +
@@ -380,7 +384,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         sb.append(lineSeparator);
 
         for (PlannedFeature feature : plannedFeatures)
-        	sb      .append("features[nrow(features)+1,] <- c(")
+        	sb      .append("userData$features[nrow(userData$features)+1,] <- c(")
                     .append(quote(feature.getFeature().getName())).append(", ") // id
                     .append(quote(feature.getFeature().getName())).append(", ") // content
                     .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ") // start
@@ -393,15 +397,15 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         sb.append(lineSeparator);
 
         for (Employee e : resources)
-            sb      .append("resources[nrow(resources)+1,] <- c(")
+            sb      .append("userData$resources[nrow(userData$resources)+1,] <- c(")
                     .append(quote(e.getName())).append(", ") // id
                     .append(quote(e.getName())).append(", ") // content
                     .append(e.getWeekAvailability()).append(")").append(lineSeparator); // availability
 
 		sb.append(lineSeparator);
 
-        sb.append("nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
-        sb.append("nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
+        sb.append("userData$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
+        sb.append("userData$nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
 
         return sb.toString();
     }
