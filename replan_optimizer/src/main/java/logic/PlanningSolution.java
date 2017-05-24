@@ -169,7 +169,9 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	// Initialize the variables. Load a random number of planned features
 	private void initializePlannedFeatureVariables() {
 		int numberOfFeatures = problem.getFeatures().size();
-		int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
+		// TODO: All the solutions will have all the features. This is a temporal solution.
+        //int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
+		int nbFeaturesToDo = numberOfFeatures;
 		
 		undoneFeatures = new CopyOnWriteArrayList<Feature>();
 		undoneFeatures.addAll(problem.getFeatures());
@@ -375,8 +377,11 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
                     .append(quote(e.getName())).append(", ") // content
                     .append(e.getWeekAvailability()).append(")").append(lineSeparator); // availability
 
+		sb.append(lineSeparator);
+
         sb.append("nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
         sb.append("nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
+
         return sb.toString();
     }
 

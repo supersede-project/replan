@@ -136,11 +136,11 @@ public class AlgorithmPerformanceTest {
     }
 
     // TODO: I commented this test because it does not work on the development server.
-    //@Test
+    @Test
     public void runAllWithSameInput() {
         List<Skill> skills = random.skillList(10);
-        List<Feature> features = random.featureList(50);
-        List<Employee> employees = random.employeeList(50);
+        List<Feature> features = random.featureList(30);
+        List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 
