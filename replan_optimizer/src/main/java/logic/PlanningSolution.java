@@ -10,6 +10,8 @@ import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -22,6 +24,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	private List<Feature> undoneFeatures; // not included features
     private Map<Employee, List<EmployeeWeekAvailability>> employeesPlanning; // The employees' week planning
 	private double endDate; // The end hour of the solution. It's updated only when isUpToDate field is true
+    private NextReleaseProblem NRP;
 
     // GETTERS / SETTERS
 	public double getEndDate() {
@@ -57,6 +60,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     // constructor (normal)
 	public PlanningSolution(NextReleaseProblem problem) {
 		super(problem);
+
+        NRP=problem;
 	    numberOfViolatedConstraints = 0;
 
 	    initializePlannedFeatureVariables();
@@ -66,6 +71,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     // constructor (with previous plan)
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
+
+	    NRP=problem;
 	    numberOfViolatedConstraints = 0;
 
 	    undoneFeatures = new CopyOnWriteArrayList<Feature>();
@@ -83,6 +90,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		super(origin.problem);
 
 	    numberOfViolatedConstraints = origin.numberOfViolatedConstraints;
+	    NRP=origin.NRP;
 	    
 	    plannedFeatures = new CopyOnWriteArrayList<>();
 	    for (PlannedFeature plannedFeature : origin.getPlannedFeatures()) {
@@ -161,7 +169,9 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	// Initialize the variables. Load a random number of planned features
 	private void initializePlannedFeatureVariables() {
 		int numberOfFeatures = problem.getFeatures().size();
-		int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
+		// TODO: All the solutions will have all the features. This is a temporal solution.
+        //int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
+		int nbFeaturesToDo = numberOfFeatures;
 		
 		undoneFeatures = new CopyOnWriteArrayList<Feature>();
 		undoneFeatures.addAll(problem.getFeatures());
@@ -334,8 +344,80 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 			sb.append(lineSeparator);
 		}
 		
-		sb.append("End Date: ").append(getEndDate()).append(System.getProperty("line.separator"));
+		sb.append("End Date: ").append(getEndDate()).append(lineSeparator);
 		
 		return sb.toString();
 	}
+
+	public String toR() {
+        StringBuilder sb = new StringBuilder();
+        String lineSeparator = System.getProperty("line.separator");
+        List<PlannedFeature> plannedFeatures = getPlannedFeatures();
+        List<Employee> resources = getResources();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date curDate = new Date();
+        final int OneHour = 60 * 60 * 1000;
+
+        sb.append("userData <- list()").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        sb.append("  userData$features <- data.frame(\n" +
+                "    id=numeric(), \n" +
+                "    content=character(), \n" +
+                "    start=character(), \n" +
+                "    end=character(), \n" +
+                "    group=character(), #resource\n" +
+                "    type=character(), \n" +
+                "    priority=numeric(), \n" +
+                "    effort=numeric(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        sb.append("  userData$resources <- data.frame(\n" +
+                "    id=character(), #same as group in features\n" +
+                "    content=character(), # display name\n" +
+                "    availability=numeric(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        for (PlannedFeature feature : plannedFeatures)
+        	sb      .append("userData$features[nrow(userData$features)+1,] <- c(")
+                    .append(quote(feature.getFeature().getName())).append(", ") // id
+                    .append(quote(feature.getFeature().getName())).append(", ") // content
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ") // start
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getEndHour())))).append(", ") // end
+                    .append(quote(feature.getEmployee().getName())).append(", ") // group
+                    .append(quote("range")).append(", ") // type
+                    .append(feature.getFeature().getPriority().ordinal()+1).append(", ") // priority
+                    .append((int)feature.getFeature().getDuration()).append(")").append(lineSeparator); // effort
+
+        sb.append(lineSeparator);
+
+        for (Employee e : resources)
+            sb      .append("userData$resources[nrow(userData$resources)+1,] <- c(")
+                    .append(quote(e.getName())).append(", ") // id
+                    .append(quote(e.getName())).append(", ") // content
+                    .append(e.getWeekAvailability()).append(")").append(lineSeparator); // availability
+
+		sb.append(lineSeparator);
+
+        sb.append("userData$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
+        sb.append("userData$nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
+
+        return sb.toString();
+    }
+
+    private String quote(String s) {
+	    return "\"".concat(s).concat("\"");
+    }
+
+    private List<Employee> getResources() {
+	    ArrayList<Employee> employees = new ArrayList<>();
+        for (PlannedFeature feature : getPlannedFeatures())
+            if(!employees.contains(feature.getEmployee())) employees.add(feature.getEmployee());
+        return employees;
+    }
 }
