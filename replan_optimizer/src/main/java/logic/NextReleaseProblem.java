@@ -257,23 +257,21 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		solution.resetHours();
 
-		//double endHour = 0.0;
-		for (PlannedFeature currentPlannedFeature : plannedFeatures) {
-			computeHours(solution, currentPlannedFeature);
+		Iterator<PlannedFeature> it = plannedFeatures.iterator();
+        while(it.hasNext()) {
+            PlannedFeature currentPlannedFeature = it.next();
 
-			if (currentPlannedFeature.getBeginHour() == currentPlannedFeature.getEndHour()) {
-				throw new IllegalStateException(".");
-			}
+			computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 
-			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
+			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks));
 
-			employeeSchedule.scheduleFeature(currentPlannedFeature);
+			if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
+			    it.remove();
+            }
 			schedule.put(employee, employeeSchedule);
-
-			//endHour = Math.max(currentPlannedFeature.getEndHour(), endHour);
-		}
+        }
 
         double endHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
@@ -286,7 +284,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			    for (PlannedFeature pf : week.getPlannedFeatures())
 			        endHour = Math.max(endHour, pf.getEndHour());
 
-			employeesTimeSlots.put(e, s.getAllWeeks());
+			employeesTimeSlots.put(e, weeks);
 		}
 
 		solution.setEmployeesPlanning(employeesTimeSlots);
