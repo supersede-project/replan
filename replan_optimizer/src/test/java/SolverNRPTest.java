@@ -191,12 +191,6 @@ public class SolverNRPTest {
         PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
 
         validator.validateAll(solution);
-/*
-        try {
-            validator.validateAll(solution);
-        } catch (AssertionError e) {
-            e.printStackTrace();
-        }*/
 
         solutionToDataFile(solution);
     }
@@ -282,7 +276,7 @@ public class SolverNRPTest {
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }
 
-    //@Test
+    @Test
     public void averageUseCaseTest() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(20);
@@ -304,9 +298,11 @@ public class SolverNRPTest {
         employees.get(3).getSkills().add(skills.get(4));
         employees.get(3).getSkills().add(skills.get(3));
 
+        employees.get(3).setWeekAvailability(1.0);
+
         // dependencies
-        features.get(3).getPreviousFeatures().add(features.get(0));
-        features.get(3).getPreviousFeatures().add(features.get(1));
+        //features.get(3).getPreviousFeatures().add(features.get(0));
+        //features.get(3).getPreviousFeatures().add(features.get(1));
 
         features.get(7).getPreviousFeatures().add(features.get(3));
 
@@ -317,6 +313,9 @@ public class SolverNRPTest {
         features.get(16).getPreviousFeatures().add(features.get(10));
 
         features.get(19).getPreviousFeatures().add(features.get(16));
+
+        features.get(3).setDuration(4.0);
+
 
         // required skills by features
         features.get(0).getRequiredSkills().add(skills.get(0));
@@ -371,6 +370,10 @@ public class SolverNRPTest {
         System.out.print(solution.toR());
 
         Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
+
+        validator.validateAll(solution);
+
+        solutionToDataFile(solution);
     }
 
     @Test

@@ -26,6 +26,10 @@ public class Feature {
 	 * The duration of the feature in hours
 	 */
 	private double duration;
+
+	public void setDuration(Double d) {
+		duration = d;
+	}
 	
 	/**
 	 * The features which needed to be executed before
