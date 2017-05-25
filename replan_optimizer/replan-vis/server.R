@@ -1,5 +1,6 @@
 library(timevis)
 library(shinyjs)
+library(igraph)
 
 source("exampleData.R")
 source("render.R")

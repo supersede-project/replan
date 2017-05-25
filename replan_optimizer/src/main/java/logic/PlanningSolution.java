@@ -360,9 +360,9 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
         sb.append("userData <- list()").append(lineSeparator);
 
-        sb.append(lineSeparator);
+		sb.append(lineSeparator);
 
-        sb.append("  userData$features <- data.frame(\n" +
+        sb.append("  userData$plan <- data.frame(\n" +
                 "    id=numeric(), \n" +
                 "    content=character(), \n" +
                 "    start=character(), \n" +
@@ -376,23 +376,40 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         sb.append(lineSeparator);
 
         sb.append("  userData$resources <- data.frame(\n" +
-                "    id=character(), #same as group in features\n" +
+                "    id=character(), #same as group in plan\n" +
                 "    content=character(), # display name\n" +
                 "    availability=numeric(), \n" +
                 "    stringsAsFactors=FALSE)").append(lineSeparator);
 
         sb.append(lineSeparator);
 
-        for (PlannedFeature feature : plannedFeatures)
-        	sb      .append("userData$features[nrow(userData$features)+1,] <- c(")
-                    .append(quote(feature.getFeature().getName())).append(", ") // id
-                    .append(quote(feature.getFeature().getName())).append(", ") // content
-                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getBeginHour())))).append(", ") // start
-                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)feature.getEndHour())))).append(", ") // end
-                    .append(quote(feature.getEmployee().getName())).append(", ") // group
+        sb.append("  userData$features <- data.frame(\n" +
+                "    id=character(), #same as content in plan\n" +
+                "    content=character(), # display name\n" +
+                "    scheduled=character(), # Yes/No\n" +
+                "    priority=numeric(), \n" +
+                "    effort=numeric(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        sb.append("  userData$depGraphEdges <- data.frame(\n" +
+                "    node1=character(), \n" +
+                "    node2=character(), \n" +
+                "    stringsAsFactors=FALSE)").append(lineSeparator);
+
+        sb.append(lineSeparator);
+
+        for (PlannedFeature pf : plannedFeatures)
+        	sb      .append("userData$plan[nrow(userData$plan)+1,] <- c(")
+                    .append(quote(pf.getFeature().getName())).append(", ") // id
+                    .append(quote(pf.getFeature().getName())).append(", ") // content
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)pf.getBeginHour())))).append(", ") // start
+                    .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)pf.getEndHour())))).append(", ") // end
+                    .append(quote(pf.getEmployee().getName())).append(", ") // group
                     .append(quote("range")).append(", ") // type
-                    .append(feature.getFeature().getPriority().ordinal()+1).append(", ") // priority
-                    .append((int)feature.getFeature().getDuration()).append(")").append(lineSeparator); // effort
+                    .append(pf.getFeature().getPriority().ordinal()+1).append(", ") // priority
+                    .append((int)pf.getFeature().getDuration()).append(")").append(lineSeparator); // effort
 
         sb.append(lineSeparator);
 
@@ -404,8 +421,24 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
 		sb.append(lineSeparator);
 
+        for (Feature f : NRP.getFeatures()) {
+            sb.append("userData$features[nrow(userData$features)+1,] <- c(")
+                    .append(quote(f.getName())).append(", ") // id
+                    .append(quote(f.getName())).append(", ") // id
+                    .append(quote("Yes")).append(", ") // id
+                    .append(f.getPriority().ordinal() + 1).append(", ") // priority
+                    .append((int) f.getDuration()).append(")").append(lineSeparator); // effort
+            for(Feature d : f.getPreviousFeatures())
+                sb.append("userData$depGraphEdges[nrow(userData$depGraphEdges)+1,] <- c(")
+                        .append(quote(f.getName())).append(", ")
+                        .append(quote(d.getName())).append(")").append(lineSeparator);
+        }
+
+        sb.append(lineSeparator);
+
         sb.append("userData$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
         sb.append("userData$nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
+
 
         return sb.toString();
     }

@@ -253,7 +253,7 @@ public class SolverNRPTest {
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }
 
-    //@Test
+    @Test
     public void averageUseCaseTest() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(20);

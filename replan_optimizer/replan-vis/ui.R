@@ -18,8 +18,9 @@ fluidPage(
       hr(),
       timevisOutput("timeline"),
       fluidRow(
-        column(5, plotOutput("score", width = 400)),
-        column(5, plotOutput("resources", width = 400))
+        column(5, textOutput("scheduledFeatures"), 
+                  plotOutput("depGraph")),
+        column(5, plotOutput("resources"))
       )
     ),
     tabPanel(
