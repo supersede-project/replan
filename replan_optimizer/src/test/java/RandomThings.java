@@ -40,7 +40,9 @@ public class RandomThings {
     }
 
     public Feature feature() {
-        return new Feature(name("F"), PriorityLevel.FIVE, random.nextDouble(1.0, 40.0), new ArrayList<>(), new ArrayList<>());
+        return new Feature(name("F"), PriorityLevel.FIVE,
+                Math.floor(random.nextDouble(1.0, 40.0)),
+                new ArrayList<>(), new ArrayList<>());
     }
 
     public List<Feature> featureList(int nbElems) {

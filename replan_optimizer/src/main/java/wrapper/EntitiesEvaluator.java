@@ -29,16 +29,16 @@ public class EntitiesEvaluator {
                                                           List<Feature> features, List<Employee> employees) {
 
         return new NextReleaseProblem(this.featuresAddSkills(features),
-                                                            this.employeesAddSkills(employees),
-                                                            new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+                this.employeesAddSkills(employees),
+                new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
     }
 
     public NextReleaseProblem nextReleaseProblemDeleteSkills(int nbWeeks, Number hoursPerweek,
                                                              List<Feature> features, List<Employee> employees) {
 
         return new NextReleaseProblem(this.featuresDeleteSkills(features),
-                                                            this.employeesDeleteSkills(employees),
-                                                            new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+                this.employeesDeleteSkills(employees),
+                new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
     }
 
     public List<Employee> employeesAddSkills(List<Employee> employees) {
@@ -127,12 +127,22 @@ public class EntitiesEvaluator {
     }
 
     private PlannedFeature plannedFeatureDeleteSkill(PlannedFeature pf) {
+        /*
         Feature feature = pf.getFeature();
         Employee employee = pf.getEmployee();
         PlannedFeature plannedFeature = new PlannedFeature(this.featureDeleteSkills(feature),this.employeeDeleteSkill(employee));
         plannedFeature.setBeginHour(pf.getBeginHour());
         plannedFeature.setEndHour(pf.getEndHour());
         return plannedFeature;
+        */
+
+        Feature f = featureDeleteSkills(pf.getFeature());
+        Employee e = employeeDeleteSkill(pf.getEmployee());
+
+        pf.setFeature(f);
+        pf.setEmployee(e);
+
+        return pf;
     }
 
     public PlanningSolution planningSolution(PlanningSolution solution) {

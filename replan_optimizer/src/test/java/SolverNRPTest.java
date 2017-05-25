@@ -7,7 +7,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import wrapper.SolverNRP;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -176,19 +182,43 @@ public class SolverNRPTest {
 
     @Test
     public void randomProblemValidatesAllConstraints() {
-        List<Skill> skills = random.skillList(3);
-        List<Feature> features = random.featureList(5);
-        List<Employee> employees = random.employeeList(2);
+        List<Skill> skills = random.skillList(7);
+        List<Feature> features = random.featureList(20);
+        List<Employee> employees = random.employeeList(6);
 
         random.mix(features, skills, employees);
 
         PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
 
         validator.validateAll(solution);
+/*
+        try {
+            validator.validateAll(solution);
+        } catch (AssertionError e) {
+            e.printStackTrace();
+        }*/
+
+        solutionToDataFile(solution);
     }
 
-    // TODO: It won't pass the frozen validation if the solution is cleared because of constraint violation as all planned features are removed, including frozen ones
     @Test
+    public void manyRandomProblemsToSeeIfICatchAnOverlappingErrorBecauseItDoesntSeemToHappen() {
+        for (int i = 0; i < 50; ++i) {
+            List<Skill> skills = random.skillList(7);
+            List<Feature> features = random.featureList(20);
+            List<Employee> employees = random.employeeList(6);
+
+            random.mix(features, skills, employees);
+
+            PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+
+            validator.validateAll(solution);
+        }
+    }
+
+
+    // TODO: It won't pass the frozen validation if the solution is cleared because of constraint violation as all planned features are removed, including frozen ones
+    //@Test
     public void randomReplanValidatesAllConstraints() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(15);
@@ -343,4 +373,35 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
     }
 
+    @Test
+    public void noOverlappedJobs() {
+        List<Skill> skills = random.skillList(3);
+        List<Feature> features = random.featureList(5);
+        List<Employee> employees = random.employeeList(3);
+
+        random.mix(features, skills, employees);
+
+        PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+
+        validator.validateNoOverlappedJobs(solution);
+    }
+
+    private void solutionToDataFile(PlanningSolution solution) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+
+        String base = "src/test/data";
+        String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
+                dateFormat.format(Calendar.getInstance().getTime()));
+        String fullPath = String.format("%s/%s.txt", base, filename);
+
+        File f = new File(fullPath);
+        f.getParentFile().mkdirs();
+
+
+        try {
+            Files.write(f.toPath(), solution.toR().getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

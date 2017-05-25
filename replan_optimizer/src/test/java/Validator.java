@@ -15,17 +15,20 @@ import static junit.framework.Assert.assertTrue;
 public class Validator {
 
     private static final String DEPENDENCE_FAIL_MESSAGE =
-                    "Feature %s depends on feature %s, but planning does not respect this precedence.\n" +
+            "Feature %s depends on feature %s, but planning does not respect this precedence.\n" +
                     " Dependence -> beginHour: %f, endHour: %f.\n Dependant -> beginHour: %f, endHour: %f";
 
     private static final String SKILL_FAIL_MESSAGE =
-                    "Feature %s requires skill %s, but employee %s does not have it.";
+            "Feature %s requires skill %s, but employee %s does not have it.";
 
     private static final String FROZEN_FAIL_MESSAGE =
-                    "PlannedFeature %s is frozen in the previous plan, but this is not respected in the new plan.";
+            "PlannedFeature %s is frozen in the previous plan, but this is not respected in the new plan.";
+
+    private static final String OVERLAPPING_FAIL_MESSAGE =
+            "PlannedFeature %s overlaps with PlannedFeature %s";
 
     private static final String DEADLOCK_MESSAGE =
-                    "Feature %s depends on itself at some point.";
+            "Feature %s depends on itself at some point.";
 
 
     public void validateDependencies(PlanningSolution solution) {
@@ -54,7 +57,7 @@ public class Validator {
 
             for (Skill s : f.getRequiredSkills()) {
                 assertTrue(String.format(SKILL_FAIL_MESSAGE, f.toString(), s.toString(), e.toString()),
-                            e.getSkills().contains(s));
+                        e.getSkills().contains(s));
             }
         }
     }
@@ -69,6 +72,7 @@ public class Validator {
 
     public void validateAll(PlanningSolution solution) {
         validateDependencies(solution);
+        validateNoOverlappedJobs(solution);
         validateSkills(solution);
     }
 
@@ -101,5 +105,48 @@ public class Validator {
                 validateNoDependencyDeadlock(original, previous);
             }
         }
+    }
+
+    public void validateNoOverlappedJobs(PlanningSolution solution) {
+        List<PlannedFeature> jobs = solution.getPlannedFeatures();
+        Map<Employee, List<PlannedFeature>> schedule = new HashMap<>();
+
+        for (PlannedFeature pf : jobs) {
+            Employee e = pf.getEmployee();
+            if (!schedule.containsKey(e)) schedule.put(e, new ArrayList<>());
+            schedule.get(e).add(pf);
+        }
+
+        for (Map.Entry<Employee, List<PlannedFeature>> entry : schedule.entrySet()) {
+            double endHour = 0.0;
+            List<PlannedFeature> employeeJobs = entry.getValue();
+            PlannedFeature previous = employeeJobs.get(0);
+
+            sortJobsByBeginHour(employeeJobs);
+
+            for (PlannedFeature pf : employeeJobs) {
+                Assert.assertTrue(
+                        String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
+                        pf.getBeginHour() >= endHour
+                );
+
+                endHour = pf.getEndHour();
+                previous = pf;
+            }
+        }
+    }
+
+    private void sortJobsByBeginHour(List<PlannedFeature> jobs) {
+        Collections.sort(jobs, new Comparator<PlannedFeature>() {
+            @Override
+            public int compare(PlannedFeature o1, PlannedFeature o2) {
+                double h1 = o1.getBeginHour();
+                double h2 = o2.getBeginHour();
+
+                if (h1 < h2) return -1;
+                else if (h1 > h2) return 1;
+                else return 0;
+            }
+        });
     }
 }

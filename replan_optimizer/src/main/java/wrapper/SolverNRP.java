@@ -75,8 +75,8 @@ public class SolverNRP {
             case MOCell:
                 return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(5000) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
-                        .setPopulationSize(100) // TODO: any number > 100 makes the algorithm to trigger an exception: org.uma.jmetal.util.JMetalException: The solution list size 101 is not equal to the grid size: 10 * 10
+                        .setMaxEvaluations(50000) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
+                        .setPopulationSize(5000) // TODO: any number > 100 makes the algorithm to trigger an exception: org.uma.jmetal.util.JMetalException: The solution list size 101 is not equal to the grid size: 10 * 10
                         .build();
             case SPEA2:
                 return new SPEA2Builder<PlanningSolution>(problem, crossover, mutation)
