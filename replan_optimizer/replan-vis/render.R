@@ -38,28 +38,41 @@ renderThisData <- function(output, d) {
   })
   
   output$resources <- renderPlot({
-    d$plan[,8] <- sapply(d$plan[,8], as.numeric) # effort as numeric
-    d$resources[,3] <- sapply(d$resources[,3], as.numeric) # week availability as numeric
+    d$plan$effort <- sapply(d$plan$effort, as.numeric)
+    d$resources$availability <- sapply(d$resources$availability, as.numeric)
     totalhours <- tapply(d$resources$availability, d$resources$id, FUN=sum)
     totalhours <- totalhours*d$nWeeks
-    totalhours <- totalhours[order(names(totalhours))]
+    totalhours <- totalhours[order(names(totalhours), decreasing = TRUE)]
     usedhours <- tapply(d$plan$effort, d$plan$group, FUN=sum)
-    usedhours <- usedhours[order(names(usedhours))]
+    usedhours <- usedhours[order(names(usedhours), decreasing = TRUE)]
     ptab <-round(100 * (usedhours/totalhours), 1)
     
     lbls <- paste(usedhours, "h of ", totalhours, "h (", ptab, "%)", sep = "")
     bp <- barplot(ptab, 
-                  xlim=c(0, 100), 
-                  horiz=TRUE, 
-                  xlab="% of used hours per resource", 
-                  beside=TRUE,
+                  xlim = c(0, 100), 
+                  horiz = TRUE, 
+                  xlab = "% of used hours per resource", 
+                  beside = TRUE,
                   main = "Resource usage")
-    text(x=ptab, 
-         y=bp, 
-         labels=lbls, 
-         pos=placeText(ptab), 
-         cex=1.5)
+    text(x = ptab, 
+         y = bp, 
+         labels = lbls, 
+         pos = placeText(ptab), 
+         cex = 1.5)
   }, 
   height = 90*nrow(d$resources), 
   width = 400)
+  
+  output$plannedTable <- renderDataTable({
+    d$plan
+  })
+  
+  output$resourcesTable <- renderDataTable({
+    d$resources
+  })
+  
+  output$featuresTable <- renderDataTable({
+    d$features
+  })
+  
 }

@@ -29,7 +29,24 @@ fluidPage(
       )
     ),
     tabPanel(
-      div("Data"),
+      div("Browse Data"),
+      tabsetPanel(
+        tabPanel(
+          div("Planned Features"),
+          dataTableOutput("plannedTable")
+        ),
+        tabPanel(
+          div("Resources"),
+          dataTableOutput("resourcesTable")
+        ),
+        tabPanel(
+          div("Features"),
+          dataTableOutput("featuresTable")
+        )
+      )
+    ),
+    tabPanel(
+      div("Input Data"),
       runcodeUI(type = "textarea", width = 900, height = 400, includeShinyjs=TRUE)
     )
   )
