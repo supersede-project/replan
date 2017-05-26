@@ -9,16 +9,26 @@ renderThisData <- function(output, d) {
   output$scheduledFeatures <- renderText({
     paste("Planned ", nrow(d$plan), " out of ", d$nFeatures, " features (", (nrow(d$plan)/d$nFeatures)*100,"%)", sep="")
   })
+
+  output$planScore <- renderText({
+    d$plan$priority <- sapply(d$plan$priority, as.numeric) # priority as numeric
+    d$features$priority <- sapply(d$features$priority, as.numeric) # priority as numeric
+    score <- sum(d$plan$priority)
+    maxScore <- sum(d$features$priority)
+    paste("This plan has a score of ", score, " out of ", maxScore, " (", (score/maxScore)*100,"%)", sep="")
+  })
   
   output$depGraph <- renderPlot({
-    dG <- graph(c("a", "b", "c", "b", "d", "a", "g", "a"))
+    dG <- graph.data.frame(d$depGraphEdges)
     plot (dG,
           #edge.arrow.size=.5, 
           vertex.color="lightblue", 
-          vertex.size=25, 
+          vertex.size=35, 
           #vertex.frame.color="gray", 
           vertex.label.color="black", 
-          vertex.label.dist=5)
+          #vertex.label.dist=5
+          main="Dependency graph"
+          )
   })
   
   output$resources <- renderPlot({
@@ -32,7 +42,18 @@ renderThisData <- function(output, d) {
     ptab <-round(100 * (usedhours/totalhours), 1)
     
     lbls <- paste(usedhours, "h of ", totalhours, "h (", ptab, "%)", sep = "")
-    bp <- barplot(ptab, xlim=c(0, 100), horiz=TRUE, xlab="% of used hours per resource", beside=TRUE)
-    text(x=ptab, y=bp, labels=lbls, pos=placeText(ptab), cex=1.5)
-  }, height = 90*nrow(d$resources), width = 400)
+    bp <- barplot(ptab, 
+                  xlim=c(0, 100), 
+                  horiz=TRUE, 
+                  xlab="% of used hours per resource", 
+                  beside=TRUE,
+                  main = "Resource usage")
+    text(x=ptab, 
+         y=bp, 
+         labels=lbls, 
+         pos=placeText(ptab), 
+         cex=1.5)
+  }, 
+  height = 90*nrow(d$resources), 
+  width = 400)
 }

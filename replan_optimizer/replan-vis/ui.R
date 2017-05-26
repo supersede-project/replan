@@ -8,7 +8,7 @@ library(shinyjs)
 fluidPage(
   title = "RePlan visualization",
   tags$head(tags$link(href = "style.css", rel = "stylesheet")),
-  div(id = "header", div(id = "title", "RePlan visualization")),
+  div(id = "header", div(id = "title", "RePlan visualization ")),
   tabsetPanel(
     tabPanel(
       div("Visualization"),
@@ -18,8 +18,13 @@ fluidPage(
       hr(),
       timevisOutput("timeline"),
       fluidRow(
-        column(5, textOutput("scheduledFeatures"), 
-                  plotOutput("depGraph")),
+        column(10, 
+               textOutput("scheduledFeatures"),
+               textOutput("planScore")
+        )
+      ),
+      fluidRow(
+        column(5, plotOutput("depGraph")),
         column(5, plotOutput("resources"))
       )
     ),
