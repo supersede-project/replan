@@ -1,6 +1,11 @@
 source("utils.R")
 
 renderThisData <- function(output, d) {
+  d$plan <- d$plan[order(d$plan$id), ]
+  d$resources <- d$resources[order(d$resources$id), ]
+  d$features <- d$features[order(d$features$id), ]
+  d$depGraphEdges <- d$depGraphEdges[order(d$depGraphEdges$node1), ]
+  
   setItems("timeline", d$plan)
   setGroups("timeline", d$resources)
   setOptions("timeline", list(stack = FALSE))
@@ -20,9 +25,10 @@ renderThisData <- function(output, d) {
   
   output$depGraph <- renderPlot({
     dG <- graph.data.frame(d$depGraphEdges)
+    V(dG)$color <- ifelse(d$features$scheduled[match(V(dG)$name, d$features$id)] == "Yes", "lightblue", "red")
     plot (dG,
           #edge.arrow.size=.5, 
-          vertex.color="lightblue", 
+          #vertex.color="lightblue", 
           vertex.size=35, 
           #vertex.frame.color="gray", 
           vertex.label.color="black", 

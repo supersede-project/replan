@@ -425,7 +425,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
             sb.append("userData$features[nrow(userData$features)+1,] <- c(")
                     .append(quote(f.getName())).append(", ") // id
                     .append(quote(f.getName())).append(", ") // id
-                    .append(quote("Yes")).append(", ") // id
+                    .append(quote(isAlreadyPlanned(f) ? "Yes" : "No")).append(", ") // id
                     .append(f.getPriority().ordinal() + 1).append(", ") // priority
                     .append((int) f.getDuration()).append(")").append(lineSeparator); // effort
             for(Feature d : f.getPreviousFeatures())
