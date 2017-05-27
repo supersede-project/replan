@@ -1,28 +1,78 @@
+source("utils.R")
 
 renderThisData <- function(output, d) {
-  setItems("timeline", d$features)
+  d$plan <- d$plan[order(d$plan$id), ]
+  d$resources <- d$resources[order(d$resources$id), ]
+  d$features <- d$features[order(d$features$id), ]
+  d$depGraphEdges <- d$depGraphEdges[order(d$depGraphEdges$node1), ]
+  
+  setItems("timeline", d$plan)
   setGroups("timeline", d$resources)
   setOptions("timeline", list(stack = FALSE))
   fitWindow("timeline", list(animation = FALSE))
   
-  output$score <- renderPlot({
-    x <- c(d$nFeatures, nrow(d$features))
-    bp <- barplot(x, horiz=TRUE, xlab="features", xlim=c(0, 50))
-    text(x=x, y=bp, labels=c(paste("Total (",x[1],")", sep=""), paste("Scheduled (",x[2],")", sep="")), pos=4, cex=1.5)
+  output$scheduledFeatures <- renderText({
+    paste("Planned ", nrow(d$plan), " out of ", d$nFeatures, " features (", (nrow(d$plan)/d$nFeatures)*100,"%)", sep="")
+  })
+
+  output$planScore <- renderText({
+    d$plan$priority <- sapply(d$plan$priority, as.numeric) # priority as numeric
+    d$features$priority <- sapply(d$features$priority, as.numeric) # priority as numeric
+    score <- sum(d$plan$priority)
+    maxScore <- sum(d$features$priority)
+    paste("This plan has a score of ", score, " out of ", maxScore, " (", (score/maxScore)*100,"%)", sep="")
+  })
+  
+  output$depGraph <- renderPlot({
+    dG <- graph.data.frame(d$depGraphEdges)
+    V(dG)$color <- ifelse(d$features$scheduled[match(V(dG)$name, d$features$id)] == "Yes", "lightblue", "red")
+    plot (dG,
+          #edge.arrow.size=.5, 
+          #vertex.color="lightblue", 
+          vertex.size=35, 
+          #vertex.frame.color="gray", 
+          vertex.label.color="black", 
+          #vertex.label.dist=5
+          main="Dependency graph"
+          )
   })
   
   output$resources <- renderPlot({
-    d$features[,8] <- sapply(d$features[,8], as.numeric) # effort as numeric
-    d$resources[,3] <- sapply(d$resources[,3], as.numeric) # week availability as numeric
+    d$plan$effort <- sapply(d$plan$effort, as.numeric)
+    d$resources$availability <- sapply(d$resources$availability, as.numeric)
     totalhours <- tapply(d$resources$availability, d$resources$id, FUN=sum)
     totalhours <- totalhours*d$nWeeks
-    totalhours <- totalhours[order(names(totalhours))]
-    usedhours <- tapply(d$features$effort, d$features$group, FUN=sum)
-    usedhours <- usedhours[order(names(usedhours))]
+    totalhours <- totalhours[order(names(totalhours), decreasing = TRUE)]
+    usedhours <- tapply(d$plan$effort, d$plan$group, FUN=sum)
+    usedhours <- usedhours[order(names(usedhours), decreasing = TRUE)]
     ptab <-round(100 * (usedhours/totalhours), 1)
     
-    lbls <- paste(usedhours, "h (", ptab, "%)", sep = "")
-    bp <- barplot(ptab, xlim=c(0, 100), horiz=TRUE, xlab="% of used hours per resource", beside=TRUE)
-    text(x=ptab, y=bp, labels=lbls, pos=2, cex=1.5)
+    lbls <- paste(usedhours, "h of ", totalhours, "h (", ptab, "%)", sep = "")
+    bp <- barplot(ptab, 
+                  xlim = c(0, 100), 
+                  horiz = TRUE, 
+                  xlab = "% of used hours per resource", 
+                  beside = TRUE,
+                  main = "Resource usage")
+    text(x = ptab, 
+         y = bp, 
+         labels = lbls, 
+         pos = placeText(ptab), 
+         cex = 1.5)
+  }, 
+  height = 90*nrow(d$resources), 
+  width = 400)
+  
+  output$plannedTable <- renderDataTable({
+    d$plan
   })
+  
+  output$resourcesTable <- renderDataTable({
+    d$resources
+  })
+  
+  output$featuresTable <- renderDataTable({
+    d$features
+  })
+  
 }

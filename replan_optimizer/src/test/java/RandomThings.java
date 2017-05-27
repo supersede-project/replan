@@ -24,9 +24,12 @@ public class RandomThings {
         validator = new Validator();
     }
 
+    private static int skillID = 0;
+    private static int featureID = 0;
+    private static int employeeID = 0;
 
     public Skill skill() {
-        return new Skill(name("S"));
+        return new Skill(String.format("S%03d", ++skillID));
     }
 
     public List<Skill> skillList (int nbElems) {
@@ -40,9 +43,7 @@ public class RandomThings {
     }
 
     public Feature feature() {
-        return new Feature(name("F"), PriorityLevel.FIVE,
-                Math.floor(random.nextDouble(1.0, 40.0)),
-                new ArrayList<>(), new ArrayList<>());
+        return new Feature(String.format("F%03d", ++featureID), PriorityLevel.FIVE, random.nextDouble(1.0, 40.0), new ArrayList<>(), new ArrayList<>());
     }
 
     public List<Feature> featureList(int nbElems) {
@@ -56,7 +57,7 @@ public class RandomThings {
     }
 
     public Employee employee() {
-        return new Employee(name("E"), 40.0, new ArrayList<>());
+        return new Employee(String.format("E%03d", ++employeeID), 40.0, new ArrayList<>());
     }
 
     public List<Employee> employeeList(int nbElems) {
