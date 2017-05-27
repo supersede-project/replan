@@ -79,6 +79,7 @@ public class Validator {
     public void validateAll(PlanningSolution previous, PlanningSolution current) {
         validateDependencies(current);
         validateFrozen(previous, current);
+        validateNoOverlappedJobs(current);
         validateSkills(current);
     }
 
@@ -125,10 +126,12 @@ public class Validator {
             sortJobsByBeginHour(employeeJobs);
 
             for (PlannedFeature pf : employeeJobs) {
-                Assert.assertTrue(
-                        String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
-                        pf.getBeginHour() >= endHour
-                );
+                if (pf != previous) {
+                    Assert.assertTrue(
+                            String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
+                            pf.getBeginHour() >= endHour
+                    );
+                }
 
                 endHour = pf.getEndHour();
                 previous = pf;

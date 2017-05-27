@@ -184,7 +184,7 @@ public class SolverNRPTest {
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(7);
         List<Feature> features = random.featureList(20);
-        List<Employee> employees = random.employeeList(6);
+        List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 

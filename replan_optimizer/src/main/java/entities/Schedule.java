@@ -31,35 +31,47 @@ public class Schedule {
         double featureHoursLeft = pf.getFeature().getDuration();
 
         // Not enough hours left for this feature in the iteration
-        if (totalHoursLeft < featureHoursLeft) return false;
+        //if (totalHoursLeft < featureHoursLeft) return false;
 
         EmployeeWeekAvailability week = getCurrentWeek();
+
         double remainingWeekHours = week.getRemainHoursAvailable();
 
         EmployeeWeekAvailability previousWeek = getPreviousWeek(week);
 
-        if (week.getPlannedFeatures().isEmpty()) {
+
+        PlannedFeature lastPlanned = getLastPlannedFeature(week, previousWeek);
+
+        /*if (week.getPlannedFeatures().isEmpty()) {
             if (previousWeek != null) {
-                week.setBeginHour(Math.max(pf.getBeginHour(), previousWeek.getEndHour()));
+                //week.setBeginHour(Math.max(pf.getBeginHour(), previousWeek.getEndHour()));
+                week.setBeginHour(previousWeek.getEndHour());
                 week.setEndHour(week.getBeginHour());
             } else {
                 week.setBeginHour(pf.getBeginHour());
                 week.setEndHour(week.getBeginHour());
             }
-        }
+        }*/
 
         if (featureHoursLeft <= remainingWeekHours) {
-            pf.setBeginHour(week.getEndHour());
-            pf.setEndHour(pf.getBeginHour() + pf.getFeature().getDuration());
+            double newBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
+            pf.setBeginHour(newBeginHour);
+            pf.setEndHour(pf.getBeginHour() + featureHoursLeft);
+
+            if (lastPlanned != null && pf.getBeginHour() < lastPlanned.getEndHour()) {
+                String s = "dummy";
+            }
 
             week.addPlannedFeature(pf);
             week.setRemainHoursAvailable(remainingWeekHours - featureHoursLeft);
-            week.setEndHour(week.getEndHour() + featureHoursLeft);
+            week.setEndHour(pf.getEndHour());
+
+
 
             totalHoursLeft -= featureHoursLeft;
         } else {
-            double pfBeginHour = week.getEndHour();
-            double pfEndHour = week.getEndHour();
+            double pfBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();;
+            double pfEndHour = pfBeginHour;
             while (featureHoursLeft > 0.0) {
                 week.addPlannedFeature(pf);
 
@@ -68,38 +80,57 @@ public class Schedule {
                 featureHoursLeft -= doneHours;
                 totalHoursLeft -= doneHours;
 
+                pfEndHour += doneHours;
+
                 week.setRemainHoursAvailable(remainingWeekHours - doneHours);
-                week.setEndHour(week.getEndHour() + doneHours);
+                week.setEndHour(pfEndHour);
 
-                pfEndHour = week.getEndHour();
-
+                /*
                 EmployeeWeekAvailability nextWeek = getCurrentWeek();
                 if (nextWeek != week) {
                     nextWeek.setBeginHour(week.getEndHour());
                     nextWeek.setEndHour(nextWeek.getBeginHour());
                 }
-
                 week = nextWeek;
+                */
+                week = getCurrentWeek();
                 remainingWeekHours = week.getRemainHoursAvailable();
             }
             pf.setBeginHour(pfBeginHour);
             pf.setEndHour(pfEndHour);
+
+            if (lastPlanned != null && pf.getBeginHour() < lastPlanned.getEndHour()) {
+                String s = "dummy";
+            }
         }
+
+        if (lastPlanned != null && pf.getBeginHour() < lastPlanned.getEndHour()) {
+            String s = "dummy";
+        }
+
+
         return true;
     }
 
 
     /**
-     * @return The first non-full week of the employee, or null if there isn't any.
+     * @return The first non-full week of the employee, or a new one if there isn't any.
      */
     public EmployeeWeekAvailability getCurrentWeek() {
         for (EmployeeWeekAvailability week : weeks)
             if (week.getRemainHoursAvailable() > 0.0)
                 return week;
 
-        EmployeeWeekAvailability week =
-                new EmployeeWeekAvailability(0.0, employee.getWeekAvailability());
+        EmployeeWeekAvailability week = new EmployeeWeekAvailability(0.0, employee.getWeekAvailability());
         weeks.add(week);
+
+        EmployeeWeekAvailability previous = getPreviousWeek(week);
+
+        if (previous != null) {
+            week.setBeginHour(previous.getEndHour());
+            week.setEndHour(week.getBeginHour());
+        }
+
         return week;
     }
 
@@ -112,6 +143,20 @@ public class Schedule {
         int index = weeks.indexOf(week) - 1;
 
         return index < 0 ? null : weeks.get(index);
+    }
+
+    public PlannedFeature getLastPlannedFeature(EmployeeWeekAvailability week, EmployeeWeekAvailability previousWeek) {
+        List<PlannedFeature> jobs = week.getPlannedFeatures();
+        if (!jobs.isEmpty())
+            return jobs.get(jobs.size() - 1);
+
+        if (previousWeek == null) return null;
+
+        jobs = previousWeek.getPlannedFeatures();
+        if (!jobs.isEmpty())
+            return jobs.get(jobs.size() - 1);
+
+        return null;
     }
 
     public List<EmployeeWeekAvailability> getAllWeeks() {

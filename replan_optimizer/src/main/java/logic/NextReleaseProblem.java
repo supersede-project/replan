@@ -251,7 +251,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 
 	//@Override
-	public void evaluate2(PlanningSolution solution) {
+	public void evaluateOld(PlanningSolution solution) {
 		Map<Employee, Schedule> schedule = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
@@ -261,15 +261,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         while(it.hasNext()) {
             PlannedFeature currentPlannedFeature = it.next();
 
-			computeHours(solution, currentPlannedFeature);
+			computeHoursRecursive(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 
 			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks));
 
-			if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
+			if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
 			    it.remove();
-            }
+
 			schedule.put(employee, employeeSchedule);
         }
 
@@ -307,23 +307,19 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
 		Feature feature = pf.getFeature();
 		if (feature.getPreviousFeatures().isEmpty()) {
-			if (pf.getEndHour() == 0.0) {
-				pf.setEndHour(pf.getBeginHour() + feature.getDuration());
-			}
+            pf.setEndHour(feature.getDuration());
 		} else {
+		    double newBeginHour = 0.0;
 			for (Feature previous : feature.getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previous);
 
 				if (previousPlannedFeature != null) {
 					computeHoursRecursive(solution, previousPlannedFeature);
-
-					pf.setBeginHour(previousPlannedFeature.getEndHour());
-					pf.setEndHour(pf.getBeginHour() + feature.getDuration());
-				} else {
-					pf.setBeginHour(0.0);
-					pf.setEndHour(pf.getFeature().getDuration());
+					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
 				}
 			}
+			pf.setBeginHour(newBeginHour);
+            pf.setEndHour(pf.getBeginHour() + feature.getDuration());
 		}
 	}
 

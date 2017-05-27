@@ -179,7 +179,7 @@ public class RandomThings {
 
             boolean mutated = false;
             for (Feature f1 : features) {
-                if (random.nextDouble() <= 0.75) {
+                if (random.nextDouble() <= 0.5) {
                     Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
                     if (!f1.equals(f2)) {
@@ -211,8 +211,8 @@ public class RandomThings {
         return random.nextDouble() <= MUTATION_PROBABILITY;
     }
 
-    private String name(String type) {
-        return String.format("%s-%d", type, random.nextInt(0, MANY));
+    private String name(String prefix) {
+        return String.format("%s-%d", prefix, random.nextInt(0, MANY));
     }
 
     private void removeDependencies(List<Feature> features) {
