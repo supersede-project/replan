@@ -12,20 +12,19 @@ fluidPage(
   tabsetPanel(
     tabPanel(
       div("Visualization"),
-      actionButton("runfromexample", "Build from example"),
       actionButton("runfromdata", "Build from data"),
       actionButton("runfromcontroller", "Build from controller"), 
       hr(),
-      timevisOutput("timeline"),
       fluidRow(
-        column(10, 
-               textOutput("scheduledFeatures"),
-               textOutput("planScore")
-        )
+        column(12, timevisOutput("timelineRelease"))
       ),
       fluidRow(
-        column(5, plotOutput("depGraph")),
-        column(5, plotOutput("resources"))
+        column(6, align="center", tableOutput("resultsTable"), selectInput("unscheduled", "Select non-scheduled", c("NONE","A","B","C"), selected="NONE")),
+        column(6, align="center", tableOutput("selectedFeature"))
+      ),
+      fluidRow(
+        column(6, align="center", plotOutput("depGraph"), plotOutput("depGraphLegend")),
+        column(6, align="center", plotOutput("resources", inline = T), plotOutput("resourcesLegend", inline = T))
       )
     ),
     tabPanel(

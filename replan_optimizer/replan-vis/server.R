@@ -8,14 +8,16 @@ source("render.R")
 function(input, output, session) {
   runcodeServer()
   
-  observeEvent(input$runfromexample, {
-    if(!exists("exampleData")) {
-      alert("Ooops! we don't have data for the example :(")
-      return()
-    }
-    renderThisData(output, exampleData)
+  d <- fixData(exampleData)
+  
+  output$timelineRelease <- renderTimevis({
+    timevis(data = d$plan,
+            groups = d$resources,
+            options = list(stack = FALSE))
   })
-
+  
+  renderThisData(output, d)
+  
   observeEvent(input$runfromdata, {
     if(!exists("userData")) {
       alert("Please set the data before build!")
@@ -23,7 +25,7 @@ function(input, output, session) {
     }
     renderThisData(output, userData)
   })
-
+  
   observeEvent(input$runfromcontroller, {
     if(!exists("controllerData")) {
       alert("This features is not yet implemented!")
@@ -31,13 +33,12 @@ function(input, output, session) {
     }
     renderThisData(output, controllerData)
   })
-  
-  output$timeline <- renderTimevis({
-    timevis(data = data.frame(
-      start = c(Sys.Date(), Sys.Date()),
-      content = c("no", "data"),
-      group = c(1, 2)),
-      groups = data.frame(id = 1:2, content = c("G1", "G2")))
-  })
 
+  observeEvent(input$timelineRelease_selected, {
+    renderSelectedFeature(output, d, input$timelineRelease_selected)
+  })
+  
+  observe({
+    updateSelectInput(session, "unscheduled", choices=c("NONE", subset(d$features, d$features$scheduled=="No")$id))
+  })
 }
