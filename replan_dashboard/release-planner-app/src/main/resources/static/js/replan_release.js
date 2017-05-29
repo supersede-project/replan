@@ -192,7 +192,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			    var datarecord = $scope.dependencies[index];
 			    return datarecord.name + "-" + datarecord.id +"(Id)";
 			},
-			//displayMember: "name",
+			displayMember: "name",
 			valueMember: "id",
 			checkboxes: true,
 			enableSelection: true,
