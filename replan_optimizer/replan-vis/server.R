@@ -8,22 +8,20 @@ source("render.R")
 function(input, output, session) {
   runcodeServer()
   
-  d <- fixData(exampleData)
-  
-  output$timelineRelease <- renderTimevis({
-    timevis(data = d$plan,
-            groups = d$resources,
-            options = list(stack = FALSE))
+  observeEvent(input$runfromexample, {
+    if(!exists("exampleData")) {
+      alert("No example?!")
+      return()
+    }
+    renderThisData(output, session, exampleData)
   })
-  
-  renderThisData(output, d)
   
   observeEvent(input$runfromdata, {
     if(!exists("userData")) {
       alert("Please set the data before build!")
       return()
     }
-    renderThisData(output, userData)
+    renderThisData(output, session, userData)
   })
   
   observeEvent(input$runfromcontroller, {
@@ -31,14 +29,31 @@ function(input, output, session) {
       alert("This features is not yet implemented!")
       return()
     }
-    renderThisData(output, controllerData)
+    renderThisData(output, session, controllerData)
   })
 
   observeEvent(input$timelineRelease_selected, {
-    renderSelectedFeature(output, d, input$timelineRelease_selected)
+    renderSelectedFeature(output, session$userData$d, input$timelineRelease_selected)
+    if(!is.null(input$timelineRelease_selected))
+      updateSelectInput(
+        session, 
+        "unscheduled", 
+        selected = "NONE")
+  }, 
+  ignoreNULL = FALSE)
+  
+  observeEvent(input$unscheduled, {
+    if(input$unscheduled != "NONE") {
+      renderSelectedFeature(output, session$userData$d, input$unscheduled)
+      setSelection("timelineRelease", c())
+    }
   })
   
-  observe({
-    updateSelectInput(session, "unscheduled", choices=c("NONE", subset(d$features, d$features$scheduled=="No")$id))
+  output$timelineRelease <- renderTimevis({
+    timevis(data = data.frame(
+      start = c(Sys.Date(), Sys.Date()),
+      content = c("no", "data"),
+      group = c(1, 2)),
+      groups = data.frame(id = 1:2, content = c("G1", "G2")))
   })
 }

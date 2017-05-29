@@ -83,3 +83,4 @@ exampleData$depGraphEdges[nrow(exampleData$depGraphEdges)+1,] <- c("F-545", "F-2
 
 exampleData$nWeeks <- 4
 exampleData$nFeatures <- 20
+

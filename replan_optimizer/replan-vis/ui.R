@@ -12,8 +12,9 @@ fluidPage(
   tabsetPanel(
     tabPanel(
       div("Visualization"),
-      actionButton("runfromdata", "Build from data"),
-      actionButton("runfromcontroller", "Build from controller"), 
+      actionButton("runfromexample", "Demo"),
+      actionButton("runfromdata", "User data"),
+      actionButton("runfromcontroller", "Controller data"), 
       hr(),
       fluidRow(
         column(12, timevisOutput("timelineRelease"))

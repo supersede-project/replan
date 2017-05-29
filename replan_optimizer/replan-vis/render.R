@@ -29,20 +29,36 @@ renderResults <- function(output, d) {
 
 renderSelectedFeature <- function(output, d, fID) {
   output$selectedFeature <- renderTable({
-    if(is.na(fID)) featureData <- data.frame(rep("", 9))
-    else featureData <- t(subset(d$plan, id == fID))
+    featureData <- data.frame(ID = "None selected",
+                              Name = "",
+                              Start = "",
+                              End = "",
+                              Duration = "",
+                              Effort = "",
+                              Priority = "",
+                              Done_by = "",
+                              Doable_by = "",
+                              stringsAsFactors = FALSE)
+    if(!is.null(fID)) {
+      plannedFeature <- subset(d$plan, id == fID)
+      feature <- subset(d$features, id == fID)
+      
+      if(nrow(plannedFeature) == 1) {
+        featureData$Start <- plannedFeature$start
+        featureData$End <- plannedFeature$end
+        featureData$Duration <- as.numeric(difftime(plannedFeature$end, plannedFeature$start, units = "hours"))
+        featureData$Done_by <- plannedFeature$group
+      }
+      if(nrow(feature) == 1) {
+        featureData$ID <- feature$id
+        featureData$Name <- feature$content
+        featureData$Effort <- feature$effort
+        featureData$Priority <- feature$priority
+      }
+    }
     
-    colnames(featureData) <- c("Value")
-    rownames(featureData) <- c("ID", 
-                           "Name",
-                           "Start",
-                           "End",
-                           #"Duration",
-                           "Done by",
-                           "Type",
-                           "Priority",
-                           "Effort",
-                           "Class name")
+    featureData <- t(featureData)
+    colnames(featureData) <- c("Values")
     
     featureData
   }, 
@@ -148,12 +164,18 @@ renderDataTables <- function(output, d) {
   output$featuresTable <- renderDataTable({d$features})
 }
 
-renderThisData <- function(output, d) {
-  d <- fixData(d)
-  updateTimeline(d)
-  renderResults(output, d)
-  renderSelectedFeature(output, d, NA)
-  renderDepGraph(output, d)
-  renderResources(output, d)
-  renderDataTables(output, d)
+renderThisData <- function(output, session, d) {
+  session$userData$d <- fixData(d)
+  updateTimeline(session$userData$d)
+  renderResults(output, session$userData$d)
+  renderSelectedFeature(output, session$userData$d, NULL)
+  renderDepGraph(output, session$userData$d)
+  renderResources(output, session$userData$d)
+  renderDataTables(output, session$userData$d)
+  
+  updateSelectInput(
+    session, 
+    "unscheduled", 
+    choices=c("NONE", subset(session$userData$d$features, session$userData$d$features$scheduled=="No")$id))
+  
 }
