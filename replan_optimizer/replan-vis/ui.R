@@ -7,7 +7,10 @@ library(shinyjs)
 
 fluidPage(
   title = "RePlan visualization",
-  tags$head(tags$link(href = "style.css", rel = "stylesheet")),
+  tags$head(
+    tags$link(href = "style.css", rel = "stylesheet"),
+    tags$link(rel = "shortcut icon", href="favicon.png")
+  ),
   div(id = "header", div(id = "title", "RePlan visualization ")),
   tabsetPanel(
     tabPanel(
