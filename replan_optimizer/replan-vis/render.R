@@ -88,7 +88,7 @@ renderDepGraph <- function(output, d) {
     plot(1, type="n", axes=FALSE, xlab="", ylab="")
     par(xpd=TRUE)
     legend("topleft",
-           inset=c(0,-4),
+           inset=c(0,-3.8),
            descriptions, 
            fill = colors,
            bty = "n")
@@ -149,7 +149,7 @@ renderResources <- function(output, d) {
     plot(1, type="n", axes=FALSE, xlab="", ylab="")
     par(xpd=TRUE)
     legend("topleft",
-           inset=c(0,-4),
+           inset=c(0,-3.8),
            descriptions, 
            fill = colors,
            bty = "n")
