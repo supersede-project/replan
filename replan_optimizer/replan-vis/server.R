@@ -2,26 +2,28 @@ library(timevis)
 library(shinyjs)
 library(igraph)
 
-source("exampleData.R")
+source("data.R")
 source("render.R")
 
 function(input, output, session) {
   runcodeServer()
   
   observeEvent(input$runfromexample, {
-    if(!exists("exampleData")) {
-      alert("No example?!")
-      return()
-    }
-    renderThisData(output, session, exampleData)
+    d <- getRePlanDataStructure()
+    d <- getDataFromExample(d)
+    d <- fixData(d)
+    renderThisData(output, session, d)
   })
   
   observeEvent(input$runfromdata, {
-    if(!exists("userData")) {
-      alert("Please set the data before build!")
+    d <- getRePlanDataStructure()
+    d <- getDataFromUser(d)
+    d <- fixData(d)
+    if(nrow(d$plan) == 0) {
+      alert("User data is empty!")
       return()
     }
-    renderThisData(output, session, userData)
+    renderThisData(output, session, d)
   })
   
   observeEvent(input$runfromcontroller, {
@@ -29,7 +31,10 @@ function(input, output, session) {
       alert("This features is not yet implemented!")
       return()
     }
-    renderThisData(output, session, controllerData)
+    d <- getRePlanDataStructure()
+    d <- getDataFromController(d)
+    d <- fixData(d)
+    renderThisData(output, session, d)
   })
 
   observeEvent(input$timelineRelease_selected, {

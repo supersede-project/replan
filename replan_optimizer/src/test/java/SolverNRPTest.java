@@ -1,5 +1,6 @@
 import entities.Employee;
 import entities.Feature;
+import entities.PriorityLevel;
 import entities.Skill;
 import logic.PlanningSolution;
 import org.junit.Assert;
@@ -253,7 +254,7 @@ public class SolverNRPTest {
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
     }
 
-    //@Test
+    @Test
     public void averageUseCaseTest() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(20);
@@ -338,6 +339,10 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(skills.get(3));
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
+
+        // TODO we should solve this without using nulls as part of the refactoring.
+        removeNullSkillsFromFeatures(features);
+        removeNullSkillsFromEmployees(employees);
 
         System.out.print(solution.toR());
 

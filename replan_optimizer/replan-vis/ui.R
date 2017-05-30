@@ -27,8 +27,9 @@ fluidPage(
         column(6, align="center", tableOutput("selectedFeature"))
       ),
       fluidRow(
-        column(6, align="center", plotOutput("depGraph"), plotOutput("depGraphLegend")),
-        column(6, align="center", plotOutput("resources", inline = T), plotOutput("resourcesLegend", inline = T))
+        column(4, align="center", plotOutput("depGraph"), plotOutput("depGraphLegend")),
+        column(4, align="center", plotOutput("skillsGraph"), plotOutput("skillsGraphLegend")),
+        column(4, align="center", plotOutput("resources", inline = T), plotOutput("resourcesLegend", inline = T))
       )
     ),
     tabPanel(

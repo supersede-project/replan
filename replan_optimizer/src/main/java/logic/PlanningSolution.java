@@ -1,10 +1,7 @@
 // @author Vavou
 package logic;
 
-import entities.Employee;
-import entities.EmployeeWeekAvailability;
-import entities.Feature;
-import entities.PlannedFeature;
+import entities.*;
 import entities.parameters.DefaultAlgorithmParameters;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
@@ -358,50 +355,12 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         Date curDate = new Date();
         final int OneHour = 60 * 60 * 1000;
 
-        sb.append("userData <- list()").append(lineSeparator);
-
-		sb.append(lineSeparator);
-
-        sb.append("  userData$plan <- data.frame(\n" +
-                "    id=numeric(), \n" +
-                "    content=character(), \n" +
-                "    start=character(), \n" +
-                "    end=character(), \n" +
-                "    group=character(), #resource\n" +
-                "    type=character(), \n" +
-                "    priority=numeric(), \n" +
-                "    effort=numeric(), \n" +
-                "    stringsAsFactors=FALSE)").append(lineSeparator);
-
-        sb.append(lineSeparator);
-
-        sb.append("  userData$resources <- data.frame(\n" +
-                "    id=character(), #same as group in plan\n" +
-                "    content=character(), # display name\n" +
-                "    availability=numeric(), \n" +
-                "    stringsAsFactors=FALSE)").append(lineSeparator);
-
-        sb.append(lineSeparator);
-
-        sb.append("  userData$features <- data.frame(\n" +
-                "    id=character(), #same as content in plan\n" +
-                "    content=character(), # display name\n" +
-                "    scheduled=character(), # Yes/No\n" +
-                "    priority=numeric(), \n" +
-                "    effort=numeric(), \n" +
-                "    stringsAsFactors=FALSE)").append(lineSeparator);
-
-        sb.append(lineSeparator);
-
-        sb.append("  userData$depGraphEdges <- data.frame(\n" +
-                "    node1=character(), \n" +
-                "    node2=character(), \n" +
-                "    stringsAsFactors=FALSE)").append(lineSeparator);
+        sb.append("getDataFromUser <- function(d) {").append(lineSeparator);
 
         sb.append(lineSeparator);
 
         for (PlannedFeature pf : plannedFeatures)
-        	sb      .append("userData$plan[nrow(userData$plan)+1,] <- c(")
+        	sb      .append("  d$plan[nrow(d$plan)+1,] <- c(")
                     .append(quote(pf.getFeature().getName())).append(", ") // id
                     .append(quote(pf.getFeature().getName())).append(", ") // content
                     .append(quote(dateFormat.format(new Date(curDate.getTime()+OneHour*(int)pf.getBeginHour())))).append(", ") // start
@@ -413,32 +372,45 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
         sb.append(lineSeparator);
 
-        for (Employee e : resources)
-            sb      .append("userData$resources[nrow(userData$resources)+1,] <- c(")
+        for (Employee e : resources) {
+            sb.append("  d$resources[nrow(d$resources)+1,] <- c(")
                     .append(quote(e.getName())).append(", ") // id
                     .append(quote(e.getName())).append(", ") // content
                     .append(e.getWeekAvailability()).append(")").append(lineSeparator); // availability
+            for(Skill s : e.getSkills())
+                sb.append("  d$skillsGraphEdges[nrow(d$skillsGraphEdges)+1,] <- c(")
+                        .append(quote(e.getName())).append(", ")
+                        .append(quote(s.getName())).append(")").append(lineSeparator);
+        }
 
 		sb.append(lineSeparator);
 
         for (Feature f : NRP.getFeatures()) {
-            sb.append("userData$features[nrow(userData$features)+1,] <- c(")
+            sb.append("  d$features[nrow(d$features)+1,] <- c(")
                     .append(quote(f.getName())).append(", ") // id
                     .append(quote(f.getName())).append(", ") // id
                     .append(quote(isAlreadyPlanned(f) ? "Yes" : "No")).append(", ") // id
                     .append(f.getPriority().ordinal() + 1).append(", ") // priority
                     .append((int) f.getDuration()).append(")").append(lineSeparator); // effort
             for(Feature d : f.getPreviousFeatures())
-                sb.append("userData$depGraphEdges[nrow(userData$depGraphEdges)+1,] <- c(")
+                sb.append("  d$depGraphEdges[nrow(d$depGraphEdges)+1,] <- c(")
                         .append(quote(f.getName())).append(", ")
                         .append(quote(d.getName())).append(")").append(lineSeparator);
+            for(Skill s : f.getRequiredSkills())
+                sb.append("  d$reqSkillsGraphEdges[nrow(d$reqSkillsGraphEdges)+1,] <- c(")
+                        .append(quote(f.getName())).append(", ")
+                        .append(quote(s.getName())).append(")").append(lineSeparator);
+
         }
 
         sb.append(lineSeparator);
 
-        sb.append("userData$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
-        sb.append("userData$nFeatures <- ").append(NRP.getFeatures().size()).append(lineSeparator);
+        sb.append("  d$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
 
+        sb.append(lineSeparator);
+
+        sb.append("  return(d)").append(lineSeparator);
+        sb.append("}").append(lineSeparator);
 
         return sb.toString();
     }

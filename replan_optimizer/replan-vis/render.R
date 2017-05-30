@@ -9,7 +9,7 @@ updateTimeline <- function(d) {
 
 renderResults <- function(output, d) {
   output$resultsTable <- renderTable({
-    featureRes <- c(nrow(d$plan), d$nFeatures, (nrow(d$plan)/d$nFeatures)*100)
+    featureRes <- c(nrow(d$plan), nrow(d$features), (nrow(d$plan)/nrow(d$features))*100)
     score <- sum(d$plan$priority)
     maxScore <- sum(d$features$priority)
     scoreRes <- c(score, maxScore, (score/maxScore)*100)
@@ -38,6 +38,8 @@ renderSelectedFeature <- function(output, d, fID) {
                               Priority = "",
                               Done_by = "",
                               Doable_by = "",
+                              Dependencies = "",
+                              Req_Skills = "",
                               stringsAsFactors = FALSE)
     if(!is.null(fID)) {
       plannedFeature <- subset(d$plan, id == fID)
@@ -54,6 +56,21 @@ renderSelectedFeature <- function(output, d, fID) {
         featureData$Name <- feature$content
         featureData$Effort <- feature$effort
         featureData$Priority <- feature$priority
+        
+        dependencies <- d$depGraphEdges$node2[d$depGraphEdges$node1 == fID]
+        featureData$Dependencies <- paste(dependencies, collapse = ", ")
+        
+        reqSkills <- d$reqSkillsGraphEdges$node2[d$reqSkillsGraphEdges$node1 == fID]
+        featureData$Req_Skills <- paste(reqSkills, collapse = ", ")
+        
+        resourceSkills <- aggregate(node2 ~ node1, data = d$skillsGraphEdges, c)
+        matchSkillsTable <- sapply(resourceSkills$node2, function(x) reqSkills %in% x)
+        if(is.null(nrow(matchSkillsTable)))
+           selectedResources <- matchSkillsTable
+        else
+          selectedResources <- apply(t(matchSkillsTable), MARGIN = 1, function(x) all(x == TRUE))
+        skilledResources <- d$resources$id[which(selectedResources)]
+        featureData$Doable_by <- paste(skilledResources, collapse = ", ")
       }
     }
     
@@ -84,6 +101,34 @@ renderDepGraph <- function(output, d) {
     colors <- c("lightgreen", "lightcoral")
     descriptions <- c("Scheduled feature", 
                       "Non-scheduled feature")
+    
+    plot(1, type="n", axes=FALSE, xlab="", ylab="")
+    par(xpd=TRUE)
+    legend("topleft",
+           inset=c(0,-3.8),
+           descriptions, 
+           fill = colors,
+           bty = "n")
+  },
+  height = 150, 
+  width = 400)
+}
+
+renderSkillsGraph <- function(output, d) {
+  output$skillsGraph <- renderPlot({
+    dG <- graph.data.frame(d$skillsGraphEdges)
+    V(dG)$color <- ifelse(V(dG)$name %in% d$skillsGraphEdges$node1, "cornflowerblue", "lightblue")
+    plot (dG,
+          vertex.size=35, 
+          vertex.label.color="black", 
+          main="Skills graph"
+    )
+  })
+  
+  output$skillsGraphLegend <- renderPlot({
+    colors <- c("cornflowerblue", "lightblue")
+    descriptions <- c("Resource", 
+                      "Skill")
     
     plot(1, type="n", axes=FALSE, xlab="", ylab="")
     par(xpd=TRUE)
@@ -165,11 +210,12 @@ renderDataTables <- function(output, d) {
 }
 
 renderThisData <- function(output, session, d) {
-  session$userData$d <- fixData(d)
+  session$userData$d <- d
   updateTimeline(session$userData$d)
   renderResults(output, session$userData$d)
   renderSelectedFeature(output, session$userData$d, NULL)
   renderDepGraph(output, session$userData$d)
+  renderSkillsGraph(output, session$userData$d)
   renderResources(output, session$userData$d)
   renderDataTables(output, session$userData$d)
   
