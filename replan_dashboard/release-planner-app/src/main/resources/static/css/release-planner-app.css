@@ -129,7 +129,22 @@
   /*   cursor: move; */
   font-size: 0.8vw;
 }
-
 .legend {
   margin-left: 15px;
+}
+.scheduledFeature{
+	background-color: #5cb85c;	
+}
+.my-buttonJqxgrid{
+	text-align: center;
+	width: 100% !important;
+	height: 100% !important;
+	margin-top: 2px;
+    margin-bottom: 2px;
+    border-color: #aaa;
+    background: #efefef;
+   
+}
+.my-buttonJqxgrid-disabled{
+	opacity: .55;
 }
