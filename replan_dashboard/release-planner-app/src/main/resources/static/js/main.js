@@ -1,8 +1,8 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http',
+app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http','$rootScope',
 
 
-function ($scope, $location, $http) {
+function ($scope, $location, $http, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -158,7 +158,14 @@ function ($scope, $location, $http) {
 //						$scope.dataAdapter = new $.jqx.dataAdapter(source);
 //					}
 
-					$location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
+					
+					
+	      			$rootScope.$apply(function() {
+	      				$location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
+						console.log($location.path());
+	      		    });
+	      			
+	      			
 					break;
 				}
 			}

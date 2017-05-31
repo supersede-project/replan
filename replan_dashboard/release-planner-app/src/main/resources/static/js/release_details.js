@@ -330,7 +330,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			      			$rootScope.$apply(function() {
 			      				$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
 					      		console.log($location.path());
-			      		      });
+			      		    });
 			      		}
 		            }
 				},
