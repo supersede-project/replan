@@ -1,6 +1,6 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile',
-                                   function ($scope, $location, $http,  $compile) {
+app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile', '$rootScope',
+                                   function ($scope, $location, $http,  $compile, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -326,8 +326,12 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		                
 			      		if(row != -1){
 			      			var featureId = $scope.planJqxgrid.jobs[row].feature.id
-			      			$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
-					 	}
+			      			
+			      			$rootScope.$apply(function() {
+			      				$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
+					      		console.log($location.path());
+			      		      });
+			      		}
 		            }
 				},
 				
