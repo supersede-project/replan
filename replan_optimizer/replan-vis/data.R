@@ -1,3 +1,5 @@
+library(jsonlite)
+
 getRePlanDataStructure <- function() {
   d <- list()
   
@@ -157,11 +159,16 @@ getDataFromExample <- function(d) {
   return(d)
 }
 
+# this fuction is overrided by the user.
 getDataFromUser <- function(d) {
   return(d)
 }
 
-getDataFromController <- function(d) {
+getDataFromController <- function(d, baseURL, projectID, releaseID) {
+  releaseURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID)
+  releaseData <- try(fromJSON(releaseURL), silent = TRUE)
+  
+  
   return(d)
 }
 

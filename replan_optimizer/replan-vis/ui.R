@@ -52,6 +52,14 @@ fluidPage(
     tabPanel(
       div("Input Data"),
       runcodeUI(type = "textarea", width = 900, height = 400, includeShinyjs=TRUE)
+    ),
+    tabPanel(
+      div("Controller configuration"),
+      selectInput("deployment", "Controller", c("User defined", "Development", "Production"), selected="User defined"),
+      textInput("baseURL", "URL", ""),
+      selectInput("tenant", "Tenant", c("User defined", "Siemens", "Atos", "Senercon"), selected="User defined"),
+      numericInput("project", "Project ID", "0"),
+      numericInput("release", "Release ID", "0")
     )
   )
 )

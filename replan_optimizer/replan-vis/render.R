@@ -1,3 +1,5 @@
+library(igraph)
+
 source("utils.R")
 
 updateTimeline <- function(d) {

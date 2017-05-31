@@ -1,6 +1,5 @@
 library(timevis)
 library(shinyjs)
-library(igraph)
 
 source("data.R")
 source("render.R")
@@ -27,12 +26,12 @@ function(input, output, session) {
   })
   
   observeEvent(input$runfromcontroller, {
-    if(!exists("controllerData")) {
-      alert("This features is not yet implemented!")
+    if(input$baseURL == "") {
+      alert("Controller not configured!")
       return()
     }
     d <- getRePlanDataStructure()
-    d <- getDataFromController(d)
+    d <- getDataFromController(d, input$baseURL, input$project, input$release)
     d <- fixData(d)
     renderThisData(output, session, d)
   })
@@ -52,6 +51,39 @@ function(input, output, session) {
       renderSelectedFeature(output, session$userData$d, input$unscheduled)
       setSelection("timelineRelease", c())
     }
+  })
+
+  observeEvent(input$deployment, {
+    if(input$deployment == "Development")
+      updateTextInput(session, "baseURL", value = "http://supersede.es.atos.net:8280/replan")
+    if(input$deployment == "Production")
+      updateTextInput(session, "baseURL", value = "http://platform.supersede.eu:8280/replan")
+  })
+
+  observeEvent(input$baseURL, {
+    if(input$baseURL != "http://supersede.es.atos.net:8280/replan" &
+       input$baseURL != "http://platform.supersede.eu:8280/replan")
+    updateSelectInput(session, "deployment", selected = "User defined")
+  })
+  
+  observeEvent(input$tenant, {
+    if(input$tenant == "Siemens")
+      updateNumericInput(session, "project", value = 1)
+    if(input$tenant == "Senercon")
+      updateNumericInput(session, "project", value = 2)
+    if(input$tenant == "Atos")
+      updateNumericInput(session, "project", value = 3)
+  })
+
+  observeEvent(input$project, {
+    if(input$project == 1)
+      updateSelectInput(session, "tenant", selected = "Siemens")
+    else if(input$project == 2)
+      updateSelectInput(session, "tenant", selected = "Senercon")
+    else if(input$project == 3)
+      updateSelectInput(session, "tenant", selected = "Atos")
+    else 
+      updateSelectInput(session, "tenant", selected = "User defined")
   })
   
   output$timelineRelease <- renderTimevis({
