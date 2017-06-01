@@ -7,25 +7,29 @@ library(shinyjs)
 
 fluidPage(
   title = "RePlan visualization",
-  tags$head(tags$link(href = "style.css", rel = "stylesheet")),
+  tags$head(
+    tags$link(href = "style.css", rel = "stylesheet"),
+    tags$link(rel = "shortcut icon", href="favicon.png")
+  ),
   div(id = "header", div(id = "title", "RePlan visualization ")),
   tabsetPanel(
     tabPanel(
       div("Visualization"),
-      actionButton("runfromexample", "Build from example"),
-      actionButton("runfromdata", "Build from data"),
-      actionButton("runfromcontroller", "Build from controller"), 
+      actionButton("runfromexample", "Demo"),
+      actionButton("runfromdata", "User data"),
+      actionButton("runfromcontroller", "Controller data"), 
       hr(),
-      timevisOutput("timeline"),
       fluidRow(
-        column(10, 
-               textOutput("scheduledFeatures"),
-               textOutput("planScore")
-        )
+        column(12, timevisOutput("timelineRelease"))
       ),
       fluidRow(
-        column(5, plotOutput("depGraph")),
-        column(5, plotOutput("resources"))
+        column(6, align="center", tableOutput("resultsTable"), selectInput("unscheduled", "Select non-scheduled", c("NONE","A","B","C"), selected="NONE")),
+        column(6, align="center", tableOutput("selectedFeature"))
+      ),
+      fluidRow(
+        column(4, align="center", plotOutput("depGraph"), plotOutput("depGraphLegend")),
+        column(4, align="center", plotOutput("skillsGraph"), plotOutput("skillsGraphLegend")),
+        column(4, align="center", plotOutput("resources", inline = T), plotOutput("resourcesLegend", inline = T))
       )
     ),
     tabPanel(
@@ -48,6 +52,14 @@ fluidPage(
     tabPanel(
       div("Input Data"),
       runcodeUI(type = "textarea", width = 900, height = 400, includeShinyjs=TRUE)
+    ),
+    tabPanel(
+      div("Controller configuration"),
+      selectInput("deployment", "Controller", c("User defined", "Development", "Production"), selected="User defined"),
+      textInput("baseURL", "URL", ""),
+      selectInput("tenant", "Tenant", c("User defined", "Siemens", "Atos", "Senercon"), selected="User defined"),
+      numericInput("project", "Project ID", "0"),
+      numericInput("release", "Release ID", "0")
     )
   )
 )

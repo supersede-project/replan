@@ -25,11 +25,11 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			data: feature
 		});	 
 	};
-
-	$scope.getReleases = function () {
+	
+	$scope.getRelease = function (releaseId) {
 		return $http({
 			method: 'GET',
-			url: baseURL + '/releases'
+			url: baseURL + '/releases/' + releaseId
 		});
 	}
 
@@ -82,7 +82,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		});	
 	};
 	
-	
 	$scope.deleteSkillsFromFeature = function (featureId, skillIdsToRemove){
 
 		var url =  baseURL + '/features/'+ featureId + '/skills';
@@ -120,9 +119,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			data: dataObj
 		});	
 	};
-	
-	
-	
 	
 	//ok
 	//add feature to release
@@ -170,7 +166,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	/*
 	 * Dependencies
 	 */
-
 	$scope.dependencies = [];
 	// prepare the data
 	var sourceDependencyDropDownList =
@@ -192,7 +187,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 			    var datarecord = $scope.dependencies[index];
 			    return datarecord.name + "-" + datarecord.id +"(Id)";
 			},
-			//displayMember: "name",
+			displayMember: "name",
 			valueMember: "id",
 			checkboxes: true,
 			enableSelection: true,
@@ -215,7 +210,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 		}
 
 	});
-
 
 	/*
 	 * Skills 
@@ -275,115 +269,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
     		
 	});
     
-
-	$scope.getRelease = function (releaseId) {
-
-		$scope.getReleases()
-		.then(
-				function(response) {
-
-					for(var i =0; i< response.data.length; i++){
-						if(response.data[i].id == parseInt(releaseId)){
-							$scope.release = response.data[i];
-							break;
-						}
-					}
-
-					$scope.getFeature($location.search().featureId)
-					.then(
-							function(response) {
-								$scope.feature = response.data;
-								if($scope.feature.deadline == null){
-									$scope.feature.deadline = getStringSUPERSEDEDateNow();
-								}
-									
-								//data input
-								$("#dateInputDeadline").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
-								$('#dateInputDeadline').jqxDateTimeInput('setDate', new Date($scope.feature.deadline));
-
-								//dependencies
-								$scope.getReleaseFeatures($scope.release.id)
-								.then(
-										function(response) {
-
-											$scope.releaseFeatures = response.data;
-											$scope.dependencies = [];
-											for (var y = 0; y < $scope.releaseFeatures.length; y++) {
-												if($scope.releaseFeatures[y].id !=$location.search().featureId ){
-													$scope.dependencies.push($scope.releaseFeatures[y]);
-												}
-											}
-
-											// prepare the data
-											var sourceDependencyDropDownList =
-											{
-													datatype: "json",
-													datafields: [
-													             { name: 'id' },
-													             { name: 'name' }
-													             ],
-													             id: 'id',
-													             localdata: $scope.dependencies
-											};
-
-											$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList,{
-												loadComplete: function () {
-													var items = $scope.dataAdapterDependencyDropDownList.records;
-
-												}
-											});
-
-
-
-											$scope.getProjectSkills()
-											.then(
-													function(response) {
-														$scope.showFeature = true;
-
-														$scope.skills = response.data;
-
-														// prepare the data
-														var sourceSkillDropDownList =
-														{
-																datatype: "json",
-																datafields: [
-																             { name: 'id' },
-																             { name: 'name' }
-																             ],
-																             id: 'id',
-																             localdata: $scope.skills
-														};
-														$scope.dataAdapterSkillDropDownList = new $.jqx.dataAdapter(sourceSkillDropDownList);
-													},
-
-													function(response) {
-
-														$scope.showFeature = false;
-														$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
-													}
-											);
-										},
-										function(response) {
-											$scope.showFeature = false;
-											$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
-										}
-								);
-							},
-							function(response) {
-								$scope.showFeature = false;
-								$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
-							}
-					);
-
-				},
-
-				function(response) {
-					$scope.showFeature = false;
-					$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
-				}
-		);
-	}
-
 	appendReplaneWindows = function(type, message) {
 
 		var featureForm = $('#featureForm');
@@ -574,7 +459,6 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	$scope.arraySkill_to_add = [];
 	$scope.arraySkill_to_remove = [];
 	
-
 	$scope.replanRelease = function(){
 
 		
@@ -832,6 +716,103 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	/**
 	 * start point method
 	 */
-	$scope.getRelease($location.search().releaseId);
+	$scope.getRelease($location.search().releaseId)
+	.then(
+			function(response) {
+				$scope.release = response.data;
+
+				$scope.getFeature($location.search().featureId)
+				.then(
+						function(response) {
+							$scope.feature = response.data;
+							if($scope.feature.deadline == null){
+								$scope.feature.deadline = getStringSUPERSEDEDateNow();
+							}
+								
+							//data input
+							$("#dateInputDeadline").jqxDateTimeInput({ width: '100%', height: '25px', formatString: 'yyyy-MM-dd'/*, min: new Date(year, month, day)*/});
+							$('#dateInputDeadline').jqxDateTimeInput('setDate', new Date($scope.feature.deadline));
+
+							//dependencies
+							$scope.getReleaseFeatures($scope.release.id)
+							.then(
+									function(response) {
+
+										$scope.releaseFeatures = response.data;
+										$scope.dependencies = [];
+										for (var y = 0; y < $scope.releaseFeatures.length; y++) {
+											if($scope.releaseFeatures[y].id !=$location.search().featureId ){
+												$scope.dependencies.push($scope.releaseFeatures[y]);
+											}
+										}
+
+										// prepare the data
+										var sourceDependencyDropDownList =
+										{
+												datatype: "json",
+												datafields: [
+												             { name: 'id' },
+												             { name: 'name' }
+												             ],
+												             id: 'id',
+												             localdata: $scope.dependencies
+										};
+
+										$scope.dataAdapterDependencyDropDownList = new $.jqx.dataAdapter(sourceDependencyDropDownList,{
+											loadComplete: function () {
+												var items = $scope.dataAdapterDependencyDropDownList.records;
+
+											}
+										});
+
+
+
+										$scope.getProjectSkills()
+										.then(
+												function(response) {
+													$scope.showFeature = true;
+
+													$scope.skills = response.data;
+
+													// prepare the data
+													var sourceSkillDropDownList =
+													{
+															datatype: "json",
+															datafields: [
+															             { name: 'id' },
+															             { name: 'name' }
+															             ],
+															             id: 'id',
+															             localdata: $scope.skills
+													};
+													$scope.dataAdapterSkillDropDownList = new $.jqx.dataAdapter(sourceSkillDropDownList);
+												},
+
+												function(response) {
+
+													$scope.showFeature = false;
+													$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
+												}
+										);
+									},
+									function(response) {
+										$scope.showFeature = false;
+										$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
+									}
+							);
+						},
+						function(response) {
+							$scope.showFeature = false;
+							$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
+						}
+				);
+
+			},
+
+			function(response) {
+				$scope.showFeature = false;
+				$scope.messageFeature = "Error: "+response.status + " " + response.statusText;
+			}
+	);
 
 }]);

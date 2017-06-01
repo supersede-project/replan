@@ -1,6 +1,8 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http',
-                                  function ($scope, $location, $http) {
+app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http','$rootScope',
+
+
+function ($scope, $location, $http, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -119,44 +121,51 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 			var bottom = parseInt(offset.top) + height;
 			if (x >= parseInt(offset.left) && x <= right) {
 				if (y >= parseInt(offset.top) && y <= bottom) {
+					
+					//to improve the GUI user response I commented the code below 29-05-2017
+					
+//					//add to release
+//					$scope.releases[i].count ++;
+//
+//					//$scope.$apply(); 
+//					//remove from listBox
+//					//get index to remove
+//					var index = -1;
+//					for(var i = 0; i < $scope.features.length; i++)
+//					{
+//						if($scope.features[i].id == idFeature){
+//							index = i;
+//							break;
+//						}
+//					}
+//
+//					//remove index
+//					if(index != -1){
+//						$scope.features.splice(index, 1);
+//						$scope.featuresLength.length = $scope.featuresLength.length -1;
+//
+//						var source =
+//						{
+//								datatype: "json",
+//								datafields: [
+//								             { name: 'id' },
+//								             { name: 'name' }
+//								             ],
+//								             id: 'id',
+//								             localdata: $scope.features
+//						};
+//
+//						$scope.dataAdapter = new $.jqx.dataAdapter(source);
+//					}
 
-					//add to release
-					$scope.releases[i].count ++;
-
-					//$scope.$apply(); 
-					//remove from listBox
-
-					//get index to remove
-					var index = -1;
-					for(var i = 0; i < $scope.features.length; i++)
-					{
-						if($scope.features[i].id == idFeature){
-							index = i;
-							break;
-						}
-					}
-
-					//remove index
-					if(index != -1){
-						$scope.features.splice(index, 1);
-						$scope.featuresLength.length = $scope.featuresLength.length -1;
-
-						var source =
-						{
-								datatype: "json",
-								datafields: [
-								             { name: 'id' },
-								             { name: 'name' }
-								             ],
-								             id: 'id',
-								             localdata: $scope.features
-						};
-
-						$scope.dataAdapter = new $.jqx.dataAdapter(source);
-					}
-
-					$location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
-					//$location.path("/release-planner-app/replan_release");
+					
+					
+	      			$rootScope.$apply(function() {
+	      				$location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
+						console.log($location.path());
+	      		    });
+	      			
+	      			
 					break;
 				}
 			}
@@ -233,7 +242,6 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 	$scope.releaseFeatures = [];
 
 
-
 	/**
 	 * start point release method
 	 */
@@ -263,7 +271,11 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 
 									for(var i = 0; i<response1.data.length; ++i){ 
 										  var feature = response1.data[i];
-										  feature.nameId = '' + feature.name + '-' + feature.id + '(Id)';
+										  //truncate the name if to big
+										  var length = 17;
+										  var myTruncatedName = feature.name.substring(0,length);
+										  myTruncatedName = myTruncatedName + "...";
+										  feature.nameId = '' + myTruncatedName + '-' + feature.id + '(Id)';
 									}
 									var releaseID = response1.data[0].release.release_id;
 
@@ -295,9 +307,6 @@ app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http
 									});
 
 									var idbadge = "badgeId" + releaseID;
-
-
-
 									var badge =  document.getElementById(idbadge);
 									badge.innerHTML ='';
 									badge.innerHTML =''+response1.data.length;

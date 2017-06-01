@@ -1,5 +1,6 @@
 import entities.Employee;
 import entities.Feature;
+import entities.PriorityLevel;
 import entities.Skill;
 import logic.PlanningSolution;
 import org.junit.Assert;
@@ -366,6 +367,10 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(skills.get(3));
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
+
+        // TODO we should solve this without using nulls as part of the refactoring.
+        removeNullSkillsFromFeatures(features);
+        removeNullSkillsFromEmployees(employees);
 
         System.out.print(solution.toR());
 

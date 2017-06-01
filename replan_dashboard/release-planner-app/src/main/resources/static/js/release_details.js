@@ -1,6 +1,6 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile',
-                                   function ($scope, $location, $http,  $compile) {
+app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile', '$rootScope',
+                                   function ($scope, $location, $http,  $compile, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -24,10 +24,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		});
 	};
 
-	$scope.getReleases = function () {
+	$scope.getRelease = function (releaseId) {
 		return $http({
 			method: 'GET',
-			url: baseURL + '/releases'
+			url: baseURL + '/releases/' + releaseId
 		});
 	};
 	
@@ -51,6 +51,15 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 	};
 	
+	$scope.removeReleasePlan = function (releaseId){
+
+		var url = baseURL + '/releases/' + releaseId + '/plan';
+		return $http({
+			method: 'DELETE',
+			url: url
+		});	 
+
+	};
 	$scope.forceReleasePlan = function (releaseId, force) {
 
 		var strForce = force.toString();
@@ -69,6 +78,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	$scope.showReleasePlan = false;
 	$scope.messageReleasePlan = "Loading ...";
 	$scope.plan = {};
+	$scope.planJqxgrid = {};
 	$scope.release = {};
 	$scope.featuresTORemove = [];
 
@@ -109,37 +119,30 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		$scope.getReleaseFeatures(releaseId)
 		.then(
 				function(response) {
+					
+					//var myFeatures = '[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[],"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[],"release":{"release_id":16}},{"id":120,"code":5067,"name":"ahp requirement 3","description":"","effort":"9.0","deadline":"2017-05-18","priority":2,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}},{"id":121,"code":5068,"name":"ahp requirement 4","description":"","effort":"1.0","deadline":"2017-05-25","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}},{"id":200,"code":5068,"name":"barbara","description":"","effort":"1.0","deadline":"2017-05-25","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}}]';
+					//var obj = JSON.parse(myFeatures);
+					//$scope.releaseFeatures = obj;
+					
 					$scope.releaseFeatures = response.data;
-					//alert("features release: " + $scope.releaseFeatures);
-					$scope.getReleases()
+					
+					$scope.getRelease(releaseId)
 					.then(
 							function(response) {
-
-								for(var i =0; i< response.data.length; i++){
-									if(response.data[i].id == parseInt(releaseId)){
-										$scope.release = response.data[i];
-										//alert("release: " + $scope.release);
-										break;
-									}
-								}
+								$scope.release = response.data;
 
 								$scope.getReleasePlan(releaseId)
 								.then(
 										function(response) {
-											
-											//var mydata = JSON.parse('{"id":214,"created_at":"2016-10-13T08:30:25.455Z","release_id":1,"jobs":[{"starts":"2016-10-14","ends":"2016-10-16","feature":{"id":1,"code":111,"name":"Fix auto upload","description":"Bla, bla, bla","effort":"2.0","deadline":"2016-11-11","priority":5,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-17","ends":"2016-10-19","feature":{"id":2,"code":222,"name":"New login","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-12","priority":4,"release":{"release_id":1}},"resource":{"id":9,"name":"George","description":"","availability":"2.0","skills":[{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"},{"id":1,"name":"Java","description":"Java Programming Language"}]}},{"starts":"2016-10-20","ends":"2016-10-22","feature":{"id":3,"code":334,"name":"Enrollment refactoring","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-13","priority":3,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-23","ends":"2016-10-25","feature":{"id":4,"code":454,"name":"New channel","description":"Bla, bla, bla","effort":"4.0","deadline":"2016-10-18","priority":2,"release":{"release_id":1}},"resource":{"id":2,"name":"Bob","description":"Bob Bonaplata","availability":"55.0","skills":[{"id":2,"name":"Ruby","description":"Ruby Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}},{"starts":"2016-10-26","ends":"2016-10-28","feature":{"id":5,"code":556,"name":"Email reply","description":"Bla, bla, bla","effort":"5.0","deadline":"2016-10-20","priority":1,"release":{"release_id":1}},"resource":{"id":3,"name":"Calvin","description":"Calvin California","availability":"90.0","skills":[{"id":1,"name":"Java","description":"Java Programming Language"},{"id":3,"name":"JavaScript","description":"JavaScript Programming Language"}]}}]}');
 										
-											addDependenciesTOPlan(response.data);
-											$scope.plan = response.data;
-											
+											var responseData = response.data;
+											$scope.plan = responseData;
 											$scope.showReleasePlan = true;
-											
 											$scope.draw();
 											
+											$scope.planJqxgrid = JSON.parse(JSON.stringify(responseData)); 
+											addPropertiesTOPlanJqxgrid();
 											$scope.initFeaturesJqxgrid();
-						
-											//to add tooltip to buttons use the code below
-											//$("#cancelJqxButton").jqxTooltip({ position: 'top', content: 'This is a jqxButton.', theme: 'shinyblack' });
 											
 										},
 										function(response) {
@@ -162,23 +165,69 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		);
 	}
 	
-	function addDependenciesTOPlan(plan) {
+	function addPropertiesTOPlanJqxgrid() {
 		
-		for(var i = 0; i<plan.jobs.length; ++i){ 
+		for(var i = 0; i<$scope.planJqxgrid.jobs.length; ++i){ 
+			//add my_dependencies to plan
 			var dependencies = '';
 			
-			for(var j = 0; j<plan.jobs[i].depends_on.length; ++j){
+			for(var j = 0; j<$scope.planJqxgrid.jobs[i].depends_on.length; ++j){
 				if(j==0){
-					dependencies = dependencies + plan.jobs[i].depends_on[j].feature_id;
+					dependencies = dependencies + $scope.planJqxgrid.jobs[i].depends_on[j].feature_id;
 				}
 				else{
-					dependencies = dependencies +','+ plan.jobs[i].depends_on[j].feature_id;
+					dependencies = dependencies +','+ $scope.planJqxgrid.jobs[i].depends_on[j].feature_id;
 				}
 			}
-			var job = plan.jobs[i];
-			job.dependencies = dependencies;
+			var job = $scope.planJqxgrid.jobs[i];
+			job.my_dependencies = dependencies;
+			
+			
+			//add my_starts
+			var res = $scope.planJqxgrid.jobs[i].starts.split("T");
+			var time = res[1].split(":");
+			job.my_starts=res[0] + " " + time[0] +":" + time[1];
+			
+			//add my_ends
+			res = $scope.planJqxgrid.jobs[i].ends.split("T");
+			time = res[1].split(":");
+			job.my_ends=res[0] + " " + time[0] +":" + time[1];
+			
+			//add scheduled
+			job.my_scheduled = true;
+			
 		}
+		//add features not scheduled as job 
+		for(var i = 0; i<$scope.releaseFeatures.length; ++i){
+			//if false -> add
+			if(!is_in_scheduled_jobs($scope.releaseFeatures[i].id)){
+				var job = {};
+				job.id = null;
+				job.starts = null;
+				job.ends = null;
+				job.feature = $scope.releaseFeatures[i];
+				job.resource = null;
+				job.my_dependencies = '';
+				job.my_starts = '';
+				job.my_ends = '';
+				job.my_scheduled = false;
+				
+				$scope.planJqxgrid.jobs.push(job);
+			}
+		}
+		
 	}
+	
+	function is_in_scheduled_jobs(id) {
+		for(var i = 0; i<$scope.planJqxgrid.jobs.length; ++i){ 
+			if($scope.planJqxgrid.jobs[i].feature.id == id){
+				return true;
+			}
+		}
+		return false;
+	}
+
+
 	
 	$scope.initFeaturesJqxgrid = function(){
 		
@@ -191,19 +240,31 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			datafields: [
 			    { name: 'id', map : 'feature>id', type: 'number' },
 				{ name: 'name', map : 'feature>name', type: 'string'},
-			    { name: 'starts', type: 'string'},
-			    { name: 'ends', type: 'string' },
-			    { name: 'dependencies', type: 'string' }
-			    
-			    
+				{ name: 'effort', map : 'feature>effort', type: 'string'},
+				{ name: 'priority', map : 'feature>priority', type: 'number'},
+			    { name: 'my_starts', type: 'string'},
+			    { name: 'my_ends', type: 'string' },
+			    { name: 'my_dependencies', type: 'string' }
 			],
 			id: 'id',
-			localdata: $scope.plan.jobs
+			localdata: $scope.planJqxgrid.jobs
 		};
 		
 		
 		var dataAdapter = new $.jqx.dataAdapter(source);
-		 // create tooltip.
+		
+		//tooltip header
+		var tooltipHeaderRenderer = function (element) {
+            $(element).parent().jqxTooltip({ position: 'mouse', content: $(element).text() });
+        }
+		//css style cell 
+		var cellclass = function (row, columnfield, value) {
+			if ($scope.planJqxgrid.jobs[row].my_scheduled) {
+				return 'scheduledFeature';
+			}
+        }
+			
+		// create tooltip.
         $("#featuresJqxgrid").jqxTooltip();
        
         
@@ -212,9 +273,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			width: '100%',
 			autoheight: true,
 			source: dataAdapter,
-			 enabletooltips: true,
-			//editable: true,
-			// trigger cell hover.
+			enabletooltips: true,
+		
+			//trigger cell hover.(only for the body table)
             cellhover: function (element, pageX, pageY)
             {
                 // update tooltip.
@@ -222,52 +283,66 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
                 // open tooltip.
                 $("#featuresJqxgrid").jqxTooltip('open', pageX + 15, pageY + 15);
             },
+            enablehover: true,
 			columns: [
-			    { text: 'Id', datafield: 'id', width: 60 },
-			    { text: 'Name', datafield: 'name' },
-			    { text: 'Start', datafield: 'starts' },
-			    { text: 'End', datafield: 'ends' },
-			    { text: 'Dependencies', datafield: 'dependencies' },
-			    
-			    { text: '', datafield: 'Remove', columntype: 'button', width: 67, 
+			          //width: 40 
+			    { text: 'Id', datafield: 'id', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
+			    { text: 'Name', datafield: 'name', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+			    { text: 'Effort', datafield: 'effort', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
+			    { text: 'Priority', datafield: 'priority', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40 },
+			    { text: 'Start', datafield: 'my_starts', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+			    { text: 'End', datafield: 'my_ends', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+			    { text: 'Dependencies', datafield: 'my_dependencies' , rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 60},
+			    { text: '', columntype: 'button', cellclassname: cellclass, width: 60,
 			    	cellsrenderer: function () {
 			    		return "Remove";
 			    	},
 			      	buttonclick: function (row) {
-		                
-			      		if(row != -1){
-			      			
+			      		
+			      		if($scope.planJqxgrid.jobs[row].my_scheduled){
 			      			//update grid
-			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.plan.jobs[row].id);
+			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.planJqxgrid.jobs[row].id);
 							//add feature id to remove
-			      			$scope.featuresTORemove.push($scope.plan.jobs[row].feature.id);
+			      			$scope.featuresTORemove.push($scope.planJqxgrid.jobs[row].feature.id);
 			      			
 			      			//remove from scope
+							$scope.planJqxgrid.jobs.splice(row, 1);
 							$scope.plan.jobs.splice(row, 1);
+							
 							//redraw the chart
 							$scope.draw();
+							
+							//refresh the table
+							//$("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
 					 	}
-		            }	
+			      		
+		            }
 				},
-				{ text: '', datafield: 'Edit', columntype: 'button', width: 67, 
+				{ text: '', datafield: 'Edit', columntype: 'button', cellclassname: cellclass, width: 60, 
 			    	cellsrenderer: function () {
-                    return "Edit";
+			    		return "Edit";
 			    	},
 			      	buttonclick: function (row) {
 		                
 			      		if(row != -1){
-			      			var featureId = $scope.plan.jobs[row].feature.id
-			      			$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
-					 	}
-		            }	
+			      			var featureId = $scope.planJqxgrid.jobs[row].feature.id
+			      			
+			      			$rootScope.$apply(function() {
+			      				$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
+					      		console.log($location.path());
+			      		    });
+			      		}
+		            }
 				},
 				
 			]
 		};
 		
 		$scope.blncreateFeaturesJqxgrid = true;
-
+	
 	};
+
+
 
 	$scope.draw = function(){
 
@@ -278,7 +353,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		CONSTANT["xEndAsString"] = ""+xEnd;
 		
 		//clear the svg elements
-		var ids = ["yGrid", "ydxGrid", "xGrid", "verticalLineGrid", "verticalDeadLineLineGrid", "verticalLabelLineGrid", "horizontalLineGrid", "horizontalLabelLineGrid", "data"];
+		var ids = ["yGrid", "ydxGrid", "xGrid", "verticalLineGrid", "verticalDeadLineLineGrid", "verticalLabelLineGrid", "horizontalLineGrid", "horizontalLabelLineGrid", "data", "dependencies"];
 		for(var i = 0; i< ids.length; i++){
 
 			var element = document.getElementById(ids[i]);
@@ -631,13 +706,12 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				var releaseFeature = $scope.releaseFeatures[z];
 				//if has dependency
 				if(jobs[i].feature.id == releaseFeature.id && releaseFeature.depends_on.length > 0){
-
+			
 					for (var a = 0; a < releaseFeature.depends_on.length; a++) {
-
-						//check if dependency exist in jobs
+						
 						for(var p = jobs.length-1; p>=0; p--){
 							var jobEnd = jobs[p];
-							if(jobEnd.feature.id == releaseFeature.depends_on[a].id){
+							if(jobEnd.feature.id == releaseFeature.depends_on[a].id && !is_in_featuresTORemove(releaseFeature.depends_on[a].id)){
 								
 								var lineXstart = mappingXDateJSONObject["x1"+ jobs[i].feature.id];
 								var lineYstart = mappingXDateJSONObject["y1"+ jobs[i].feature.id];
@@ -675,6 +749,15 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		
 	}
 	
+	
+	function is_in_featuresTORemove(id) {
+		for(var i = 0; i<$scope.featuresTORemove.length; ++i){ 
+			if($scope.featuresTORemove[i]== id){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 
 	/**
@@ -806,25 +889,25 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		return false;
 	}
 
-	$scope.cancel = function() {
-
-		$scope.getReleasePlan($scope.release.id)
-		.then(
-				function(response) {
-					$scope.featuresTORemove = [];
-					addDependenciesTOPlan(response.data);
-					$scope.plan = response.data;
-					$scope.showReleasePlan = true;
-
-					$scope.draw();
-				},
-				function(response) {
-					$scope.showReleasePlan = false;
-					$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
-				}
-		);
-
-	};
+//	$scope.cancel = function() {
+//
+//		$scope.getReleasePlan($scope.release.id)
+//		.then(
+//				function(response) {
+//					$scope.featuresTORemove = [];
+//					addDependenciesTOPlan(response.data);
+//					$scope.plan = response.data;
+//					$scope.showReleasePlan = true;
+//
+//					$scope.draw();
+//				},
+//				function(response) {
+//					$scope.showReleasePlan = false;
+//					$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
+//				}
+//		);
+//
+//	};
 
 	$scope.accept = function() {
 
@@ -850,15 +933,32 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	};
 	
 	$scope.forceTOReplan = function(bln) {
-		$scope.forceReleasePlan($scope.release.id, bln)
-		.then(
-				function(response) {
-					$scope.startPoint($location.search().releaseId);
-				},
-				function(response) {
-					alert("Error: "+response.status + " " + response.statusText);
-				}
-		);   
+		
+		if(bln){
+			$scope.forceReleasePlan($scope.release.id, bln)
+			.then(
+					function(response) {
+						$scope.startPoint($location.search().releaseId);
+					},
+					function(response) {
+						alert("Error: "+response.status + " " + response.statusText);
+					}
+			); 
+		}
+		else{
+			
+			$scope.removeReleasePlan($scope.release.id)
+			.then(
+					function(response) {
+						$scope.startPoint($scope.release.id);
+					},
+					function(response) {
+						alert("Error: "+response.status + " " + response.statusText);
+					}
+			);
+		
+		}
+		  
 	};
 
 	/**

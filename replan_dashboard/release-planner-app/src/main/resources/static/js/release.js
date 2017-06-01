@@ -6,10 +6,10 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
  	*/
 	var baseURL = "release-planner-app/replan/projects/tenant";
 	
-	$scope.getReleases = function () {
+	$scope.getRelease = function (releaseId) {
 		return $http({
 			method: 'GET',
-			url: baseURL + '/releases'
+			url: baseURL + '/releases/'+ releaseId
 		});
 	}
 	$scope.removeRelease = function (release){
@@ -105,56 +105,64 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	$scope.showResourcesAddListBox = false;
 	$scope.releasesOnLoad = [];
 	
-	$scope.getRelease = function (releaseId) {
-		
-		$scope.getReleases()
-		.then(
-				function(response) {
-					
-					$scope.showRelease = true;
-					
-					for(var i = 0; i< response.data.length; i++){
-						if(response.data[i].id == parseInt(releaseId)){
-							$scope.release = response.data[i];
-							$scope.isUpdate = true;
-							$scope.deadlineStyle = 'my-input-success';
-							break;
+	
+	
+	startPoint = function(){
+		var releaseId = $location.search().releaseId;
+		if (releaseId == "undefined"){
+			$scope.showRelease = true;
+
+		}else{
+			
+			$scope.getRelease($location.search().releaseId)
+			.then(
+					function(response) {
+						
+						$scope.showRelease = true;
+						$scope.release = response.data;
+						$scope.isUpdate = true;
+						$scope.deadlineStyle = 'my-input-success';
+						
+						
+						//store the initial releases
+						$scope.releasesOnLoad = [];
+						for(var i =0; i< $scope.release.resources.length; i++){
+							$scope.releasesOnLoad.push($scope.release.resources[i]);
 						}
+						
+						var source =
+						{
+								datatype: "json",
+								datafields: [
+					             { name: 'id' },
+					             { name: 'name' }
+					             ],
+					             id: 'id',
+					             localdata: $scope.release.resources
+						};
+
+						$scope.dataAdapterResourcesListBox = new $.jqx.dataAdapter(source);
+						
+						//data input
+						$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
+						//start at input
+						$('#dateInputUpdateStartAt').jqxDateTimeInput('setDate', new Date($scope.release.starts_at));
+						
+					},
+
+					function(response) {
+						$scope.showRelease = false;
+						$scope.messageRelease = "Error: "+response.status + " " + response.statusText;
 					}
-					//store the initial releases
-					$scope.releasesOnLoad = [];
-					for(var i =0; i< $scope.release.resources.length; i++){
-						$scope.releasesOnLoad.push($scope.release.resources[i]);
-					}
-					
-					// Create a jqxListBox
-					var source =
-					{
-							datatype: "json",
-							datafields: [
-							             { name: 'id' },
-							             { name: 'name' }
-							             ],
-							             id: 'id',
-							             localdata: $scope.release.resources
-					};
-
-					$scope.dataAdapterResourcesListBox = new $.jqx.dataAdapter(source);
-					
-					//data input
-					$('#dateInputUpdate').jqxDateTimeInput('setDate', new Date($scope.release.deadline));
-					//start at input
-					$('#dateInputUpdateStartAt').jqxDateTimeInput('setDate', new Date($scope.release.starts_at));
-					
-				},
-
-				function(response) {
-					$scope.showRelease = false;
-					$scope.messageRelease = "Error: "+response.status + " " + response.statusText;
-				}
-		);
-
-	}
+			);
+		}
+	};
+	
+	/**
+	 * start point method
+	 */
+	startPoint();
+	
 	
 	// Create a jqxListBox
 	// prepare the data for jqxListBox
@@ -569,7 +577,13 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 						
 					},
 					function(response) {
-						alert("Error: "+response.status + " " + response.statusText);
+						if(response.status == 422){
+							alert("Please check the 'start at' and 'deadline' fields");	
+						}
+						else{
+							alert("Error: "+response.status + " " + response.statusText);	
+						}
+						
 					}
 			);
 			
@@ -670,10 +684,7 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 
 	};
 	
-	/**
-	 * start point method
-	 */
-	$scope.getRelease($location.search().releaseId);
+
 
 	
 	/**
@@ -689,28 +700,6 @@ app.controllerProvider.register('release-utilities', ['$scope', '$location', '$h
 	};
 	
 	function getStringSUPERSEDEDate(time){
-		
-//		var date = new Date(time);
-//	
-//		var month = date.getMonth() + 1;
-//		var day = date.getDate();
-//		
-//		var strMonth;
-//		if(month <= 9){
-//			strMonth ="0" + month;
-//		}else{
-//			strMonth = ""+month;
-//		}
-//		
-//		var strDay;
-//		if(day <= 9){
-//			strDay ="0" + day;
-//		}else{
-//			strDay = ""+day;
-//		}
-//		
-//		var strDate =	date.getFullYear() + "-" + strMonth + "-" + strDay;
-//		return strDate;
 		var date = new Date(time);
 		var n = date.toISOString();
 		return n;

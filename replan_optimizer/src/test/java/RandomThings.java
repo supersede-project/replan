@@ -43,7 +43,7 @@ public class RandomThings {
     }
 
     public Feature feature() {
-        return new Feature(String.format("F%03d", ++featureID), PriorityLevel.FIVE, random.nextDouble(1.0, 40.0), new ArrayList<>(), new ArrayList<>());
+        return new Feature(String.format("F%03d", ++featureID), PriorityLevel.getPriorityByLevel(random.nextInt(0,5)), random.nextDouble(1.0, 40.0), new ArrayList<>(), new ArrayList<>());
     }
 
     public List<Feature> featureList(int nbElems) {

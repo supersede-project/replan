@@ -9,7 +9,7 @@
 
 <div class="well" ng-controller="release-details">
 
- <div class="container-fluid">
+	<div class="container-fluid">
 <!--  	   	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
 <!-- 			<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
 <!-- 		</a> -->
@@ -87,10 +87,11 @@
 	     	<div class="col-xs-12">
 			     <div class="text-right" ng-show="showReleasePlan">
 			     	<jqx-button id="acceptJqxButton" type="submit" class="my-button margin-left-5px" ng-click="accept()">Accept</jqx-button>
-			     	<jqx-button id="forceTOReplanJqxButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(true)">Forse to replan</jqx-button>
+			     	<jqx-button id="forceTOReplanJqxButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(true)">Force replan</jqx-button>
 			     	<jqx-button id="previousPlanButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(false)">Previous plan</jqx-button>
-			     	<jqx-button id="cancelJqxButton" type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button>
+<!-- 			     	<jqx-button id="cancelJqxButton" type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button> -->
 			    </div>  
 			</div>
         </div>
+	</div>
 </div>
