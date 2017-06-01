@@ -5,7 +5,7 @@ class JobSerializer < ActiveModel::Serializer
     object
       .feature
       .depends_on
-      .map { |x| SmallJobSerializer.new(x.jobs.find_by(plan_id: object.plan_id)).as_json }.compact
+      .map { |x| SmallJobSerializer.new(x.jobs.find_by(plan_id: object.plan_id)).as_json unless x.jobs.find_by(plan_id: object.plan_id).nil?}.compact
   end
   
   def feature
