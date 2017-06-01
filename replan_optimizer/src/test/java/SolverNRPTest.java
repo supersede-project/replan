@@ -371,7 +371,7 @@ public class SolverNRPTest {
 
         Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
 
-        validator.validateAll(solution);
+        //validator.validateAll(solution);
 
         solutionToDataFile(solution);
     }

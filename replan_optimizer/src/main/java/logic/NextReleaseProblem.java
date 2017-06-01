@@ -147,7 +147,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	     wrong ones. It will eventually get to a valid solution (most likely), but only based on the randomness of
 	     the algorithm and not because evaluate() is doing a good job.
 	*/
-	public void evaluate(PlanningSolution solution) {
+	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
 		double endPlanningHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
@@ -251,7 +251,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 
 	//@Override
-	public void evaluateOld(PlanningSolution solution) {
+	public void evaluate(PlanningSolution solution) {
 		Map<Employee, Schedule> schedule = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
