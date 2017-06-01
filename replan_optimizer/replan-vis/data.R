@@ -50,11 +50,12 @@ fixData <- function(d) {
   d$plan <- d$plan[order(d$plan$id), ]
   d$resources <- d$resources[order(d$resources$id), ]
   d$features <- d$features[order(d$features$id), ]
+  
   d$depGraphEdges <- d$depGraphEdges[order(d$depGraphEdges$node1), ]
   d$skillsGraphEdges <- d$skillsGraphEdges[order(d$skillsGraphEdges$node1), ]
   d$reqSkillsGraphEdges <- d$reqSkillsGraphEdges[order(d$reqSkillsGraphEdges$node1), ]
   
-    d$plan$priority <- sapply(d$plan$priority, as.numeric) # priority as numeric
+  d$plan$priority <- sapply(d$plan$priority, as.numeric) # priority as numeric
   d$features$priority <- sapply(d$features$priority, as.numeric) # priority as numeric
   d$plan$effort <- sapply(d$plan$effort, as.numeric) # effort as numeric
   d$resources$availability <- sapply(d$resources$availability, as.numeric) # availability as numeric
@@ -165,9 +166,28 @@ getDataFromUser <- function(d) {
 }
 
 getDataFromController <- function(d, baseURL, projectID, releaseID) {
-  releaseURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID)
-  releaseData <- try(fromJSON(releaseURL), silent = TRUE)
+  # baseURL <- "http://platform.supersede.eu:8280/replan"
+  # projectID <- 1
+  # releaseID <- 1
   
+  # Fetch data
+  releaseURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID)
+  releaseData <- try(fromJSON(releaseURL))
+
+  featuresURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID, "/features")
+  featuresData <- try(fromJSON(featuresURL))
+
+  planURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID, "/plan")
+  planData <- try(fromJSON(planURL))
+  
+  if(class(releaseData) == "try-error" |
+     class(featuresData) == "try-error" |
+     class(planData) == "try-error") {
+    alert("Connection error with the controller!")
+    return(d)
+  }
+    
+  # Parse data
   
   return(d)
 }
