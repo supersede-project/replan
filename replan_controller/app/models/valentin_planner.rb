@@ -1,6 +1,9 @@
 class ValentinPlanner
     include ActiveModel::Model
     
+  MAX_TIME = 10 # seconds
+  MAX_ITERATIONS = 10
+    
   def self.plan(release)
     # Your code here
   # uri = "http://replan-optimizer.herokuapp.com/replan"
@@ -9,8 +12,27 @@ class ValentinPlanner
   # uri = "http://localhost:8280/replan_optimizer/replan"
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer (#{uri}) with payload = #{payload}\n"
-    response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
-    self.build_plan(release, JSON.parse(response.body)["jobs"])
+    numFeatures = release.features.count
+    numJobs = 0
+    it = 0
+    ttime = 0
+    response = "";
+    until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
+      time = Benchmark.realtime do
+        response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+      end
+      jobArray = JSON.parse(response.body)["jobs"]
+      jobCount = jobArray.count
+      puts "#{it+1}# iteration -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
+      if numJobs < jobCount
+        sol = jobArray
+        numJobs = jobCount
+      end
+      it += 1
+      ttime += time
+    end
+    puts "FINAL -> Num jobs/Num features: #{sol.count}/#{numFeatures} in #{ttime} seconds"
+    self.build_plan(release, sol)
   end
   
   private
