@@ -23,13 +23,25 @@ fluidPage(
         column(12, timevisOutput("timelineRelease"))
       ),
       fluidRow(
-        column(6, align="center", tableOutput("resultsTable"), selectInput("unscheduled", "Select non-scheduled", c("NONE","A","B","C"), selected="NONE")),
-        column(6, align="center", tableOutput("selectedFeature"))
+        column(4, align="center", 
+               tableOutput("resultsTable"), 
+               selectInput("unscheduled", "Select non-scheduled", c("NONE","A","B","C"), selected="NONE"),
+               selectInput("resource", "Select resource", c("NONE","A","B","C"), selected="NONE")),
+        column(4, align="center", 
+               tableOutput("selectedResource")),
+        column(4, align="center", 
+               tableOutput("selectedFeature"))
       ),
       fluidRow(
-        column(4, align="center", plotOutput("depGraph"), plotOutput("depGraphLegend")),
-        column(4, align="center", plotOutput("skillsGraph"), plotOutput("skillsGraphLegend")),
-        column(4, align="center", plotOutput("resources", inline = T), plotOutput("resourcesLegend", inline = T))
+        column(4, align="center", 
+               plotOutput("depGraph"), 
+               plotOutput("depGraphLegend")),
+        column(4, align="center", 
+               plotOutput("skillsGraph"), 
+               plotOutput("skillsGraphLegend")),
+        column(4, align="center", 
+               plotOutput("resources", inline = T), 
+               plotOutput("resourcesLegend", inline = T))
       )
     ),
     tabPanel(
@@ -44,8 +56,20 @@ fluidPage(
           dataTableOutput("resourcesTable")
         ),
         tabPanel(
+          div("Resource-Skills"),
+          dataTableOutput("resourceSkillsTable")
+        ),
+        tabPanel(
           div("Features"),
           dataTableOutput("featuresTable")
+        ),
+        tabPanel(
+          div("Features-Dependencies"),
+          dataTableOutput("featuresDepTable")
+        ),
+        tabPanel(
+          div("Features-ReqSkills"),
+          dataTableOutput("featuresReqSkillsTable")
         )
       )
     ),
@@ -54,7 +78,7 @@ fluidPage(
       runcodeUI(type = "textarea", width = 900, height = 400, includeShinyjs=TRUE)
     ),
     tabPanel(
-      div("Controller configuration"),
+      div("Controller Settings"),
       selectInput("deployment", "Controller", c("User defined", "Development", "Production"), selected="User defined"),
       textInput("baseURL", "URL", ""),
       selectInput("tenant", "Tenant", c("User defined", "Siemens", "Atos", "Senercon"), selected="User defined"),

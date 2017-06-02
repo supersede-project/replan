@@ -52,6 +52,11 @@ function(input, output, session) {
       setSelection("timelineRelease", c())
     }
   })
+  
+  observeEvent(input$resource, {
+    if(input$resource != "NONE")
+      renderSelectedResource(output, session$userData$d, input$resource)
+  })
 
   observeEvent(input$deployment, {
     if(input$deployment == "Development")

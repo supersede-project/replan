@@ -1,5 +1,7 @@
 library(jsonlite)
 
+source("utils.R")
+
 getRePlanDataStructure <- function() {
   d <- list()
   
@@ -171,6 +173,9 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
   # releaseID <- 1
   
   # Fetch data
+  projectURL <- paste0(baseURL, "/projects/", projectID)
+  projectData <- try(fromJSON(projectURL))
+  
   releaseURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID)
   releaseData <- try(fromJSON(releaseURL))
 
@@ -180,14 +185,73 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
   planURL <- paste0(baseURL, "/projects/", projectID, "/releases/", releaseID, "/plan")
   planData <- try(fromJSON(planURL))
   
-  if(class(releaseData) == "try-error" |
+  if(class(projectData) == "try-error" |
+     class(releaseData) == "try-error" |
      class(featuresData) == "try-error" |
      class(planData) == "try-error") {
     alert("Connection error with the controller!")
     return(d)
   }
     
-  # Parse data
+  # Parse nWeeks
+  d$nWeeks <- round(as.numeric(difftime(releaseData$deadline, releaseData$starts_at, units = "weeks")))
+
+  # Parse resources
+  fulltime <- projectData$hours_per_week_and_full_time_resource
+  nResources <- nrow(releaseData$resources)
+  if(nResources >= 1)
+    for(i in 1:nResources) {
+      d$resources[i, ] <- c(
+        getID("E", releaseData$resources$id[i]), 
+        releaseData$resources$name[i], 
+        (as.numeric(releaseData$resources$availability[i])/100)*as.numeric(fulltime))
+      nResourceSkills <- nrow(releaseData$resources$skills[[i]])
+      if (nResourceSkills >= 1)
+        for(j in 1:nResourceSkills)
+          d$skillsGraphEdges[nrow(d$skillsGraphEdges)+1, ] <- c(
+            getID("E", releaseData$resources$id[i]), 
+            getID("S", releaseData$resources$skills[[i]]$id[j]))
+    }
+  
+  # Parse features
+  nFeatures <- nrow(featuresData)
+  if(nFeatures >= 1)
+    for(i in 1:nFeatures) {
+      d$features[i, ] <- c(
+        getID("F", featuresData$id[i]), 
+        getID("F", featuresData$id[i]),
+        ifelse(featuresData$id[i] %in% planData$jobs$feature$id, "Yes", "No"),
+        featuresData$priority[i],
+        featuresData$effort[i])
+      nReqSkills <- nrow(featuresData$required_skills[[i]])
+      if(nReqSkills >= 1) 
+        for(j in 1:nReqSkills)
+          d$reqSkillsGraphEdges[nrow(d$reqSkillsGraphEdges)+1, ] <- c(
+            getID("F", featuresData$id[i]), 
+            getID("S", featuresData$required_skills[[i]]$id[j]))
+      nDeps <- nrow(featuresData$depends_on[[i]])
+      if(nDeps >= 1)
+        for(j in 1:nDeps)
+          if(featuresData$depends_on[[i]]$id[j] %in% featuresData$id)
+            d$depGraphEdges[nrow(d$depGraphEdges)+1, ] <- c(
+              getID("F", featuresData$id[i]), 
+              getID("F", featuresData$depends_on[[i]]$id[j]))
+    }
+  
+  # Parse plan
+  nJobs <- nrow(planData$jobs)
+  if(nJobs >= 1)
+    for(i in 1:nJobs)
+      d$plan[nrow(d$plan)+1, ] <- c(
+        getID("F", planData$jobs$feature$id[i]),
+        getID("F", planData$jobs$feature$id[i]),
+        planData$jobs$starts[i],
+        planData$jobs$ends[i],
+        getID("E", planData$jobs$resource$id[i]),
+        "range",
+        planData$jobs$feature$priority[i],
+        planData$jobs$feature$effort[i]
+      )
   
   return(d)
 }
