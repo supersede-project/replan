@@ -1,3 +1,4 @@
+library(curl)
 library(jsonlite)
 
 source("utils.R")

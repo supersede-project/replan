@@ -251,6 +251,7 @@ renderThisData <- function(output, session, d) {
   updateTimeline(session$userData$d)
   renderResults(output, session$userData$d)
   renderSelectedFeature(output, session$userData$d, NULL)
+  renderSelectedResource(output, session$userData$d, NULL)
   renderDepGraph(output, session$userData$d)
   renderSkillsGraph(output, session$userData$d)
   renderResources(output, session$userData$d)

@@ -98,4 +98,8 @@ function(input, output, session) {
       group = c(1, 2)),
       groups = data.frame(id = 1:2, content = c("G1", "G2")))
   })
+  
+  renderSelectedFeature(output, session$userData$d, NULL)
+  renderSelectedResource(output, session$userData$d, NULL)
+  
 }
