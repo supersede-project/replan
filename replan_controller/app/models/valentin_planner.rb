@@ -17,6 +17,7 @@ class ValentinPlanner
     it = 0
     ttime = 0
     response = "";
+    sol = Array.new
     until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
       time = Benchmark.realtime do
         response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
@@ -31,7 +32,7 @@ class ValentinPlanner
       it += 1
       ttime += time
     end
-    puts "FINAL -> Num jobs/Num features: #{sol.count}/#{numFeatures} in #{ttime} seconds"
+    puts "FINAL -> Num jobs/Num features: #{numJobs}/#{numFeatures} in #{ttime} seconds"
     self.build_plan(release, sol)
   end
   
