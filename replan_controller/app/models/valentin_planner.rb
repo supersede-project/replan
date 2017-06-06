@@ -1,14 +1,14 @@
 class ValentinPlanner
     include ActiveModel::Model
     
-  MAX_TIME = 10 # seconds
-  MAX_ITERATIONS = 10
+  MAX_TIME = 6 # seconds
+  MAX_ITERATIONS = 6
     
   def self.plan(release)
     # Your code here
   # uri = "http://replan-optimizer.herokuapp.com/replan"
-  # uri = "http://platform.supersede.eu:8280/replan_optimizer/replan"
-    uri = "http://62.14.219.13:8280/replan_optimizer/replan"
+    uri = "http://platform.supersede.eu:8280/replan_optimizer/replan"
+  # uri = "http://62.14.219.13:8280/replan_optimizer/replan"
   # uri = "http://localhost:8280/replan_optimizer/replan"
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer (#{uri}) with payload = #{payload}\n"
