@@ -42,17 +42,6 @@ public class Schedule {
 
         PlannedFeature lastPlanned = getLastPlannedFeature(week, previousWeek);
 
-        /*if (week.getPlannedFeatures().isEmpty()) {
-            if (previousWeek != null) {
-                //week.setBeginHour(Math.max(pf.getBeginHour(), previousWeek.getEndHour()));
-                week.setBeginHour(previousWeek.getEndHour());
-                week.setEndHour(week.getBeginHour());
-            } else {
-                week.setBeginHour(pf.getBeginHour());
-                week.setEndHour(week.getBeginHour());
-            }
-        }*/
-
         if (featureHoursLeft <= remainingWeekHours) {
             double newBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
             pf.setBeginHour(newBeginHour);
@@ -161,5 +150,14 @@ public class Schedule {
 
     public List<EmployeeWeekAvailability> getAllWeeks() {
         return weeks;
+    }
+
+    public boolean contains(PlannedFeature pf) {
+        for (EmployeeWeekAvailability week : weeks) {
+            if (week.getPlannedFeatures().contains(pf)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

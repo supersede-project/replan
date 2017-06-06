@@ -81,8 +81,19 @@ public class Report {
         if (listener != null) listener.onInfoAdded(info);
     }
 
+    public void clear() {
+        this.info.clear();
+        this.errors.clear();
+        this.warnings.clear();
+    }
+
     private String addTimestamp(String message) {
         return String.format("%s: %s", dateFormat.format(Calendar.getInstance().getTime()), message);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s errors, %s warnings, %s info", errors.size(), warnings.size(), info.size());
     }
 }
 

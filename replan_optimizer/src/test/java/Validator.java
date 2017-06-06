@@ -1,7 +1,4 @@
-import entities.Employee;
-import entities.Feature;
-import entities.PlannedFeature;
-import entities.Skill;
+import entities.*;
 import logic.PlanningSolution;
 import org.junit.Assert;
 
@@ -109,6 +106,7 @@ public class Validator {
     }
 
     public void validateNoOverlappedJobs(PlanningSolution solution) {
+        /*
         List<PlannedFeature> jobs = solution.getPlannedFeatures();
         Map<Employee, List<PlannedFeature>> schedule = new HashMap<>();
 
@@ -135,6 +133,27 @@ public class Validator {
 
                 endHour = pf.getEndHour();
                 previous = pf;
+            }
+        }
+        */
+        Map<Employee, List<EmployeeWeekAvailability>> schedule = solution.getEmployeesPlanning();
+        for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : schedule.entrySet()) {
+            for (EmployeeWeekAvailability week : entry.getValue()) {
+                double endHour = 0.0;
+                List<PlannedFeature> employeeJobs = week.getPlannedFeatures();
+                PlannedFeature previous = employeeJobs.get(0);
+
+                for (PlannedFeature pf : employeeJobs) {
+                    if (pf != previous) {
+                        Assert.assertTrue(
+                                String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
+                                pf.getBeginHour() >= endHour
+                        );
+                    }
+
+                    endHour = pf.getEndHour();
+                    previous = pf;
+                }
             }
         }
     }

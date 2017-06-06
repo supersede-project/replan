@@ -14,7 +14,7 @@ public class PlannedFeature {
 	
 	/* --- Attributes --- */
 	/**
-	 * A static feature will NOT be replanned.
+	 * A frozen feature will NOT be replanned.
 	 */
 	private boolean frozen;
 	
@@ -37,10 +37,9 @@ public class PlannedFeature {
 	 * The feature to do
 	 */
 	private Feature feature;
-	
+
 	
 	/* --- Getters and setters --- */
-
 
 	public boolean isFrozen() {
 		return frozen;
@@ -49,6 +48,7 @@ public class PlannedFeature {
 	public void setFrozen(boolean frozen) {
 		this.frozen = frozen;
 	}
+
 
 	/**
 	 * @return the beginHour

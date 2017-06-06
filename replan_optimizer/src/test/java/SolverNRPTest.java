@@ -1,6 +1,5 @@
 import entities.Employee;
 import entities.Feature;
-import entities.PriorityLevel;
 import entities.Skill;
 import logic.PlanningSolution;
 import org.junit.Assert;
@@ -184,12 +183,12 @@ public class SolverNRPTest {
     @Test
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(20);
+        List<Feature> features = random.featureList(300);
         List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+        PlanningSolution solution = solver.executeNRP(500, 40.0, features, employees);
 
         validator.validateAll(solution);
 
@@ -198,7 +197,7 @@ public class SolverNRPTest {
 
     @Test
     public void manyRandomProblemsToSeeIfICatchAnOverlappingErrorBecauseItDoesntSeemToHappen() {
-        for (int i = 0; i < 50; ++i) {
+        for (int i = 0; i < 100; ++i) {
             List<Skill> skills = random.skillList(7);
             List<Feature> features = random.featureList(20);
             List<Employee> employees = random.employeeList(6);
@@ -376,7 +375,7 @@ public class SolverNRPTest {
 
         Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
 
-        //validator.validateAll(solution);
+        validator.validateAll(solution);
 
         solutionToDataFile(solution);
     }

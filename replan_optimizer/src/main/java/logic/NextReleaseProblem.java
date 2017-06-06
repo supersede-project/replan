@@ -139,6 +139,34 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		return new PlanningSolution(this);
 	}
 
+/*
+	public void evaluate(PlanningSolution solution) {
+	    Map<Employee, List<EmployeeWeekAvailability>> s1 = evaluateOld(solution);
+	    Map<Employee, List<EmployeeWeekAvailability>> s2 = evaluate2(solution);
+
+
+	    double count = 0.0;
+        double coincidences = 0.0;
+	    for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : s1.entrySet()) {
+	        Employee e = entry.getKey();
+	        List<EmployeeWeekAvailability> weeksS1 = entry.getValue();
+	        List<EmployeeWeekAvailability> weeksS2 = s2.get(e);
+
+	        for (int i = 0; i < weeksS1.size(); ++i) {
+	            for (PlannedFeature pf : weeksS1.get(i).getPlannedFeatures()) {
+	                EmployeeWeekAvailability weekS2 = weeksS2.get(i);
+                    if (weekS2.getPlannedFeatures().contains(pf)) {
+                        ++coincidences;
+                    }
+                    ++count;
+                }
+            }
+        }
+
+        double similarity = coincidences/count;
+
+    }*/
+
 
 	// TODO: read
 	/*
@@ -147,7 +175,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	     wrong ones. It will eventually get to a valid solution (most likely), but only based on the randomness of
 	     the algorithm and not because evaluate() is doing a good job.
 	*/
-	public void evaluateOld(PlanningSolution solution) {
+	public void evaluate(PlanningSolution solution) {
 		double newBeginHour;
 		double endPlanningHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
@@ -234,7 +262,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.setEmployeesPlanning(employeesTimeSlots);
 		solution.setEndDate(endPlanningHour);
 
-
 		// TODO From here to the end is the evaluation of the solution.
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
 		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
@@ -246,29 +273,34 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
 		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
-	}
+    }
 
 
 
 	//@Override
-	public void evaluate(PlanningSolution solution) {
+	public void evaluate2(PlanningSolution solution) {
 		Map<Employee, Schedule> schedule = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
 
-		Iterator<PlannedFeature> it = plannedFeatures.iterator();
-        while(it.hasNext()) {
-            PlannedFeature currentPlannedFeature = it.next();
+		//computeHours(solution);
 
-			computeHoursRecursive(solution, currentPlannedFeature);
+        for (PlannedFeature currentPlannedFeature : plannedFeatures) {
+
+            computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 
 			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks));
 
-			if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
-			    it.remove();
+			if (!employeeSchedule.contains(currentPlannedFeature)) {
+                if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
+                    solution.unschedule(currentPlannedFeature);
+                }
+            } else {
+			    throw new IllegalStateException(".");
+            }
 
 			schedule.put(employee, employeeSchedule);
         }
@@ -302,6 +334,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
 		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
+
 	}
 
 	private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
@@ -322,6 +355,16 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             pf.setEndHour(pf.getBeginHour() + feature.getDuration());
 		}
 	}
+
+	private void computeHoursRecursive(PlanningSolution solution) {
+		for (PlannedFeature pf : solution.getPlannedFeatures())
+			computeHoursRecursive(solution, pf);
+	}
+
+	private void computeHours(PlanningSolution solution) {
+        for (PlannedFeature pf : solution.getPlannedFeatures())
+            computeHours(solution, pf);
+    }
 
 	private void computeHours(PlanningSolution solution, PlannedFeature pf) {
 		double newBeginHour = pf.getBeginHour();
@@ -345,16 +388,25 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
+		    // Use this loop to clear the previous reports
+            currentFeature.getFeature().getReport().clear();
+
 			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
 			if (	previousSolution != null &&
 					previousSolution.findPlannedFeature(currentFeature.getFeature()) != null &&
 					previousSolution.getPlannedFeatures().contains(currentFeature))
-				continue;
+			{
+                currentFeature.getFeature().addInfo("Ignored precedence constraint because feature is frozen");
+			    continue;
+            }
 
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
-				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour())
-					precedencesViolated++;
+				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour()) {
+                    currentFeature.getFeature().addError(
+                            String.format("Precedence violated: Feature %s should be done before", previousFeature.getName()));
+				    precedencesViolated++;
+                }
 			}
 		}
 
@@ -379,6 +431,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					}
 				}
 				if (!hasSkill) {
+				    plannedFeature.getFeature().addError("Assigned employee does not have the required skills");
 					violatedConstraints++;
 					overall -= 1.0;
 				}
@@ -393,6 +446,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 				/* Frozen jobs constraint */
 				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {
+				    pf.getFeature().addError("Frozen feature should not be replanned");
 					violatedConstraints++;
 					overall -= 1.0;
 				}
@@ -403,37 +457,11 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				if (previousFeatures.containsKey(pf.getFeature()) &&
 						!previousFeatures.get(pf.getFeature()).equals(pf.getEmployee()))
 				{
+				    pf.getFeature().addWarning("Feature assigned to a different employee on this replan");
 					overall -= 0.1;
 				}
 			}
 		}
-
-		// Overlaps
-        /*
-        List<PlannedFeature> jobs = solution.getPlannedFeatures();
-        Map<Employee, List<PlannedFeature>> schedule = new HashMap<>();
-
-        for (PlannedFeature pf : jobs) {
-            Employee e = pf.getEmployee();
-            if (!schedule.containsKey(e)) schedule.put(e, new ArrayList<>());
-            schedule.get(e).add(pf);
-        }
-
-        for (Map.Entry<Employee, List<PlannedFeature>> entry : schedule.entrySet()) {
-            double endHour = 0.0;
-            List<PlannedFeature> employeeJobs = entry.getValue();
-
-            sortJobsByBeginHour(employeeJobs);
-
-            for (PlannedFeature pf : employeeJobs) {
-                if (pf.getBeginHour() < endHour) {
-                    violatedConstraints++;
-                    overall -= 1.0;
-                }
-                endHour = pf.getEndHour();
-            }
-        }
-        */
 
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);
 		overallConstraintViolation.setAttribute(solution, overall);
@@ -441,18 +469,4 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			solutionQuality.setAttribute(solution, 0.0);
 		}
 	}
-
-    private void sortJobsByBeginHour(List<PlannedFeature> jobs) {
-        Collections.sort(jobs, new Comparator<PlannedFeature>() {
-            @Override
-            public int compare(PlannedFeature o1, PlannedFeature o2) {
-                double h1 = o1.getBeginHour();
-                double h2 = o2.getBeginHour();
-
-                if (h1 < h2) return -1;
-                else if (h1 > h2) return 1;
-                else return 0;
-            }
-        });
-    }
 }

@@ -41,8 +41,15 @@ public class Feature {
 	 */
 	private List<Skill> requiredSkills;
 
+	private Report report;
+
 	
 	/* --- Getters and setters --- */
+
+	public Report getReport() { return report; }
+
+	public void setReport(Report report) { this.report = report; }
+
 
 	/**
 	 * @return the name of the feature
@@ -88,6 +95,18 @@ public class Feature {
         return previousFeatures.contains(f);
     }
 
+    public void addInfo(String info) {
+    	report.addInfo(info);
+	}
+
+	public void addError(String error) {
+    	report.addError(error);
+	}
+
+	public void addWarning(String warning) {
+    	report.addWarning(warning);
+	}
+
 	
 	
 	/* --- Constructors --- */
@@ -106,6 +125,7 @@ public class Feature {
 		this.duration = duration;
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
+		report = new Report();
 	}
 
 	
@@ -124,6 +144,7 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = new ArrayList<>();
 		requiredSkills.add(requiredSkill);
+		report = new Report();
 	}
 	
 	@Override
