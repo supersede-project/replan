@@ -1,5 +1,6 @@
 package entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class Feature {
 
 	private List<Skill> requiredSkills;
 
+	@JsonIgnore
 	private Report report;
 
 	

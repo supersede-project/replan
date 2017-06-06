@@ -3,7 +3,7 @@ package io.swagger.api;
 
 import entities.Feature;
 import io.swagger.annotations.ApiParam;
-import logic.NextReleaseProblem;
+import io.swagger.model.ApiNextReleaseProblem;
 import logic.PlanningSolution;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public class ReplanApiController implements ReplanApi {
     public ResponseEntity<PlanningSolution> replan(
 
 @ApiParam(value = "" ,required=true )
-@RequestBody NextReleaseProblem body
+@RequestBody ApiNextReleaseProblem body
 
 ) {
         SolverNRP solver = new SolverNRP();
@@ -30,7 +30,7 @@ public class ReplanApiController implements ReplanApi {
         List<Feature> features = body.getFeatures();
 
         logic.PlanningSolution solution =
-                solver.executeNRP(body.getNbWeeks(), body.getNbHoursByWeek(), features, body.getEmployees());
+                solver.executeNRP(body.getNbWeeks(), body.getHoursPerWeek(), features, body.getResources());
 
         /* Let's ignore previous plan for now
 

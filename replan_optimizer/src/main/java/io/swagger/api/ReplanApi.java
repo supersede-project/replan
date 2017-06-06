@@ -2,7 +2,7 @@ package io.swagger.api;
 
 
 import io.swagger.annotations.*;
-import logic.NextReleaseProblem;
+import io.swagger.model.ApiNextReleaseProblem;
 import logic.PlanningSolution;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +24,7 @@ public interface ReplanApi {
         method = RequestMethod.POST)
     ResponseEntity<PlanningSolution> replan(
 
-@ApiParam(value = "" ,required=true ) @RequestBody NextReleaseProblem body
+@ApiParam(value = "" ,required=true ) @RequestBody ApiNextReleaseProblem body
 
 );
 
