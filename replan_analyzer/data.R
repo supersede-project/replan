@@ -71,8 +71,6 @@ fixData <- function(d) {
 
 getDataFromExample <- function(d) {
 
-  d$plan[nrow(d$plan)+1,] <- c("F015", "F015", "2017-05-30 19:13:56", "2017-05-31 23:13:56", "E003", "range", 5, 28)
-  d$plan[nrow(d$plan)+1,] <- c("F006", "F006", "2017-05-31 23:13:56", "2017-06-01 17:13:56", "E003", "range", 5, 18)
   d$plan[nrow(d$plan)+1,] <- c("F016", "F016", "2017-05-30 19:13:56", "2017-06-01 06:13:56", "E001", "range", 5, 35)
   d$plan[nrow(d$plan)+1,] <- c("F009", "F009", "2017-05-30 19:13:56", "2017-05-31 14:13:56", "E002", "range", 2, 19)
   d$plan[nrow(d$plan)+1,] <- c("F007", "F007", "2017-05-31 14:13:56", "2017-06-01 15:13:56", "E002", "range", 5, 24)
@@ -84,7 +82,6 @@ getDataFromExample <- function(d) {
   d$plan[nrow(d$plan)+1,] <- c("F011", "F011", "2017-06-03 18:13:56", "2017-06-03 20:13:56", "E002", "range", 1, 1)
   d$plan[nrow(d$plan)+1,] <- c("F003", "F003", "2017-06-01 12:13:56", "2017-06-02 13:13:56", "E004", "range", 4, 25)
   d$plan[nrow(d$plan)+1,] <- c("F019", "F019", "2017-06-03 20:13:56", "2017-06-04 15:13:56", "E002", "range", 4, 18)
-  d$plan[nrow(d$plan)+1,] <- c("F001", "F001", "2017-06-01 17:13:56", "2017-06-03 04:13:56", "E003", "range", 3, 35)
   d$plan[nrow(d$plan)+1,] <- c("F014", "F014", "2017-06-02 04:13:56", "2017-06-03 10:13:56", "E001", "range", 2, 30)
   
   d$resources[nrow(d$resources)+1,] <- c("E003", "E003", 40.0)
@@ -190,8 +187,7 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
      class(releaseData) == "try-error" |
      class(featuresData) == "try-error" |
      class(planData) == "try-error") {
-    alert("Connection error with the controller!")
-    return(d)
+    return("ERROR")
   }
     
   # Parse nWeeks

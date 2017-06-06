@@ -1,3 +1,4 @@
+library(gtools)
 library(igraph)
 
 source("utils.R")
@@ -188,16 +189,17 @@ renderResources <- function(output, d) {
     endhours <- tapply(d$plan$end, d$plan$group, FUN=max)
     endhours <- endhours[order(names(endhours), decreasing = TRUE)]
     starthours <- rep(min(d$plan$start), dim(endhours))
-    endhours <- as.numeric(difftime(endhours, starthours, units = "hours"))
-    
+    endhours <- difftime(endhours, starthours, units = "hours")
+
     startendhours <- tapply(difftime(d$plan$end, d$plan$start, units = "hours"), d$plan$group, FUN=sum)
     startendhours <- startendhours[order(names(startendhours), decreasing = TRUE)]
-    
-    hours <- rbind(usedhours, startendhours, endhours)
+
+    hours <- smartbind(totalhours, usedhours, startendhours, endhours, fill=0)
+    hours <- as.matrix(hours[-1, ])
     totalhours <- rbind(totalhours, totalhours, totalhours)
     
     ptab <-round(100 * (hours/totalhours), 1)
-    
+
     lbls <- paste(hours, "h of ", totalhours, "h (", ptab, "%)", sep = "")
     colors <- c('#8dd3c7','#ffffb3','#bebada')
     

@@ -32,6 +32,10 @@ function(input, output, session) {
     }
     d <- getRePlanDataStructure()
     d <- getDataFromController(d, input$baseURL, input$project, input$release)
+    if(is.character(d) && d == "ERROR") {
+      alert("Connection error with the controller!")
+      return()
+    }
     d <- fixData(d)
     renderThisData(output, session, d)
   })

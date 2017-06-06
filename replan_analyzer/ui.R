@@ -1,17 +1,17 @@
 # to deploy in shinyapps.io
-# rsconnect::deployApp('C:/Users/nail2/git/replan/replan_optimizer/replan-vis')
+# rsconnect::deployApp('C:/Users/nail2/git/replan/replan_analyzer')
 
 # Some advanced examples: http://visjs.org/timeline_examples.html
 library(timevis)
 library(shinyjs)
 
 fluidPage(
-  title = "RePlan visualization",
+  title = "RePlan Analyzer",
   tags$head(
     tags$link(href = "style.css", rel = "stylesheet"),
     tags$link(rel = "shortcut icon", href="favicon.png")
   ),
-  div(id = "header", div(id = "title", "RePlan visualization ")),
+  div(id = "header", div(id = "title", "RePlan Analyzer ")),
   tabsetPanel(
     tabPanel(
       div("Visualization"),
