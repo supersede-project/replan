@@ -1,8 +1,8 @@
 class ValentinPlanner
     include ActiveModel::Model
     
-  MAX_TIME = 10 # seconds
-  MAX_ITERATIONS = 10
+  MAX_TIME = 6 # seconds
+  MAX_ITERATIONS = 6
     
   def self.plan(release)
     # Your code here
