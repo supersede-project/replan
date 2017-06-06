@@ -1,11 +1,10 @@
 package io.swagger.model;
 
-import java.util.Objects;
-
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 
@@ -21,6 +20,16 @@ public class Resource   {
   private Double availability = null;
 
   private List<Skill> skills = new ArrayList<Skill>();
+
+    public Resource() {}
+
+    public Resource(String name, Double availability, List<Skill> skills) {
+        this.name = name;
+        this.availability = availability;
+        this.skills = skills;
+    }
+
+
 
   public Resource name(String name) {
     this.name = name;

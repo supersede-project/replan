@@ -39,7 +39,7 @@ public class Feature {
 
 	
 	/* --- Getters and setters --- */
-	
+
 	/**
 	 * @return the name of the feature
 	 */
@@ -74,6 +74,16 @@ public class Feature {
 	public List<Skill> getRequiredSkills() {
 		return requiredSkills;
 	}
+
+    /**
+     *
+     * @param f a feature
+     * @return a boolean indicating wether this feature depends on f
+     */
+    public boolean dependsOn(Feature f) {
+        return previousFeatures.contains(f);
+    }
+
 	
 	
 	/* --- Constructors --- */
@@ -93,6 +103,7 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
 	}
+
 	
 	/**
 	 * Constructor with only one Skill
@@ -113,7 +124,16 @@ public class Feature {
 	
 	@Override
 	public String toString() {
-		return getName();
+		List<String> dependencesNames = new ArrayList<>();
+		for (Feature f : getPreviousFeatures())
+			dependencesNames.add(f.getName());
+
+		List<String> requiredSkillsNames = new ArrayList<>();
+		for (Skill s : getRequiredSkills())
+			requiredSkillsNames.add(s.getName());
+
+		return String.format("%s. Required skills: [%s]. Dependences: [%s].",
+				getName(), String.join(", ", requiredSkillsNames), String.join(", ", dependencesNames));
 	}
 	
 	@Override
