@@ -1,0 +1,71 @@
+body {
+    background: #fff;
+}
+
+#header {
+    text-align: center;
+    color: #FFA500;
+    text-shadow: 0 0 1px #000;
+    padding: 10px 0 10px;
+    background: #fff;
+    margin: 0 -15px;
+}
+
+#title {
+    font-size: 5em;
+    text-shadow: 0 0 5px #000;
+}
+
+#subtitle {
+    font-size: 2em;
+    margin-top: -5px;
+}
+
+#subsubtitle {
+    font-size: 1.3em;
+}
+
+.tab-content>.tab-pane {
+    padding-top: 40px;
+}
+
+.vis-item.itemPriority5 {
+    border-color: grey;
+    border-width: 1px;
+    background-color: #08519c;
+    color: white;
+}
+
+.vis-item.itemPriority4 {
+    border-color: grey;
+    border-width: 1px;
+    background-color: #3182bd;
+    color: white;
+}
+
+.vis-item.itemPriority3 {
+    border-color: grey;
+    border-width: 1px;
+    background-color: #6baed6;
+    color: white;
+}
+
+.vis-item.itemPriority2 {
+    border-color: grey;
+    border-width: 1px;
+    background-color: #bdd7e7;
+    color: black;
+}
+
+.vis-item.itemPriority1 {
+    border-color: grey;
+    border-width: 1px;
+    background-color: #eff3ff;
+    color: black;
+}
+
+.vis-item.vis-selected {
+    border-color: orange;
+    background-color: moccasin;
+    color: black;
+}
