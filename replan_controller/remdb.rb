@@ -1,7 +1,7 @@
 # print RestClient.get("#{endpoint}/projects/#{i}").body
 
-#endpoint = "http://62.14.219.13:8280/replan"
-endpoint = "http://platform.supersede.eu:8280/replan"
+endpoint = "http://62.14.219.13:8280/replan"
+#endpoint = "http://platform.supersede.eu:8280/replan"
 
 Plan.destroy_all
 Release.destroy_all
