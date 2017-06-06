@@ -185,7 +185,7 @@ public class RandomThings {
 
             boolean mutated = false;
             for (Feature f1 : features) {
-                if (random.nextDouble() <= 0.5) {
+                if (shouldMutate()) {
                     Feature f2 = features.get(random.nextInt(0, features.size() - 1));
 
                     if (!f1.equals(f2)) {

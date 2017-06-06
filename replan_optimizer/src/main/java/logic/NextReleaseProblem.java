@@ -15,6 +15,8 @@ import java.util.*;
 // Objectives: 0: Doing the high score in priority; 1: The shortest endDate
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
 
+	private static final boolean USE_NEW_EVALUATION = true;
+
 	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
 	public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
 	public final static int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
@@ -139,7 +141,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		return new PlanningSolution(this);
 	}
 
-/*
+	@Override
+	public void evaluate(PlanningSolution solution) {
+		if (USE_NEW_EVALUATION)
+			evaluateNew(solution);
+		else
+			evaluateOld(solution);
+	}
+
+	/*
 	public void evaluate(PlanningSolution solution) {
 	    Map<Employee, List<EmployeeWeekAvailability>> s1 = evaluateOld(solution);
 	    Map<Employee, List<EmployeeWeekAvailability>> s2 = evaluate2(solution);
@@ -165,7 +175,8 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
         double similarity = coincidences/count;
 
-    }*/
+    }
+    */
 
 
 	// TODO: read
@@ -175,7 +186,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	     wrong ones. It will eventually get to a valid solution (most likely), but only based on the randomness of
 	     the algorithm and not because evaluate() is doing a good job.
 	*/
-	public void evaluate(PlanningSolution solution) {
+	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
 		double endPlanningHour = 0.0;
 		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
@@ -277,18 +288,23 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 
 
-	//@Override
-	public void evaluate2(PlanningSolution solution) {
+	public void evaluateNew(PlanningSolution solution) {
 		Map<Employee, Schedule> schedule = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
 
+		/* Both of these seem to perform pretty well */
 		//computeHours(solution);
+        //computeHoursRecursive(solution);
 
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
 
-            computeHours(solution, currentPlannedFeature);
+            // Causes a drop in planned features if called from here
+            //computeHours(solution, currentPlannedFeature);
+
+            // Seems to cause overlaps if called from here
+            computeHoursRecursive(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 

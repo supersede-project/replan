@@ -106,36 +106,6 @@ public class Validator {
     }
 
     public void validateNoOverlappedJobs(PlanningSolution solution) {
-        /*
-        List<PlannedFeature> jobs = solution.getPlannedFeatures();
-        Map<Employee, List<PlannedFeature>> schedule = new HashMap<>();
-
-        for (PlannedFeature pf : jobs) {
-            Employee e = pf.getEmployee();
-            if (!schedule.containsKey(e)) schedule.put(e, new ArrayList<>());
-            schedule.get(e).add(pf);
-        }
-
-        for (Map.Entry<Employee, List<PlannedFeature>> entry : schedule.entrySet()) {
-            double endHour = 0.0;
-            List<PlannedFeature> employeeJobs = entry.getValue();
-            PlannedFeature previous = employeeJobs.get(0);
-
-            sortJobsByBeginHour(employeeJobs);
-
-            for (PlannedFeature pf : employeeJobs) {
-                if (pf != previous) {
-                    Assert.assertTrue(
-                            String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
-                            pf.getBeginHour() >= endHour
-                    );
-                }
-
-                endHour = pf.getEndHour();
-                previous = pf;
-            }
-        }
-        */
         Map<Employee, List<EmployeeWeekAvailability>> schedule = solution.getEmployeesPlanning();
         for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : schedule.entrySet()) {
             for (EmployeeWeekAvailability week : entry.getValue()) {
@@ -150,25 +120,10 @@ public class Validator {
                                 pf.getBeginHour() >= endHour
                         );
                     }
-
                     endHour = pf.getEndHour();
                     previous = pf;
                 }
             }
         }
-    }
-
-    private void sortJobsByBeginHour(List<PlannedFeature> jobs) {
-        Collections.sort(jobs, new Comparator<PlannedFeature>() {
-            @Override
-            public int compare(PlannedFeature o1, PlannedFeature o2) {
-                double h1 = o1.getBeginHour();
-                double h2 = o2.getBeginHour();
-
-                if (h1 < h2) return -1;
-                else if (h1 > h2) return 1;
-                else return 0;
-            }
-        });
     }
 }

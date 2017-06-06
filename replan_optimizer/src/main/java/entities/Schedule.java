@@ -31,7 +31,7 @@ public class Schedule {
         double featureHoursLeft = pf.getFeature().getDuration();
 
         // Not enough hours left for this feature in the iteration
-        //if (totalHoursLeft < featureHoursLeft) return false;
+        if (totalHoursLeft < featureHoursLeft) return false;
 
         EmployeeWeekAvailability week = getCurrentWeek();
 
@@ -149,6 +149,7 @@ public class Schedule {
     }
 
     public List<EmployeeWeekAvailability> getAllWeeks() {
+        weeks.removeIf(week -> week.getPlannedFeatures().isEmpty());
         return weeks;
     }
 
