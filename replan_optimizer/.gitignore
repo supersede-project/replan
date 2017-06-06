@@ -1,5 +1,7 @@
 .idea
 build
-out
 .gradle
-src/test/charts
+*.html
+*.js
+*.css
+package-list

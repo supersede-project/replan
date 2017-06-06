@@ -160,7 +160,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	 * @param taskToChange the planned task to modify
 	 */
 	private void changeEmployee(PlannedFeature taskToChange) {
-		List<Employee> skilledEmployees = new ArrayList<>(problem.getSkilledEmployees(taskToChange.getFeature().getRequiredSkills()));
+		List<Employee> skilledEmployees = new ArrayList<>(problem.getSkilledEmployees(taskToChange.getFeature().getRequiredSkills().get(0)));
 		skilledEmployees.remove(taskToChange.getEmployee());
 		if (skilledEmployees.size() > 0) {
 			taskToChange.setEmployee(skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size()-1)));

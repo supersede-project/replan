@@ -44,7 +44,7 @@ public enum PriorityLevel {
 	 * @param level the level of the priority
 	 * @param score the score of the priority
 	 */
-	PriorityLevel(int level, int score) {
+	private PriorityLevel(int level, int score) {
 		this.level = level;
 		this.score = score;
 	}

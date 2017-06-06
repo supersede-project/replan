@@ -1,8 +1,13 @@
 package logic;
 
-import logic.comparators.PlanningSolutionDominanceComparator;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import java.util.*;
+import logic.comparators.PlanningSolutionDominanceComparator;
 
 public class PopulationFilter {
 	
@@ -12,7 +17,7 @@ public class PopulationFilter {
 	 * @param population the population to sort
 	 */
 	private static void sortByDominance(List<PlanningSolution> population) {	
-		population.sort(new PlanningSolutionDominanceComparator());
+		Collections.sort(population, new PlanningSolutionDominanceComparator());
 	}
 	
 	/**
@@ -30,7 +35,7 @@ public class PopulationFilter {
 	/**
 	 * Returns only the bests solutions
 	 * Uses the <code>PlanningSolutionDominanceComparator</code>
-	 * @param population The population with only the best solutions
+	 * @param sortedPopulation The population with only the best solutions
 	 */
 	public static Set<PlanningSolution> getBestSolutions(List<PlanningSolution> population) {
 		Set<PlanningSolution> bestSolutions = new HashSet<PlanningSolution>();
@@ -42,8 +47,10 @@ public class PopulationFilter {
 		PlanningSolution bestSolution = getBestSolution(population);
 		
 		Comparator<PlanningSolution> comparator = new PlanningSolutionDominanceComparator();
-
-		for (PlanningSolution currentSolution : population) {
+		Iterator<PlanningSolution> iterator = population.iterator();
+		
+		while (iterator.hasNext()) {
+			PlanningSolution currentSolution = (PlanningSolution) iterator.next();
 			if (comparator.compare(currentSolution, bestSolution) == 0) {
 				bestSolutions.add(currentSolution);
 			}

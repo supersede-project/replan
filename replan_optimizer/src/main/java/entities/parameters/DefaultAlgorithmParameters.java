@@ -23,7 +23,7 @@ public class DefaultAlgorithmParameters {
 	 * @param numberOfFeatures the number of features of the problem
 	 * @return the probability of mutation
 	 */
-	public static double MUTATION_PROBABILITY(int numberOfFeatures) {
+	public final static double MUTATION_PROBABILITY(int numberOfFeatures) {
 		return 1.0/numberOfFeatures;
 	}
 }

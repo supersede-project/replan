@@ -24,7 +24,7 @@ public enum AlgorithmChoice {
 	 * The constructor of an algorithm choice
 	 * @param name the name of the choice
 	 */
-	AlgorithmChoice(String name) {
+	private AlgorithmChoice(String name) {
 		this.name = name;
 	}
 	

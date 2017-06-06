@@ -13,10 +13,6 @@ package entities;
 public class PlannedFeature {
 	
 	/* --- Attributes --- */
-	/**
-	 * A static feature will NOT be replanned.
-	 */
-	private boolean frozen;
 	
 	/**
 	 * The begin hour of the planned feature
@@ -41,14 +37,6 @@ public class PlannedFeature {
 	
 	/* --- Getters and setters --- */
 
-
-	public boolean isFrozen() {
-		return frozen;
-	}
-
-	public void setFrozen(boolean frozen) {
-		this.frozen = frozen;
-	}
 
 	/**
 	 * @return the beginHour
@@ -156,7 +144,11 @@ public class PlannedFeature {
 	
 	@Override
 	public String toString() {
-		return String.valueOf(getFeature()) + " done by " + getEmployee() +
-				" from " + getBeginHour() + " to " + getEndHour();
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append(getFeature()).append(" done by ").append(getEmployee())
+			.append(" from ").append(getBeginHour()).append(" to ").append(getEndHour());
+		
+		return sb.toString();
 	}
 }

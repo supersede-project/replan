@@ -1,10 +1,13 @@
 package io.swagger.model;
 
+import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
+import io.swagger.model.PlannedFeature;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 
 
@@ -16,17 +19,6 @@ import java.util.Objects;
 
 public class PlanningSolution   {
   private List<PlannedFeature> jobs = new ArrayList<PlannedFeature>();
-
-
-    public PlanningSolution() {}
-
-    public PlanningSolution(PlannedFeature ...features) {
-        for (PlannedFeature f : features) {
-            jobs.add(f);
-        }
-    }
-
-
 
   public PlanningSolution jobs(List<PlannedFeature> jobs) {
     this.jobs = jobs;

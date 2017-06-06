@@ -1,8 +1,10 @@
 package io.swagger.model;
 
-import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 
 
@@ -16,14 +18,6 @@ public class Priority   {
   private Integer level = null;
 
   private Integer score = null;
-
-    public Priority() {}
-
-    public Priority(Integer level, Integer score) {
-        this.level = level;
-        this.score = score;
-    }
-
 
   public Priority level(Integer level) {
     this.level = level;

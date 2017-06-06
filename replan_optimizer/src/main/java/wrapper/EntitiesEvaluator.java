@@ -28,17 +28,20 @@ public class EntitiesEvaluator {
     public NextReleaseProblem nextReleaseProblemAddSkills(int nbWeeks, Number hoursPerweek,
                                                           List<Feature> features, List<Employee> employees) {
 
-        return new NextReleaseProblem(this.featuresAddSkills(features),
+        NextReleaseProblem problem = new NextReleaseProblem(this.featuresAddSkills(features),
                                                             this.employeesAddSkills(employees),
                                                             new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+        return problem;
     }
 
     public NextReleaseProblem nextReleaseProblemDeleteSkills(int nbWeeks, Number hoursPerweek,
                                                              List<Feature> features, List<Employee> employees) {
 
-        return new NextReleaseProblem(this.featuresDeleteSkills(features),
+        NextReleaseProblem problem = new NextReleaseProblem(this.featuresDeleteSkills(features),
                                                             this.employeesDeleteSkills(employees),
                                                             new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+
+        return problem;
     }
 
     public List<Employee> employeesAddSkills(List<Employee> employees) {
@@ -91,12 +94,8 @@ public class EntitiesEvaluator {
     public Feature featureAddSkill(Feature f){
         List<Skill> skills;
 
-        try {
-            skills = f.getRequiredSkills();
-        }
-        catch (Exception e) {
-            skills = new ArrayList<>();
-        }
+        try { skills = f.getRequiredSkills(); }
+        catch (Exception e) { skills = new ArrayList<>(); }
 
         skills.add(new Skill("null"));
 
@@ -114,7 +113,8 @@ public class EntitiesEvaluator {
         List<Skill> skills = f.getRequiredSkills();
         skills.remove(new Skill("null"));
 
-        return new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills);
+        Feature feature = new Feature(f.getName(),f.getPriority(),f.getDuration(),f.getPreviousFeatures(),skills);
+        return feature;
     }
 
     private List<PlannedFeature> plannedFeaturesDeleteSkills(List<PlannedFeature> features) {
@@ -139,12 +139,13 @@ public class EntitiesEvaluator {
 
         List<PlannedFeature> plannedFeatures = this.plannedFeaturesDeleteSkills(solution.getPlannedFeatures());
 
-        // commented because this is just output to console.
-        //for(PlannedFeature plannedFeature: plannedFeatures) {
-        //    System.out.print("FEATURES" + plannedFeature.getBeginHour() + "  " + plannedFeature.getEndHour());
-        //}
+        for(PlannedFeature plannedFeature: plannedFeatures) {
+            System.out.print("FEATURES" + plannedFeature.getBeginHour() + "  " + plannedFeature.getEndHour());
+        }
 
-        return new PlanningSolutionWrapper(solution,plannedFeatures);
+        PlanningSolutionWrapper psw = new PlanningSolutionWrapper(solution,plannedFeatures);
+
+        return psw;
     }
 
 

@@ -76,7 +76,7 @@ public class EmployeeWeekAvailability {
 	}
 
 	/**
-	 * @param plannedFeature the plannedFeature to set
+	 * @param plannedFeatures the plannedFeatures to set
 	 */
 	public void addPlannedFeature(PlannedFeature plannedFeature) {
 		this.plannedFeatures.add(plannedFeature);
