@@ -1,5 +1,7 @@
 package entities;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Describes a feature in a planning
  * Contains 
@@ -17,12 +19,12 @@ public class PlannedFeature {
 	 * A frozen feature will NOT be replanned.
 	 */
 	private boolean frozen;
-	
+
 	/**
 	 * The begin hour of the planned feature
 	 */
 	private double beginHour;
-	
+
 	/**
 	 * The employee who will do the feature
 	 */
@@ -41,6 +43,7 @@ public class PlannedFeature {
 	
 	/* --- Getters and setters --- */
 
+	@ApiModelProperty(value = "")
 	public boolean isFrozen() {
 		return frozen;
 	}
@@ -49,59 +52,38 @@ public class PlannedFeature {
 		this.frozen = frozen;
 	}
 
-
-	/**
-	 * @return the beginHour
-	 */
+	@ApiModelProperty(value = "")
 	public double getBeginHour() {
 		return beginHour;
 	}
 
-	/**
-	 * @param beginHour the beginHour to set
-	 */
 	public void setBeginHour(double beginHour) {
 		this.beginHour = beginHour;
 	}
 
-	/**
-	 * @return the employee
-	 */
+	@ApiModelProperty(value = "")
 	public Employee getEmployee() {
 		return employee;
 	}
 
-	/**
-	 * @param employee the employee to set
-	 */
 	public void setEmployee(Employee employee) {
 		this.employee = employee;
 	}
 
-	/**
-	 * @return the endHour
-	 */
+	@ApiModelProperty(value = "")
 	public double getEndHour() {
 		return endHour;
 	}
 
-	/**
-	 * @param endHour the endHour to set
-	 */
 	public void setEndHour(double endHour) {
 		this.endHour = endHour;
 	}
 
-	/**
-	 * @return the feature
-	 */
+	@ApiModelProperty(value = "")
 	public Feature getFeature() {
 		return feature;
 	}
 
-	/**
-	 * @param feature the feature to set
-	 */
 	public void setFeature(Feature feature) {
 		this.feature = feature;
 	}

@@ -1,5 +1,7 @@
 package entities;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * A skill to execute a task
  * Posseed by employees
@@ -9,29 +11,20 @@ package entities;
 public class Skill {
 	
 	/* --- Atributes --- */
-	
-	/**
-	 * The name of the Skill
-	 */
+
 	private String name;
 	
 	
 	/* --- Getters and setters --- */
-	
-	/**
-	 * @return the name of the skill
-	 */
+
+	@ApiModelProperty(value = "")
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * Set the name of the skill
-	 * @param name the new name of the skill, can't be null
-	 */
 	public void setName(String name) {
 		if (name == null) {
-			throw new NullPointerException();
+			throw new NullPointerException();	// what
 		}
 		this.name = name;
 	}

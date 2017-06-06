@@ -1,8 +1,9 @@
 package io.swagger.api;
 
-import io.swagger.model.*;
 
 import io.swagger.annotations.*;
+import logic.NextReleaseProblem;
+import logic.PlanningSolution;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

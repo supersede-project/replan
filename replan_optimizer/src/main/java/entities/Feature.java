@@ -1,5 +1,7 @@
 package entities;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,34 +13,15 @@ import java.util.List;
 public class Feature {
 
 	/* --- Atributes --- */
-	
-	/**
-	 * The name of the feature
-	 */
+
 	private String name;
-	
-	/**
-	 * The priority of the feature
-	 */
+
 	private PriorityLevel priority;
-	
-	/**
-	 * The duration of the feature in hours
-	 */
+
 	private double duration;
 
-	public void setDuration(Double d) {
-		duration = d;
-	}
-	
-	/**
-	 * The features which needed to be executed before
-	 */
 	private List<Feature> previousFeatures;
-	
-	/**
-	 * The skills required to do the feature
-	 */
+
 	private List<Skill> requiredSkills;
 
 	private Report report;
@@ -51,37 +34,32 @@ public class Feature {
 	public void setReport(Report report) { this.report = report; }
 
 
-	/**
-	 * @return the name of the feature
-	 */
+
+	@ApiModelProperty(value = "")
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @return the priority of the feature
-	 */
+    @ApiModelProperty(value = "")
 	public PriorityLevel getPriority() {
 		return priority;
 	}
 
-	/**
-	 * @return the duration of the feature
-	 */
+    @ApiModelProperty(value = "")
 	public double getDuration() {
 		return duration;
 	}
 
-	/**
-	 * @return the previous features needed to be finished
-	 */
+    public void setDuration(Double d) {
+        duration = d;
+    }
+
+    @ApiModelProperty(value = "array of features")
 	public List<Feature> getPreviousFeatures() {
 		return previousFeatures;
 	}
-	
-	/**
-	 * @return the requiredSkills
-	 */
+
+    @ApiModelProperty(value = "")
 	public List<Skill> getRequiredSkills() {
 		return requiredSkills;
 	}
@@ -89,8 +67,9 @@ public class Feature {
     /**
      *
      * @param f a feature
-     * @return a boolean indicating wether this feature depends on f
+     * @return a boolean indicating whether this feature depends on f
      */
+
     public boolean dependsOn(Feature f) {
         return previousFeatures.contains(f);
     }

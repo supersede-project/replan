@@ -3,6 +3,8 @@
  */
 package entities;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * Priority Level of a feature
  * @author Vavou
@@ -25,19 +27,21 @@ public enum PriorityLevel {
 	 */
 	private int score;
 	
-	/**
-	 * @return the level
-	 */
+
+	/* --- GETTERS / SETTERS --- */
+	@ApiModelProperty(value = "")
 	public int getLevel() {
 		return level;
 	}
 
-	/**
-	 * @return the score
-	 */
+	@ApiModelProperty(value = "")
 	public int getScore() {
 		return score;
 	}
+
+
+
+	/* --- CONSTRUCTORS --- */
 
 	/**
 	 * Constructor

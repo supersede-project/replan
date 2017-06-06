@@ -3,15 +3,13 @@ package io.swagger.api;
 
 import entities.Feature;
 import io.swagger.annotations.ApiParam;
-import io.swagger.model.NextReleaseProblem;
-import io.swagger.model.PlanningSolution;
+import logic.NextReleaseProblem;
+import logic.PlanningSolution;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import wrapper.SolverNRP;
-import wrapper.parser.Transform2NRPEntities;
-import wrapper.parser.Transform2SwaggerModel;
 
 import java.util.List;
 
@@ -29,15 +27,10 @@ public class ReplanApiController implements ReplanApi {
 ) {
         SolverNRP solver = new SolverNRP();
 
-        Transform2NRPEntities te = new Transform2NRPEntities();
-        Transform2SwaggerModel ts = new Transform2SwaggerModel();
-
-
-        List<Feature> features = te.FeatureList2Entities(body.getFeatures());
+        List<Feature> features = body.getFeatures();
 
         logic.PlanningSolution solution =
-                solver.executeNRP(body.getNbWeeks(),
-                        body.getHoursPerWeek(), features, te.ListResource2Employee(body.getResources()));
+                solver.executeNRP(body.getNbWeeks(), body.getNbHoursByWeek(), features, body.getEmployees());
 
         /* Let's ignore previous plan for now
 
@@ -59,9 +52,7 @@ public class ReplanApiController implements ReplanApi {
         }
         */
 
-        PlanningSolution s = ts.transformPlanningSolution2Swagger(solution);
-
-        return new ResponseEntity<PlanningSolution>(s,HttpStatus.OK);
+        return new ResponseEntity<PlanningSolution>(solution, HttpStatus.OK);
     }
 
 }

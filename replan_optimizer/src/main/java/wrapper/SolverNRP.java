@@ -3,6 +3,7 @@ package wrapper;
 import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
+import entities.parameters.IterationParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.PopulationFilter;
@@ -108,24 +109,24 @@ public class SolverNRP {
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
-        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
-
-        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, features, employees);
+        NextReleaseProblem problem =
+                new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
         clearSolutionIfNotValid(solution);
 
-        return ee.planningSolution(solution);
+        return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
     }
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
                                        List<Employee> employees, PlanningSolution previousSolution) {
-        EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
 
 
 
-        NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(nbWeeks, hoursPerweek, features, employees);
+
+        NextReleaseProblem problem =
+                new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
 
         problem.setPreviousSolution(previousSolution);
 
@@ -135,7 +136,7 @@ public class SolverNRP {
 
         clearSolutionIfNotValid(solution);
 
-        return ee.planningSolution(solution);
+        return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
     }
 
     /*

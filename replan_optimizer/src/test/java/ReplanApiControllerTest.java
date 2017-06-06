@@ -1,6 +1,10 @@
+import entities.Employee;
+import entities.Feature;
+import entities.Skill;
+import entities.parameters.IterationParameters;
 import io.swagger.api.ReplanApiController;
-import io.swagger.model.*;
-import org.junit.Assert;
+import logic.NextReleaseProblem;
+import logic.PlanningSolution;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -12,51 +16,53 @@ import java.util.List;
  */
 public class ReplanApiControllerTest {
     private static ReplanApiController apiController;
-    private static RandomSwaggerThings random;
-    private static SwaggerValidator validator;
+    private static RandomThings random;
+    private static Validator validator;
 
     @BeforeClass
     public static void setUpBeforeClass() {
         apiController = new ReplanApiController();
-        random = new RandomSwaggerThings();
-        validator = new SwaggerValidator();
+        random = new RandomThings();
+        validator = new Validator();
     }
 
-    // TODO: Check why this test does not pass.
-    // Because we no longer accept a previous plan
+
     //@Test
-    public void frozenJobsAreNotReplaned() {
+    public void frozenJobsAreNotReplanned() {
         List<Skill> skills = random.skillList(7);
         List<Feature> features = random.featureList(5);
-        List<Resource> resources = random.resourceList(15);
+        List<Employee> resources = random.employeeList(15);
 
         random.mix(features, skills, resources);
 
-        NextReleaseProblem problem = new NextReleaseProblem(4, 50.0, features, resources);
+
+
+        NextReleaseProblem problem =
+                new NextReleaseProblem(features, resources, new IterationParameters(4, 40.0));
+
         PlanningSolution s1 = apiController.replan(problem).getBody();
+
+        validator.validateAll(s1);
 
         random.freeze(s1);
 
         //problem.setPreviousPlan(s1);
         PlanningSolution s2 = apiController.replan(problem).getBody();
 
-
-        for (PlannedFeature pf : s1.getJobs()) {
-            if (pf.isFrozen()) {
-                Assert.assertTrue(s2.getJobs().contains(pf));
-            }
-        }
+        validator.validateFrozen(s1, s2);
     }
 
     @Test
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(5);
-        List<Resource> resources = random.resourceList(10);
+        List<Employee> resources = random.employeeList(10);
 
         random.mix(features, skills, resources);
 
-        NextReleaseProblem problem = new NextReleaseProblem(4, 50.0, features, resources);
+        NextReleaseProblem problem =
+                new NextReleaseProblem(features, resources, new IterationParameters(4, 40.0));
+
         PlanningSolution solution = apiController.replan(problem).getBody();
 
         validator.validateAll(solution);

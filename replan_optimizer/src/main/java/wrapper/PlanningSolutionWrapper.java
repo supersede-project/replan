@@ -5,8 +5,10 @@ import logic.PlanningSolution;
 
 import java.util.List;
 
+/**
+ * This is what SolverNRP returns
+ */
 public class PlanningSolutionWrapper extends PlanningSolution {
-
 
     public PlanningSolutionWrapper(PlanningSolution origin, List<PlannedFeature> listPlannedFeature) {
         super(origin);

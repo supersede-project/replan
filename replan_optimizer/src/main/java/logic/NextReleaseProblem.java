@@ -5,12 +5,16 @@ package logic;
 
 import entities.*;
 import entities.parameters.IterationParameters;
+import io.swagger.annotations.ApiModelProperty;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 // Objectives: 0: Doing the high score in priority; 1: The shortest endDate
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
@@ -43,15 +47,18 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public void setPreviousSolution(PlanningSolution previousSolution) {
 		this.previousSolution = previousSolution;
 	}
+    @ApiModelProperty(value = "")
 	public List<Feature> getFeatures() {
 		return features;
 	}
 	public void setFeatures(List<Feature> features) {
 		this.features = features;
 	}
+    @ApiModelProperty(value = "")
 	public int getNbWeeks() {
 		return nbWeeks;
 	}
+    @ApiModelProperty(value = "")
 	public double getNbHoursByWeek() {
 		return nbHoursByWeek;
 	}
@@ -68,6 +75,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				skilledEmployees.add(employee);
 		return skilledEmployees;
 	}
+    @ApiModelProperty(value = "")
 	public List<Employee> getEmployees() {
 		return employees;
 	}
