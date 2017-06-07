@@ -10,46 +10,35 @@ class ValentinPlanner
     uri_P = "http://localhost:8280/replan_optimizer/replan"
     uri_D = "http://62.14.219.13:8280/replan_optimizer/replan"
     
+    uris = [uri_P, uri_D]
+    
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer with payload = #{payload}\n"
     numFeatures = release.features.count
     numJobs = 0
-    it = 0
-    ttime = 0
     response = "";
     sol = Array.new
-    until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
-      time = Benchmark.realtime do
-        response = RestClient.post uri_P, payload,  {content_type: :json, accept: :json}
+    ftime = 0
+    uris.each do |uri|
+      ttime = 0
+      it = 0
+      until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
+        time = Benchmark.realtime do
+          response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+        end
+        jobArray = JSON.parse(response.body)["jobs"]
+        jobCount = jobArray.count
+        puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
+        if numJobs < jobCount
+          sol = jobArray
+          numJobs = jobCount
+        end
+        it += 1
+        ttime += time
       end
-      jobArray = JSON.parse(response.body)["jobs"]
-      jobCount = jobArray.count
-      puts "#{it+1}# prod_iteration -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
-      if numJobs < jobCount
-        sol = jobArray
-        numJobs = jobCount
-      end
-      it += 1
-      ttime += time
+      ftime += ttime
     end
-    it = 0
-    ttime2 = 0
-    until it == MAX_ITERATIONS || ttime2 > MAX_TIME || numJobs == numFeatures
-      time = Benchmark.realtime do
-        response = RestClient.post uri_D, payload,  {content_type: :json, accept: :json}
-      end
-      jobArray = JSON.parse(response.body)["jobs"]
-      jobCount = jobArray.count
-      puts "#{it+1}# dev_iteration -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
-      if numJobs < jobCount
-        sol = jobArray
-        numJobs = jobCount
-      end
-      it += 1
-      ttime2 += time
-    end
-    ttime += ttime2
-    puts "FINAL -> Num jobs/Num features: #{numJobs}/#{numFeatures} in #{ttime} seconds"
+    puts "FINAL -> Num jobs/Num features: #{numJobs}/#{numFeatures} in #{ftime} seconds"
     self.build_plan(release, sol)
   end
   
