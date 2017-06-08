@@ -7,7 +7,6 @@ import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Convenience data class for receiving data from the API call.
@@ -20,14 +19,17 @@ public class ApiNextReleaseProblem {
 
     private Double hoursPerWeek = null;
 
-    private List<Feature> features = new ArrayList<Feature>();
+    private List<Feature> features = new ArrayList<>();
 
-    private List<Employee> resources = new ArrayList<Employee>();
+    private List<Employee> resources = new ArrayList<>();
 
 
     /* --- CONSTRUCTORS --- */
 
-    public ApiNextReleaseProblem() {}
+    public ApiNextReleaseProblem() {
+        features = new ArrayList<>();
+        resources = new ArrayList<>();
+    }
 
     public ApiNextReleaseProblem(Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Employee> resources) {
         this.nbWeeks = nbWeeks;
@@ -62,11 +64,6 @@ public class ApiNextReleaseProblem {
     @ApiModelProperty(value = "")
     public Integer getNbWeeks() { return nbWeeks; }
 
-    public ApiNextReleaseProblem nbWeeks(Integer nbWeeks) {
-        this.nbWeeks = nbWeeks;
-        return this;
-    }
-
     public void setNbWeeks(Integer nbWeeks) { this.nbWeeks = nbWeeks; }
 
     public ApiNextReleaseProblem hoursPerWeek(Double hoursPerWeek) {
@@ -79,11 +76,6 @@ public class ApiNextReleaseProblem {
 
     public void setHoursPerWeek(Double hoursPerWeek) { this.hoursPerWeek = hoursPerWeek; }
 
-    public ApiNextReleaseProblem features(List<Feature> features) {
-        this.features = features;
-        return this;
-    }
-
     public ApiNextReleaseProblem addFeaturesItem(Feature featuresItem) {
         this.features.add(featuresItem);
         return this;
@@ -94,11 +86,6 @@ public class ApiNextReleaseProblem {
     public List<Feature> getFeatures() { return features; }
 
     public void setFeatures(List<Feature> features) { this.features = features; }
-
-    public ApiNextReleaseProblem resources(List<Employee> resources) {
-        this.resources = resources;
-        return this;
-    }
 
     public ApiNextReleaseProblem addResourcesItem(Employee resourcesItem) {
         this.resources.add(resourcesItem);
@@ -114,7 +101,7 @@ public class ApiNextReleaseProblem {
 
 
     /* ----------------- */
-
+/*
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -147,15 +134,15 @@ public class ApiNextReleaseProblem {
         sb.append("}");
         return sb.toString();
     }
-
+*/
     /**
      * Convert the given object to string with each line indented by 4 spaces
      * (except the first line).
      */
-    private String toIndentedString(java.lang.Object o) {
+  /*  private String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
         }
         return o.toString().replace("\n", "\n    ");
-    }
+    }*/
 }

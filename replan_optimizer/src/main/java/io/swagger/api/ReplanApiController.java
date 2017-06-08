@@ -1,17 +1,19 @@
 package io.swagger.api;
 
 
-import entities.Feature;
-import io.swagger.annotations.ApiParam;
+import com.google.gson.*;
+import entities.PriorityLevel;
 import io.swagger.model.ApiNextReleaseProblem;
+import io.swagger.model.ApiPlanningSolution;
 import logic.PlanningSolution;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import wrapper.SolverNRP;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.lang.reflect.Type;
 
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
@@ -19,18 +21,40 @@ import java.util.List;
 @Controller
 public class ReplanApiController implements ReplanApi {
 
-    public ResponseEntity<PlanningSolution> replan(
+    public ResponseEntity<ApiPlanningSolution> replan(
 
-@ApiParam(value = "" ,required=true )
-@RequestBody ApiNextReleaseProblem body
+ HttpServletRequest request
 
 ) {
         SolverNRP solver = new SolverNRP();
 
-        List<Feature> features = body.getFeatures();
+        StringBuffer jb = new StringBuffer();
+        String line = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null)
+                jb.append(line);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<ApiPlanningSolution>(new ApiPlanningSolution(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
-        logic.PlanningSolution solution =
-                solver.executeNRP(body.getNbWeeks(), body.getHoursPerWeek(), features, body.getResources());
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(PriorityLevel.class, new JsonDeserializer<PriorityLevel>() {
+            @Override
+            public PriorityLevel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                int level = json.getAsJsonObject().get("level").getAsInt();
+                return PriorityLevel.fromValues(level, level);
+            }
+        });
+        Gson gson = gsonBuilder.create();
+
+        ApiNextReleaseProblem problem = gson.fromJson(jb.toString(), ApiNextReleaseProblem.class);
+
+        PlanningSolution solution =
+                solver.executeNRP(problem.getNbWeeks(), problem.getHoursPerWeek(), problem.getFeatures(), problem.getResources());
+
+        ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution.getPlannedFeatures());
 
         /* Let's ignore previous plan for now
 
@@ -52,7 +76,7 @@ public class ReplanApiController implements ReplanApi {
         }
         */
 
-        return new ResponseEntity<PlanningSolution>(solution, HttpStatus.OK);
+        return new ResponseEntity<ApiPlanningSolution>(apiSolution, HttpStatus.OK);
     }
 
 }

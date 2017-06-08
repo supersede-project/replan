@@ -21,12 +21,12 @@ public class Feature {
 
 	private double duration;
 
-	private List<Feature> previousFeatures;
+	private List<Skill> requiredSkills = new ArrayList<Skill>();;
 
-	private List<Skill> requiredSkills;
+	private List<Feature> previousFeatures = new ArrayList<Feature>();;
 
 	@JsonIgnore
-	private Report report;
+	private transient Report report;
 
 	
 	/* --- Getters and setters --- */
@@ -61,7 +61,7 @@ public class Feature {
 		return previousFeatures;
 	}
 
-    @ApiModelProperty(value = "")
+    @ApiModelProperty(value = "array of skills")
 	public List<Skill> getRequiredSkills() {
 		return requiredSkills;
 	}
@@ -91,6 +91,10 @@ public class Feature {
 	
 	
 	/* --- Constructors --- */
+
+    public Feature() {
+        report = new Report();
+    }
 	
 	/**
 	 * Construct a feature
@@ -104,8 +108,8 @@ public class Feature {
 		this.name = name;
 		this.priority = priority;
 		this.duration = duration;
-		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
-		this.requiredSkills = requiredSkills == null ? new ArrayList<Skill>() : requiredSkills;
+		this.previousFeatures = previousFeatures == null ? new ArrayList<>() : previousFeatures;
+		this.requiredSkills = requiredSkills == null ? new ArrayList<>() : requiredSkills;
 		report = new Report();
 	}
 

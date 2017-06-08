@@ -3,6 +3,8 @@
  */
 package entities;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -34,14 +36,22 @@ public enum PriorityLevel {
 		return level;
 	}
 
+	public void setLevet(int level) { this.level = level; }
+
 	@ApiModelProperty(value = "")
 	public int getScore() {
 		return score;
 	}
 
+	public void setScore(int score) { this.score = score; }
 
 
 	/* --- CONSTRUCTORS --- */
+
+	/**
+	 * Empty constructor for the API
+	 */
+	PriorityLevel() {}
 
 	/**
 	 * Constructor
@@ -71,5 +81,12 @@ public enum PriorityLevel {
 			default:
 				return PriorityLevel.FIVE;
 		}
+	}
+
+	@JsonCreator
+	public static PriorityLevel fromValues(
+            @JsonProperty("level") int level,
+            @JsonProperty("score") int score) {
+		return getPriorityByLevel(level);
 	}
 }

@@ -56,6 +56,10 @@ public class Employee {
 	
 	
 	/* --- Constructor --- */
+
+    public Employee() {
+        skills = new ArrayList<>();
+    }
 	
 	/**
 	 * Constructs a new employee

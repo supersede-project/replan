@@ -23,14 +23,21 @@ public class Skill {
 	}
 
 	public void setName(String name) {
-		if (name == null) {
-			throw new NullPointerException();	// what
-		}
 		this.name = name;
+	}
+
+	public Skill name(String name) {
+		this.name = name;
+		return this;
 	}
 	
 	
 	/* --- Constructors --- */
+
+	/**
+	 * Empty constructor for the API
+	 */
+	public Skill() {}
 
 	/**
 	 * Constructs a skill

@@ -56,6 +56,9 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		this.employeesPlanning = employeesPlanning;
 	}
 
+
+	/* --- CONSTRUCTORS --- */
+
     // constructor (normal)
 	public PlanningSolution(NextReleaseProblem problem) {
 		super(problem);

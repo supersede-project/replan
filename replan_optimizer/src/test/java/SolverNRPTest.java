@@ -183,12 +183,12 @@ public class SolverNRPTest {
     @Test
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(300);
+        List<Feature> features = random.featureList(10);
         List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(500, 40.0, features, employees);
+        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
 
         validator.validateAll(solution);
 

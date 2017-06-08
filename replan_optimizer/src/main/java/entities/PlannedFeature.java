@@ -91,6 +91,8 @@ public class PlannedFeature {
 	
 	/* --- Constructors --- */
 
+    public PlannedFeature() {}
+
 	/**
 	 * Construct a planned feature
 	 * @param feature the feature to plan
