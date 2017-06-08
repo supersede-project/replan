@@ -299,10 +299,12 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			    	},
 			      	buttonclick: function (row) {
 			      		
-			      		if($scope.planJqxgrid.jobs[row].my_scheduled){
+			      		//if($scope.planJqxgrid.jobs[row].my_scheduled){
+			      		
 			      			//update grid
 			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.planJqxgrid.jobs[row].id);
-							//add feature id to remove
+							
+			      			//add feature id to remove
 			      			$scope.featuresTORemove.push($scope.planJqxgrid.jobs[row].feature.id);
 			      			
 			      			//remove from scope
@@ -313,8 +315,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 							$scope.draw();
 							
 							//refresh the table
-							//$("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
-					 	}
+							$("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
+							
+					 	//}
 			      		
 		            }
 				},
