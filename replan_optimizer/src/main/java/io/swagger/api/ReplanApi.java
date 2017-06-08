@@ -25,10 +25,7 @@ public interface ReplanApi {
     @RequestMapping(value = "/replan",
         produces = { "application/json" }, 
         method = RequestMethod.POST)
-    ResponseEntity<ApiPlanningSolution> replan(
 
-HttpServletRequest request
-
-);
+    ResponseEntity<ApiPlanningSolution> replan(HttpServletRequest request);
 
 }

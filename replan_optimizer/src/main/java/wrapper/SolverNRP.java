@@ -42,6 +42,7 @@ public class SolverNRP {
             return name;
         }
     }
+
     private Algorithm<List<PlanningSolution>> algorithm;
     private AlgorithmType algorithmType;
 
@@ -101,11 +102,12 @@ public class SolverNRP {
         }
     }
 
-    /* ---------------------------- */
     public AlgorithmType getAlgorithmType() {
         return algorithmType;
     }
-    /* ---------------------------- */
+
+
+
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
@@ -121,9 +123,6 @@ public class SolverNRP {
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
                                        List<Employee> employees, PlanningSolution previousSolution) {
-
-
-
 
         NextReleaseProblem problem =
                 new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
@@ -144,7 +143,7 @@ public class SolverNRP {
         In that case, the planning is invalid and should be cleared.
     */
     private void clearSolutionIfNotValid(PlanningSolution solution) {
-        NumberOfViolatedConstraints<logic.PlanningSolution> numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
+        NumberOfViolatedConstraints<PlanningSolution> numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
         // TODO: We should know the reason of the violation.
         if (numberOfViolatedConstraints.getAttribute(solution) > 0) {
             solution.getEmployeesPlanning().clear();
@@ -164,7 +163,4 @@ public class SolverNRP {
 
         return bestSolutions.iterator().next();
     }
-
-
-
 }

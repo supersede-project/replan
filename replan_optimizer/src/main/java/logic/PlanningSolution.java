@@ -3,7 +3,6 @@ package logic;
 
 import entities.*;
 import entities.parameters.DefaultAlgorithmParameters;
-import io.swagger.annotations.ApiModelProperty;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -34,7 +33,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public int getNumberOfPlannedFeatures() {
 		return plannedFeatures.size();
 	}
-	@ApiModelProperty(value = "")
 	public List<PlannedFeature> getPlannedFeatures() {
 		return new ArrayList<>(plannedFeatures);
 	}
@@ -294,8 +292,10 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
 	@Override
 	public String getVariableValueString(int index) {
-		return getVariableValueString(index).toString();
+		//return getVariableValueString(index).toString();	// This recurses infinitely
+		return getVariableValue(index).toString();	// I guess this is what you want
 	}
+
 
 	@Override
 	public Solution<PlannedFeature> copy() {

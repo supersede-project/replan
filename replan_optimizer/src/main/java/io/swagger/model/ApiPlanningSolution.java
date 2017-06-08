@@ -12,7 +12,6 @@ public class ApiPlanningSolution {
 
     private List<PlannedFeature> plannedFeatures;
 
-    private int numberOfFeatures;
 
 
     /* --- CONSTRUCTORS --- */
@@ -22,7 +21,6 @@ public class ApiPlanningSolution {
 
     public ApiPlanningSolution(List<PlannedFeature> plannedFeatures) {
         this.plannedFeatures = plannedFeatures;
-        this.numberOfFeatures = plannedFeatures.size();
     }
 
 
@@ -35,13 +33,5 @@ public class ApiPlanningSolution {
 
     public void setPlannedFeatures(List<PlannedFeature> plannedFeatures) {
         this.plannedFeatures = plannedFeatures;
-    }
-
-    public int getNumberOfFeatures() {
-        return numberOfFeatures;
-    }
-
-    public void setNumberOfFeatures(int numberOfFeatures) {
-        this.numberOfFeatures = numberOfFeatures;
     }
 }

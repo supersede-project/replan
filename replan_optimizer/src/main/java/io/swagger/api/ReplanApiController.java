@@ -28,6 +28,7 @@ public class ReplanApiController implements ReplanApi {
 ) {
         SolverNRP solver = new SolverNRP();
 
+        // Get request's body
         StringBuffer jb = new StringBuffer();
         String line = null;
         try {
@@ -39,6 +40,7 @@ public class ReplanApiController implements ReplanApi {
             return new ResponseEntity<ApiPlanningSolution>(new ApiPlanningSolution(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        // Parse JSON, with custom deserializer for PriorityLevel
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(PriorityLevel.class, new JsonDeserializer<PriorityLevel>() {
             @Override
@@ -51,6 +53,7 @@ public class ReplanApiController implements ReplanApi {
 
         ApiNextReleaseProblem problem = gson.fromJson(jb.toString(), ApiNextReleaseProblem.class);
 
+        // Execute
         PlanningSolution solution =
                 solver.executeNRP(problem.getNbWeeks(), problem.getHoursPerWeek(), problem.getFeatures(), problem.getResources());
 

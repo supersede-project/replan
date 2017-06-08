@@ -5,7 +5,6 @@ package logic;
 
 import entities.*;
 import entities.parameters.IterationParameters;
-import io.swagger.annotations.ApiModelProperty;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -47,18 +46,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public void setPreviousSolution(PlanningSolution previousSolution) {
 		this.previousSolution = previousSolution;
 	}
-    @ApiModelProperty(value = "")
 	public List<Feature> getFeatures() {
 		return features;
 	}
 	public void setFeatures(List<Feature> features) {
 		this.features = features;
 	}
-    @ApiModelProperty(value = "")
 	public int getNbWeeks() {
 		return nbWeeks;
 	}
-    @ApiModelProperty(value = "")
 	public double getNbHoursByWeek() {
 		return nbHoursByWeek;
 	}
@@ -75,7 +71,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				skilledEmployees.add(employee);
 		return skilledEmployees;
 	}
-    @ApiModelProperty(value = "")
 	public List<Employee> getEmployees() {
 		return employees;
 	}
@@ -89,7 +84,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		setNumberOfVariables(1);
 		setNumberOfObjectives(2);
 		features = new ArrayList<>();
-		numberOfViolatedConstraints = new NumberOfViolatedConstraints<PlanningSolution>();
+		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
 		solutionQuality = new SolutionQuality();
 	}
@@ -157,18 +152,17 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			evaluateOld(solution);
 	}
 
-	/*
-	public void evaluate(PlanningSolution solution) {
-	    Map<Employee, List<EmployeeWeekAvailability>> s1 = evaluateOld(solution);
-	    Map<Employee, List<EmployeeWeekAvailability>> s2 = evaluate2(solution);
 
+	public double similarity(PlanningSolution s1, PlanningSolution s2) {
+	    Map<Employee, List<EmployeeWeekAvailability>> planning1 = s1.getEmployeesPlanning();
+	    Map<Employee, List<EmployeeWeekAvailability>> planning2 = s2.getEmployeesPlanning();
 
 	    double count = 0.0;
         double coincidences = 0.0;
-	    for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : s1.entrySet()) {
+	    for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : planning1.entrySet()) {
 	        Employee e = entry.getKey();
 	        List<EmployeeWeekAvailability> weeksS1 = entry.getValue();
-	        List<EmployeeWeekAvailability> weeksS2 = s2.get(e);
+	        List<EmployeeWeekAvailability> weeksS2 = planning2.get(e);
 
 	        for (int i = 0; i < weeksS1.size(); ++i) {
 	            for (PlannedFeature pf : weeksS1.get(i).getPlannedFeatures()) {
@@ -181,10 +175,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             }
         }
 
-        double similarity = coincidences/count;
+        return coincidences/count;
 
     }
-    */
 
 
 	// TODO: read
@@ -302,7 +295,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		solution.resetHours();
 
-		/* Both of these seem to perform pretty well */
+		/* Both of these seem to perform well */
 		computeHours(solution);
         //computeHoursRecursive(solution);
 
@@ -312,7 +305,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             //computeHours(solution, currentPlannedFeature);
 
             // Seems to cause overlaps if called from here
-            computeHoursRecursive(solution, currentPlannedFeature);
+            //computeHoursRecursive(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 
@@ -412,7 +405,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
-		    // Use this loop to clear the previous reports
+		    // Take advantage of this loop to clear the previous reports
             currentFeature.getFeature().getReport().clear();
 
 			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
