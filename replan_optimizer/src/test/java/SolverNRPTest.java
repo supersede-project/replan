@@ -1,5 +1,6 @@
 import entities.Employee;
 import entities.Feature;
+import entities.PlannedFeature;
 import entities.Skill;
 import logic.PlanningSolution;
 import org.junit.Assert;
@@ -45,6 +46,25 @@ public class SolverNRPTest {
         for (Feature f : features) {
             if (f.getRequiredSkills().contains(nil))
                 f.getRequiredSkills().remove(nil);
+        }
+    }
+
+    private void solutionToDataFile(PlanningSolution solution) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+
+        String base = "src/test/data";
+        String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
+                dateFormat.format(Calendar.getInstance().getTime()));
+        String fullPath = String.format("%s/%s.txt", base, filename);
+
+        File f = new File(fullPath);
+        f.getParentFile().mkdirs();
+
+
+        try {
+            Files.write(f.toPath(), solution.toR().getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -99,7 +119,7 @@ public class SolverNRPTest {
         validator.validateDependencies(solution);
     }
 
-    //@Test Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
+    @Test // Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
     public void featureDependingOnItselfIsNotPlanned() {
         Skill s1 = random.skill();
         Feature f1 = random.feature();
@@ -115,8 +135,7 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
-
-    //@Test Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
+    @Test // Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
     public void featuresCausingDependencyDeadlockAreNotPlanned() {
         Skill s1 = random.skill();
         List<Feature> features = random.featureList(2);
@@ -183,7 +202,7 @@ public class SolverNRPTest {
     @Test
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(10);
+        List<Feature> features = random.featureList(20);
         List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
@@ -195,7 +214,7 @@ public class SolverNRPTest {
         solutionToDataFile(solution);
     }
 
-    @Test
+    //@Test
     public void manyRandomProblemsToSeeIfICatchAnOverlappingErrorBecauseItDoesntSeemToHappen() {
         for (int i = 0; i < 100; ++i) {
             List<Skill> skills = random.skillList(7);
@@ -222,7 +241,7 @@ public class SolverNRPTest {
 
         PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
 
-        //random.freeze(s1);
+        random.freeze(s1);
         removeNullSkillsFromFeatures(features);
         removeNullSkillsFromEmployees(employees);
 
@@ -241,7 +260,10 @@ public class SolverNRPTest {
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
 
-        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+        List<PlannedFeature> jobs = solution.getPlannedFeatures();
+        PlannedFeature pf = jobs.get(0);
+
+        Assert.assertTrue(jobs.size() == 1 && pf.getFeature().equals(f) && pf.getEmployee().equals(e));
     }
 
     @Test
@@ -250,7 +272,10 @@ public class SolverNRPTest {
         Employee e = random.employee();
         PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
 
-        Assert.assertTrue(solution.getPlannedFeatures().size() == 1);
+        List<PlannedFeature> jobs = solution.getPlannedFeatures();
+        PlannedFeature pf = jobs.get(0);
+
+        Assert.assertTrue(jobs.size() == 1 && pf.getFeature().equals(f) && pf.getEmployee().equals(e));
     }
 
     @Test
@@ -393,22 +418,24 @@ public class SolverNRPTest {
         validator.validateNoOverlappedJobs(solution);
     }
 
-    private void solutionToDataFile(PlanningSolution solution) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HHmmss");
+    @Test
+    public void endHourMinusBeginHourEqualsDuration() {
+        List<Skill> skills = random.skillList(6);
+        List<Feature> features = random.featureList(14);
+        List<Employee> employees = random.employeeList(4);
 
-        String base = "src/test/data";
-        String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
-                dateFormat.format(Calendar.getInstance().getTime()));
-        String fullPath = String.format("%s/%s.txt", base, filename);
+        random.mix(features, skills, employees);
 
-        File f = new File(fullPath);
-        f.getParentFile().mkdirs();
+        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
 
+        validator.validateAll(solution);
 
-        try {
-            Files.write(f.toPath(), solution.toR().getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        for (PlannedFeature pf : solution.getPlannedFeatures())
+            Assert.assertTrue(
+                    "endHour - beginHour != feature.duration for plannedFeature " + pf.toString(),
+                    pf.getEndHour() - pf.getBeginHour() == pf.getFeature().getDuration()
+            );
     }
+
+
 }
