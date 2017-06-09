@@ -54,6 +54,10 @@ fixData <- function(d) {
   d$resources <- d$resources[order(d$resources$id), ]
   d$features <- d$features[order(d$features$id), ]
   
+  d$nFeatures <- nrow(d$features)
+  d$nResources <- nrow(d$resources)
+  d$nJobs <- nrow(d$plan)
+    
   d$depGraphEdges <- d$depGraphEdges[order(d$depGraphEdges$node1), ]
   d$skillsGraphEdges <- d$skillsGraphEdges[order(d$skillsGraphEdges$node1), ]
   d$reqSkillsGraphEdges <- d$reqSkillsGraphEdges[order(d$reqSkillsGraphEdges$node1), ]
@@ -167,6 +171,8 @@ getDataFromUser <- function(d) {
 
 getDataFromController <- function(d, baseURL, projectID, releaseID) {
   # baseURL <- "http://platform.supersede.eu:8280/replan"
+  # baseURL <- "http://supersede.es.atos.net:8280/replan"
+  # SIEMENS (1), SENERCON (2), ATOS (3)
   # projectID <- 1
   # releaseID <- 1
   
@@ -195,9 +201,11 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
 
   # Parse resources
   fulltime <- projectData$hours_per_week_and_full_time_resource
-  nResources <- nrow(releaseData$resources)
-  if(nResources >= 1)
-    for(i in 1:nResources) {
+  d$nResources <- nrow(releaseData$resources)
+  if(is.null(d$nResources)) d$nResources <- 0
+  
+  if(d$nResources >= 1)
+    for(i in 1:d$nResources) {
       d$resources[i, ] <- c(
         getID("E", releaseData$resources$id[i]), 
         releaseData$resources$name[i], 
@@ -211,9 +219,11 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
     }
   
   # Parse features
-  nFeatures <- nrow(featuresData)
-  if(nFeatures >= 1)
-    for(i in 1:nFeatures) {
+  d$nFeatures <- nrow(featuresData)
+  if(is.null(d$nFeatures)) d$nFeatures <- 0
+  
+  if(d$nFeatures >= 1)
+    for(i in 1:d$nFeatures) {
       d$features[i, ] <- c(
         getID("F", featuresData$id[i]), 
         getID("F", featuresData$id[i]),
@@ -237,8 +247,10 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
   
   # Parse plan
   nJobs <- nrow(planData$jobs)
-  if(nJobs >= 1)
-    for(i in 1:nJobs)
+  if(is.null(d$nJobs)) d$nJobs <- 0
+  
+  if(d$nJobs >= 1)
+    for(i in 1:d$nJobs)
       d$plan[nrow(d$plan)+1, ] <- c(
         getID("F", planData$jobs$feature$id[i]),
         getID("F", planData$jobs$feature$id[i]),

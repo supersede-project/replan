@@ -12,9 +12,12 @@ updateTimeline <- function(d) {
 
 renderResults <- function(output, d) {
   output$resultsTable <- renderTable({
-    featureRes <- c(nrow(d$plan), nrow(d$features), (nrow(d$plan)/nrow(d$features))*100)
-    score <- sum(d$plan$priority)
-    maxScore <- sum(d$features$priority)
+    featureRes <- c(d$nJobs, d$nFeatures, (d$nJobs/d$nFeatures)*100)
+    
+    # fix: plan with 0 jobs
+    score <- ifelse(d$nJobs == 0, 0, sum(d$plan$priority))
+    maxScore <- ifelse(d$nFeatures == 0, 0, sum(d$features$priority))
+    
     scoreRes <- c(score, maxScore, (score/maxScore)*100)
     
     results <- rbind(featureRes, scoreRes)
@@ -183,17 +186,25 @@ renderResources <- function(output, d) {
     totalhours <- totalhours*d$nWeeks
     totalhours <- totalhours[order(names(totalhours), decreasing = TRUE)]
     
-    usedhours <- tapply(d$plan$effort, d$plan$group, FUN=sum)
-    usedhours <- usedhours[order(names(usedhours), decreasing = TRUE)]
-    
-    endhours <- tapply(d$plan$end, d$plan$group, FUN=max)
-    endhours <- endhours[order(names(endhours), decreasing = TRUE)]
-    starthours <- rep(min(d$plan$start), dim(endhours))
-    endhours <- difftime(endhours, starthours, units = "hours")
+    # fix: plan with 0 jobs
+    if(d$nJobs > 0) {
+      usedhours <- tapply(d$plan$effort, d$plan$group, FUN=sum)
+      usedhours <- usedhours[order(names(usedhours), decreasing = TRUE)]
+      
+      endhours <- tapply(d$plan$end, d$plan$group, FUN=max)
+      endhours <- endhours[order(names(endhours), decreasing = TRUE)]
+      starthours <- rep(min(d$plan$start), dim(endhours))
+      endhours <- difftime(endhours, starthours, units = "hours")
+      
+      startendhours <- tapply(difftime(d$plan$end, d$plan$start, units = "hours"), d$plan$group, FUN=sum)
+      startendhours <- startendhours[order(names(startendhours), decreasing = TRUE)]
+    } else {
+      usedhours <- totalhours - totalhours
+      endhours <- usedhours
+      startendhours <- usedhours
+    }
 
-    startendhours <- tapply(difftime(d$plan$end, d$plan$start, units = "hours"), d$plan$group, FUN=sum)
-    startendhours <- startendhours[order(names(startendhours), decreasing = TRUE)]
-
+    # fix: some resources do not have jobs
     hours <- smartbind(totalhours, usedhours, startendhours, endhours, fill=0)
     hours <- as.matrix(hours[-1, ])
     totalhours <- rbind(totalhours, totalhours, totalhours)
