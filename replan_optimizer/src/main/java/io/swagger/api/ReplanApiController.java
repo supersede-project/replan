@@ -1,8 +1,8 @@
 package io.swagger.api;
 
 
-import com.google.gson.*;
-import entities.PriorityLevel;
+import com.google.gson.Gson;
+import io.swagger.ReplanGson;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
 import logic.PlanningSolution;
@@ -13,7 +13,6 @@ import wrapper.SolverNRP;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
-import java.lang.reflect.Type;
 
 
 @javax.annotation.Generated(value = "class io.swagger.codegen.languages.SpringCodegen", date = "2016-10-01T15:48:29.618Z")
@@ -21,22 +20,7 @@ import java.lang.reflect.Type;
 @Controller
 public class ReplanApiController implements ReplanApi {
 
-    private static final Gson gson;
-
-    static {
-        JsonDeserializer<PriorityLevel> priorityDeserializer = new JsonDeserializer<PriorityLevel>() {
-            @Override
-            public PriorityLevel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                int level = json.getAsJsonObject().get("level").getAsInt();
-                return PriorityLevel.fromValues(level, level);
-            }
-        };
-
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(PriorityLevel.class, priorityDeserializer);
-
-        gson = gsonBuilder.create();
-    }
+    private static Gson gson = ReplanGson.getGson();
 
 
     public ResponseEntity<String> replan(
@@ -51,15 +35,10 @@ public class ReplanApiController implements ReplanApi {
 
         ApiNextReleaseProblem problem = gson.fromJson(body, ApiNextReleaseProblem.class);
 
-        System.out.println("\nDeserialized Body: ");
-        System.out.println(gson.toJson(problem));
-
         // Execute
         SolverNRP solver = new SolverNRP();
         PlanningSolution solution =
                 solver.executeNRP(problem.getNbWeeks(), problem.getHoursPerWeek(), problem.getFeatures(), problem.getResources());
-
-        System.out.println("done.");
 
         ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution.getPlannedFeatures());
 

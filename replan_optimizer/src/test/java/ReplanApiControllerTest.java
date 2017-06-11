@@ -1,5 +1,15 @@
+import com.google.gson.Gson;
+import entities.Employee;
+import entities.Feature;
+import entities.Skill;
+import io.swagger.ReplanGson;
 import io.swagger.api.ReplanApiController;
+import io.swagger.model.ApiPlanningSolution;
 import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import java.util.List;
 
 
 /**
@@ -9,52 +19,31 @@ public class ReplanApiControllerTest {
     private static ReplanApiController apiController;
     private static RandomThings random;
     private static Validator validator;
+    private static RequestMocker mocker;
+    private static Gson gson;
 
     @BeforeClass
     public static void setUpBeforeClass() {
         apiController = new ReplanApiController();
         random = new RandomThings();
         validator = new Validator();
+        mocker = new RequestMocker();
+        gson = ReplanGson.getGson();
     }
 
-/*
-    //@Test
-    public void frozenJobsAreNotReplanned() {
-        List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(5);
-        List<Employee> resources = random.employeeList(15);
 
-        random.mix(features, skills, resources);
-
-
-
-
-        ApiNextReleaseProblem problem = new ApiNextReleaseProblem(4, 40.0, features, resources);
-        ApiPlanningSolution s1 = apiController.replan(problem).getBody();
-
-        validator.validateAll(s1);
-
-        random.freeze(s1);
-
-        //problem.setPreviousPlan(s1);
-        ApiPlanningSolution s2 = apiController.replan(problem).getBody();
-
-        validator.validateFrozen(s1, s2);
-    }
-*//*
     @Test
-    public void randomProblemValidatesAllConstraints() {
+    public void randomProblem() {
         List<Skill> skills = random.skillList(5);
         List<Feature> features = random.featureList(5);
         List<Employee> resources = random.employeeList(10);
 
         random.mix(features, skills, resources);
 
+        MockHttpServletRequest request = mocker.request(4, 40.0, features, resources);
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContentType("application/json");
-        request.setContent(body.getBytes());
+        String response = apiController.replan(request).getBody();
 
-        String solution = apiController.replan(request).getBody();
-    }*/
+        ApiPlanningSolution solution = gson.fromJson(response, ApiPlanningSolution.class);
+    }
 }
