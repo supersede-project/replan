@@ -9,9 +9,9 @@ class ValentinPlanner
   # uri = "http://replan-optimizer.herokuapp.com/replan"
   # uri = "http://platform.supersede.eu:8280/replan_optimizer/replan"
   # uri = "http://62.14.219.13:8280/replan_optimizer/replan"
-    uri = "http://localhost:8080/replan_optimizer-0.0.1/replan"
+    uri = "http://localhost:8280/replan_optimizer/replan"
     payload = self.build_payload(release)
-    puts "\nCalling replan_optimizer (#{uri}) with payload: #{payload}\n"
+    puts "\nCalling replan_optimizer (#{uri}) with payload = #{payload}\n"
     numFeatures = release.features.count
     numJobs = 0
     it = 0
@@ -22,7 +22,7 @@ class ValentinPlanner
       time = Benchmark.realtime do
         response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
       end
-      jobArray = JSON.parse(response.body)["plannedFeatures"]
+      jobArray = JSON.parse(response.body)["jobs"]
       jobCount = jobArray.count
       puts "#{it+1}# iteration -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
       if numJobs < jobCount
@@ -46,7 +46,7 @@ class ValentinPlanner
       nrp[:features] = release.features.map {|f| self.build_feature(f) }
       nrp[:resources] = release.resources.map do |r|
         { name: r.id.to_s, 
-          weekAvailability: r.availability*0.01*nrp[:hoursPerWeek],
+          availability: r.availability*0.01*nrp[:hoursPerWeek],
           skills: r.skills.map {|s| {name: s.id.to_s} } }
       end
       nrp.to_json
@@ -56,8 +56,8 @@ class ValentinPlanner
       { name: feature.id.to_s,
         duration: feature.effort * feature.project.hours_per_effort_unit,
         priority: { level: feature.priority, score: feature.priority },
-        requiredSkills: feature.required_skills.map {|s| {name: s.id.to_s} },
-        previousFeatures: feature.depends_on.map {|d| self.build_feature(d) unless d.release.nil? || d.release != feature.release}.compact
+        required_skills: feature.required_skills.map {|s| {name: s.id.to_s} },
+        depends_on: feature.depends_on.map {|d| self.build_feature(d) unless d.release.nil? || d.release != feature.release}.compact
       }
     end
     
@@ -67,7 +67,7 @@ class ValentinPlanner
         Job.create(starts: j["beginHour"].to_i.business_hours.after(release.starts_at), 
                    ends: j["endHour"].to_i.business_hours.after(release.starts_at),
                    feature: Feature.find(j["feature"]["name"]), 
-                   resource: Resource.find(j["employee"]["name"]),
+                   resource: Resource.find(j["resource"]["name"]),
                    plan: plan)
       end
     end
