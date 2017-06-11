@@ -41,7 +41,7 @@ public class ReplanApiControllerTest {
 
         validator.validateFrozen(s1, s2);
     }
-
+*//*
     @Test
     public void randomProblemValidatesAllConstraints() {
         List<Skill> skills = random.skillList(5);
@@ -50,10 +50,11 @@ public class ReplanApiControllerTest {
 
         random.mix(features, skills, resources);
 
-        ApiNextReleaseProblem problem = new ApiNextReleaseProblem(4, 40.0, features, resources);
 
-        PlanningSolution solution = apiController.replan(problem).getBody();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContentType("application/json");
+        request.setContent(body.getBytes());
 
-        validator.validateAll(solution);
+        String solution = apiController.replan(request).getBody();
     }*/
 }

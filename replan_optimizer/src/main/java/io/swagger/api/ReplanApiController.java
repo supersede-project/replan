@@ -21,46 +21,51 @@ import java.lang.reflect.Type;
 @Controller
 public class ReplanApiController implements ReplanApi {
 
-    public ResponseEntity<ApiPlanningSolution> replan(
+    private static final Gson gson;
 
- HttpServletRequest request
-
-) {
-        SolverNRP solver = new SolverNRP();
-
-        // Get request's body
-        StringBuffer jb = new StringBuffer();
-        String line = null;
-        try {
-            BufferedReader reader = request.getReader();
-            while ((line = reader.readLine()) != null)
-                jb.append(line);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<ApiPlanningSolution>(new ApiPlanningSolution(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        // Parse JSON, with custom deserializer for PriorityLevel
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(PriorityLevel.class, new JsonDeserializer<PriorityLevel>() {
+    static {
+        JsonDeserializer<PriorityLevel> priorityDeserializer = new JsonDeserializer<PriorityLevel>() {
             @Override
             public PriorityLevel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
                 int level = json.getAsJsonObject().get("level").getAsInt();
                 return PriorityLevel.fromValues(level, level);
             }
-        });
-        Gson gson = gsonBuilder.create();
+        };
 
-        ApiNextReleaseProblem problem = gson.fromJson(jb.toString(), ApiNextReleaseProblem.class);
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(PriorityLevel.class, priorityDeserializer);
+
+        gson = gsonBuilder.create();
+    }
+
+
+    public ResponseEntity<String> replan(
+
+ HttpServletRequest request
+
+) {
+        // Deserialize
+        String body = getBodyAsJsonString(request);
+        if (body == null)
+            return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
+
+        ApiNextReleaseProblem problem = gson.fromJson(body, ApiNextReleaseProblem.class);
+
+        System.out.println("\nDeserialized Body: ");
+        System.out.println(gson.toJson(problem));
 
         // Execute
+        SolverNRP solver = new SolverNRP();
         PlanningSolution solution =
                 solver.executeNRP(problem.getNbWeeks(), problem.getHoursPerWeek(), problem.getFeatures(), problem.getResources());
 
+        System.out.println("done.");
+
         ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution.getPlannedFeatures());
 
-        /* Let's ignore previous plan for now
 
+
+        /* Let's ignore previous plan for now
         if (body.getPreviousPlan() == null) {
             solution = solver.executeNRP(body.getNbWeeks(),
                     body.getHoursPerWeek(),
@@ -79,7 +84,22 @@ public class ReplanApiController implements ReplanApi {
         }
         */
 
-        return new ResponseEntity<ApiPlanningSolution>(apiSolution, HttpStatus.OK);
+        return new ResponseEntity<String>(gson.toJson(apiSolution), HttpStatus.OK);
+    }
+
+    private String getBodyAsJsonString(HttpServletRequest request) {
+        StringBuffer jb = new StringBuffer();
+        String line = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null)
+                jb.append(line);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        return jb.toString();
     }
 
 }

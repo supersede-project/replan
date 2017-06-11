@@ -1,6 +1,6 @@
 package entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
@@ -21,11 +21,12 @@ public class Feature {
 
 	private double duration;
 
+	@SerializedName("required_skills")
 	private List<Skill> requiredSkills = new ArrayList<Skill>();;
 
+	@SerializedName("depends_on")
 	private List<Feature> previousFeatures = new ArrayList<Feature>();;
 
-	@JsonIgnore
 	private transient Report report;
 
 	

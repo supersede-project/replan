@@ -10,28 +10,28 @@ import java.util.List;
  */
 public class ApiPlanningSolution {
 
-    private List<PlannedFeature> plannedFeatures;
+    private List<PlannedFeature> jobs;
 
 
 
     /* --- CONSTRUCTORS --- */
     public ApiPlanningSolution() {
-        plannedFeatures = new ArrayList<>();
+        jobs = new ArrayList<>();
     }
 
-    public ApiPlanningSolution(List<PlannedFeature> plannedFeatures) {
-        this.plannedFeatures = plannedFeatures;
+    public ApiPlanningSolution(List<PlannedFeature> jobs) {
+        this.jobs = jobs;
     }
 
 
 
     /* --- GETTERS / SETTERS --- */
 
-    public List<PlannedFeature> getPlannedFeatures() {
-        return plannedFeatures;
+    public List<PlannedFeature> getJobs() {
+        return jobs;
     }
 
-    public void setPlannedFeatures(List<PlannedFeature> plannedFeatures) {
-        this.plannedFeatures = plannedFeatures;
+    public void setJobs(List<PlannedFeature> jobs) {
+        this.jobs = jobs;
     }
 }

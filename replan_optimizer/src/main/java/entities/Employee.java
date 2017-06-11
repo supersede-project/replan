@@ -1,5 +1,6 @@
 package entities;
 
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ public class Employee {
 	/**
 	 * The available number of hours per week
 	 */
+	@SerializedName("availability")
 	private double weekAvailability;
 
 	

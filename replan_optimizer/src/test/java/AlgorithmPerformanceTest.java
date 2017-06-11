@@ -87,7 +87,7 @@ public class AlgorithmPerformanceTest {
             PlanningSolution solution = solver.executeNRP(20, 40.0, features, employees);
 
             validator.validateAll(solution);
-            //Assert.assertTrue(solution.getPlannedFeatures().size() > 0);
+            //Assert.assertTrue(solution.getJobs().size() > 0);
 
             iterations.add(i);
             nbPlannedFeatures.add(solution.getPlannedFeatures().size());

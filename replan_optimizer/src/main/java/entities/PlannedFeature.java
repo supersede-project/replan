@@ -1,5 +1,6 @@
 package entities;
 
+import com.google.gson.annotations.SerializedName;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
@@ -28,6 +29,7 @@ public class PlannedFeature {
 	/**
 	 * The employee who will do the feature
 	 */
+	@SerializedName("resource")
 	private Employee employee;
 	
 	/**
