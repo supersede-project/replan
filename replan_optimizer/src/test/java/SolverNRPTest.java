@@ -207,7 +207,9 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        validator.validateNoUnassignedSkills(skills, employees);
+
+        PlanningSolution solution = solver.executeNRP(20, 40.0, features, employees);
 
         validator.validateAll(solution);
 
@@ -391,10 +393,6 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(skills.get(3));
 
         PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
-
-        // TODO we should solve this without using nulls as part of the refactoring.
-        removeNullSkillsFromFeatures(features);
-        removeNullSkillsFromEmployees(employees);
 
         System.out.print(solution.toR());
 

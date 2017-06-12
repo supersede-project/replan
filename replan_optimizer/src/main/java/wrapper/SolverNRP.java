@@ -21,6 +21,7 @@ import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.util.AlgorithmRunner;
+import org.uma.jmetal.util.neighborhood.impl.C9;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
 import java.util.List;
@@ -28,6 +29,9 @@ import java.util.Set;
 
 
 public class SolverNRP {
+
+    private static int POPULATION = 2500;   // Con sqrt entera porque si no peta
+    private static int ITERATIONS = 25000;
 
     public enum AlgorithmType {
         NSGAII("NSGA-II"), MOCell("MOCell"), SPEA2("SPEA2"), PESA2("PESA2"), SMSEMOA("SMSEMOA");
@@ -77,8 +81,9 @@ public class SolverNRP {
             case MOCell:
                 return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(50000) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
-                        .setPopulationSize(5000) // TODO: any number > 100 makes the algorithm to trigger an exception: org.uma.jmetal.util.JMetalException: The solution list size 101 is not equal to the grid size: 10 * 10
+                        .setMaxEvaluations(ITERATIONS) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
+                        .setPopulationSize(POPULATION) // TODO: any number > 100 makes the algorithm to trigger an exception: org.uma.jmetal.util.JMetalException: The solution list size 101 is not equal to the grid size: 10 * 10
+                        .setNeighborhood(new C9<>((int) Math.sqrt(POPULATION), (int) Math.sqrt(POPULATION)))
                         .build();
             case SPEA2:
                 return new SPEA2Builder<PlanningSolution>(problem, crossover, mutation)

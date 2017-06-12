@@ -80,17 +80,14 @@ public class AlgorithmPerformanceTest {
         int totalPlannedFeatures = 0;
 
         for (int i = 0; i < nbIterations; ++i) {
-            // I have to do this because of the null skill added by EntitiesEvaluator
-            removeNullSkillsFromEmployees(employees);
-            removeNullSkillsFromFeatures(features);
 
             PlanningSolution solution = solver.executeNRP(20, 40.0, features, employees);
 
             validator.validateAll(solution);
-            //Assert.assertTrue(solution.getJobs().size() > 0);
 
             iterations.add(i);
             nbPlannedFeatures.add(solution.getPlannedFeatures().size());
+
             totalPlannedFeatures += solution.getPlannedFeatures().size();
         }
         String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Dummy");
@@ -137,14 +134,13 @@ public class AlgorithmPerformanceTest {
     // TODO: I commented this test because it does not work on the development server.
     @Test
     public void runAllWithSameInput() {
-        List<Skill> skills = random.skillList(5);
+        List<Skill> skills = random.skillList(7);
         List<Feature> features = random.featureList(20);
         List<Employee> employees = random.employeeList(5);
 
         random.mix(features, skills, employees);
 
         validator.validateNoUnassignedSkills(skills, employees);
-
 
         SolverNRP solver;
         //solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);

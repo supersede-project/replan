@@ -18,7 +18,7 @@ import java.util.Map;
 // Objectives: 0: Doing the high score in priority; 1: The shortest endDate
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
 
-	private static final boolean USE_NEW_EVALUATION = false;
+	private static final boolean USE_NEW_EVALUATION = true;
 
 	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
 	public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
