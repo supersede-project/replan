@@ -287,25 +287,15 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
     }
 
-
-
 	public void evaluateNew(PlanningSolution solution) {
 		Map<Employee, Schedule> schedule = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
 
-		/* Both of these seem to perform well */
-		computeHours(solution);
-        //computeHoursRecursive(solution);
-
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
 
-            // Causes a drop in planned features if called from here
-            //computeHours(solution, currentPlannedFeature);
-
-            // Seems to cause overlaps if called from here
-            //computeHoursRecursive(solution, currentPlannedFeature);
+            computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
 
@@ -340,14 +330,27 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.setEndDate(endHour);
 
 
+		double priorityObjective = solution.getPriorityScore();
+        double endDateObjective = solution.getPlannedFeatures().isEmpty() ? worstEndDate : endHour;
+
 		// TODO From here to the end is the evaluation of the solution.
-		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
+		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, priorityObjective);
 		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
-		solution.setObjective(INDEX_END_DATE_OBJECTIVE, plannedFeatures.size() == 0 ? worstEndDate : endHour);
+        solution.setObjective(INDEX_END_DATE_OBJECTIVE, endDateObjective);
 
 		// TODO: maybe these values can be the values of the objectives.
-		double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
-		double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
+        double unplannedFeatures = solution.getUndoneFeatures().size();
+        double totalFeatures = solution.getPlannedFeatures().size() + unplannedFeatures;
+        double penalty = worstEndDate/totalFeatures;
+
+		double endDateQuality = Math.max(
+		        0.0,
+		        //1.0 - ((endDateObjective + penalty * unplannedFeatures) / worstEndDate)
+		        endDateObjective  / (worstEndDate + penalty * unplannedFeatures)
+        );
+		endDateQuality = Math.min(1.0, endDateQuality);
+
+        double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
 
 		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
 		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
