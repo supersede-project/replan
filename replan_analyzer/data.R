@@ -208,7 +208,7 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
     for(i in 1:d$nResources) {
       d$resources[i, ] <- c(
         getID("E", releaseData$resources$id[i]), 
-        releaseData$resources$name[i], 
+        getID("E", releaseData$resources$id[i]), 
         (as.numeric(releaseData$resources$availability[i])/100)*as.numeric(fulltime))
       nResourceSkills <- nrow(releaseData$resources$skills[[i]])
       if (nResourceSkills >= 1)
@@ -246,7 +246,7 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
     }
   
   # Parse plan
-  nJobs <- nrow(planData$jobs)
+  d$nJobs <- nrow(planData$jobs)
   if(is.null(d$nJobs)) d$nJobs <- 0
   
   if(d$nJobs >= 1)
@@ -254,8 +254,9 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
       d$plan[nrow(d$plan)+1, ] <- c(
         getID("F", planData$jobs$feature$id[i]),
         getID("F", planData$jobs$feature$id[i]),
-        planData$jobs$starts[i],
-        planData$jobs$ends[i],
+        # FIX: date format from controller is not 100% compatible. This reformat the date. 
+        as.character(strptime(planData$jobs$starts[i], "%Y-%m-%dT%H:%M:%S.000Z")),
+        as.character(strptime(planData$jobs$ends[i], "%Y-%m-%dT%H:%M:%S.000Z")),
         getID("E", planData$jobs$resource$id[i]),
         "range",
         planData$jobs$feature$priority[i],
