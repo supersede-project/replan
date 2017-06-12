@@ -11,6 +11,7 @@ function(input, output, session) {
     d <- getRePlanDataStructure()
     d <- getDataFromExample(d)
     d <- fixData(d)
+    
     renderThisData(output, session, d)
   })
   
@@ -22,6 +23,7 @@ function(input, output, session) {
       alert("User data is empty!")
       return()
     }
+    
     renderThisData(output, session, d)
   })
   
@@ -37,7 +39,8 @@ function(input, output, session) {
       return()
     }
     d <- fixData(d)
-    renderThisData(output, session, d)
+
+    renderThisData(output, session, d, dataFromController = TRUE)
   })
 
   observeEvent(input$timelineRelease_selected, {

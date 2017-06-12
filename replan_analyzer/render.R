@@ -1,5 +1,6 @@
 library(gtools)
 library(igraph)
+library(difftimeOffice)
 
 source("utils.R")
 
@@ -180,7 +181,7 @@ renderSkillsGraph <- function(output, d) {
   width = 400)
 }
 
-renderResources <- function(output, d) {
+renderResources <- function(output, d, dataFromController) {
   output$resources <- renderPlot({
     totalhours <- tapply(d$resources$availability, d$resources$id, FUN=sum)
     totalhours <- totalhours*d$nWeeks
@@ -190,13 +191,21 @@ renderResources <- function(output, d) {
     if(d$nJobs > 0) {
       usedhours <- tapply(d$plan$effort, d$plan$group, FUN=sum)
       usedhours <- usedhours[order(names(usedhours), decreasing = TRUE)]
-      
+
       endhours <- tapply(d$plan$end, d$plan$group, FUN=max)
       endhours <- endhours[order(names(endhours), decreasing = TRUE)]
       starthours <- rep(min(d$plan$start), dim(endhours))
-      endhours <- difftime(endhours, starthours, units = "hours")
       
-      startendhours <- tapply(difftime(d$plan$end, d$plan$start, units = "hours"), d$plan$group, FUN=sum)
+      if(dataFromController) { # FIX: compute hours as office time (9:00 to 17:00)
+        endhours <- as.numeric(difftime_office_hours(as.POSIXct(starthours), as.POSIXct(endhours), c(9, 17))) / 3600
+        
+        startendhours <- tapply(as.numeric(difftime_office_hours(as.POSIXct(d$plan$start), as.POSIXct(d$plan$end), c(9, 17))) / 3600, d$plan$group, FUN=sum)
+      } else {
+        endhours <- difftime(endhours, starthours, units = "hours")
+        
+        startendhours <- tapply(difftime(d$plan$end, d$plan$start, units = "hours"), d$plan$group, FUN=sum)
+      }
+    
       startendhours <- startendhours[order(names(startendhours), decreasing = TRUE)]
     } else {
       usedhours <- totalhours - totalhours
@@ -259,7 +268,7 @@ renderDataTables <- function(output, d) {
   output$featuresReqSkillsTable <- renderDataTable({d$reqSkillsGraphEdges})
 }
 
-renderThisData <- function(output, session, d) {
+renderThisData <- function(output, session, d, dataFromController = FALSE) {
   session$userData$d <- d
   updateTimeline(session$userData$d)
   renderResults(output, session$userData$d)
@@ -267,7 +276,7 @@ renderThisData <- function(output, session, d) {
   renderSelectedResource(output, session$userData$d, NULL)
   renderDepGraph(output, session$userData$d)
   renderSkillsGraph(output, session$userData$d)
-  renderResources(output, session$userData$d)
+  renderResources(output, session$userData$d, dataFromController)
   renderDataTables(output, session$userData$d)
   
   updateSelectInput(
