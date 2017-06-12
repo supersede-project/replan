@@ -16,6 +16,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, NextReleaseProblem> {
 
 	private static final long serialVersionUID = 615615442782301271L; //Generated Id
+
+    private boolean INITIALIZE_ON_CREATE = true;
 	
 	private List<PlannedFeature> plannedFeatures; // included features
 	private List<Feature> undoneFeatures; // not included features
@@ -67,6 +69,18 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	    initializePlannedFeatureVariables();
 	    initializeObjectiveValues();
 	}
+
+    public PlanningSolution(NextReleaseProblem problem, boolean initializeOnCreate) {
+        super(problem);
+
+        INITIALIZE_ON_CREATE = initializeOnCreate;
+
+        NRP=problem;
+        numberOfViolatedConstraints = 0;
+
+        initializePlannedFeatureVariables();
+        initializeObjectiveValues();
+    }
 	
     // constructor (with previous plan)
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
@@ -119,14 +133,19 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	    undoneFeatures = new CopyOnWriteArrayList<>(origin.getUndoneFeatures());
 	}
 
+	public NextReleaseProblem getProblem() {
+	    return problem;
+    }
 
 
+
+	// TODO [Andrés] This doesn't make sense to my version of the algorithm
 	// Exchange the two features in positions pos1 and pos2
 	public void exchange(int pos1, int pos2) {
 		if (pos1 >= 0 && pos2 >= 0 && pos1 < plannedFeatures.size() && pos2 < plannedFeatures.size() && pos1 != pos2) {
 			PlannedFeature feature1 = plannedFeatures.get(pos1);
-			plannedFeatures.set(pos1, new PlannedFeature(plannedFeatures.get(pos2)));
-			plannedFeatures.set(pos2, new PlannedFeature(feature1));
+			plannedFeatures.set(pos1, plannedFeatures.get(pos2));
+			plannedFeatures.set(pos2, feature1);
 		}
 	}
 	
@@ -178,11 +197,13 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		undoneFeatures = new CopyOnWriteArrayList<Feature>();
 		undoneFeatures.addAll(problem.getFeatures());
 		plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
-	
-		if (randomGenerator.nextDouble() > DefaultAlgorithmParameters.RATE_OF_NOT_RANDOM_GENERATED_SOLUTION)
-			initializePlannedFeaturesRandomly(nbFeaturesToDo);
-		else
-			initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
+
+		if (INITIALIZE_ON_CREATE) {
+            if (randomGenerator.nextDouble() > DefaultAlgorithmParameters.RATE_OF_NOT_RANDOM_GENERATED_SOLUTION)
+                initializePlannedFeaturesRandomly(nbFeaturesToDo);
+            else
+                initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);
+        }
 	}
 
     // Initializes the planned features randomly
@@ -229,16 +250,15 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	// Schedule a feature in the planning
 	public void scheduleAtTheEnd(Feature feature, Employee e) {
 	    // TODO: is this correct? it assumes that if already planned nothing happens. It may be associated to another employee or is not at the end.
-		if (!isAlreadyPlanned(feature)) {
+		/*if (!isAlreadyPlanned(feature)) {
 			undoneFeatures.remove(feature);
 			plannedFeatures.add(new PlannedFeature(feature, e));
-		}
+		}*/
 
-		/* DAVID: my proposal
+		// DAVID: my proposal
 		if (isAlreadyPlanned(feature)) plannedFeatures.remove(findPlannedFeature(feature));
 		else undoneFeatures.remove(feature);
         plannedFeatures.add(new PlannedFeature(feature, e));
-        */
 	}
 	
 	// Schedule a random undone feature to a random place in the planning
@@ -392,7 +412,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
 		sb.append(lineSeparator);
 
-        for (Feature f : NRP.getFeatures()) {
+        for (Feature f : problem.getFeatures()) {
             sb.append("  d$features[nrow(d$features)+1,] <- c(")
                     .append(quote(f.getName())).append(", ") // id
                     .append(quote(f.getName())).append(", ") // id

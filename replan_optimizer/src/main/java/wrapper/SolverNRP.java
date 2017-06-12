@@ -123,7 +123,9 @@ public class SolverNRP {
 
         clearSolutionIfNotValid(solution);
 
-        return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
+        return solution;
+
+        //return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
     }
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,

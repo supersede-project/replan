@@ -3,18 +3,16 @@
  */
 package logic.operators;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import org.uma.jmetal.operator.CrossoverOperator;
-import org.uma.jmetal.util.JMetalException;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import entities.PlannedFeature;
 import entities.parameters.DefaultAlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
+import org.uma.jmetal.operator.CrossoverOperator;
+import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The crossover operator on PlanningSolution
@@ -87,69 +85,41 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
 	 * @param parent2 the second parent
 	 * @return a list oh the two children
 	 */
-	public List<PlanningSolution> doCrossover(PlanningSolution parent1, PlanningSolution parent2) {
-		List<PlanningSolution> offspring = new ArrayList<PlanningSolution>(2);
+	private List<PlanningSolution> doCrossover(PlanningSolution parent1, PlanningSolution parent2) {
+		List<PlanningSolution> offspring = new ArrayList<>(2);
 
-		offspring.add((PlanningSolution) parent1.copy()) ;
-		offspring.add((PlanningSolution) parent2.copy()) ;
-		
-		if (randomGenerator.nextDouble() < crossoverProbability) {
-			// The two final solutions containing, at the beginning, a copy of the parents
-			PlanningSolution child1 = offspring.get(0);
-			PlanningSolution child2 = offspring.get(1);
-			
-			int minSize = Math.min(parent1.getNumberOfPlannedFeatures(), parent2.getNumberOfPlannedFeatures());
-			
-			if (minSize > 0) {
-				int splitPosition;
-				
-				if (minSize == 1) {
-					splitPosition = 1;
-				} 
-				else {
-					splitPosition = randomGenerator.nextInt(1, minSize);
-				}
-				
-				// Copy and unschedule the post-cut tasks
-				List<PlannedFeature> futurEndChild1 = child2.getEndPlannedFeaturesSubListCopy(splitPosition);
-				List<PlannedFeature> futurEndChild2 = child1.getEndPlannedFeaturesSubListCopy(splitPosition);
-				for (PlannedFeature plannedTask : futurEndChild2) {
-					child1.unschedule(plannedTask);
-				}
-				for (PlannedFeature plannedTask : futurEndChild1) {
-					child2.unschedule(plannedTask);
-				}
-				
-				
-				// schedule the new ends and keep it in the list only if they were already planned
-				Iterator<PlannedFeature> iteratorEndChild1 = futurEndChild1.iterator();
-				while (iteratorEndChild1.hasNext()) {
-					PlannedFeature plannedTask = (PlannedFeature) iteratorEndChild1.next();
-					if (!child1.isAlreadyPlanned(plannedTask.getFeature())) {
-						child1.scheduleAtTheEnd(plannedTask.getFeature(), plannedTask.getEmployee());
-						iteratorEndChild1.remove();
-					}
-				}
-				Iterator<PlannedFeature> iteratorEndChild2 = futurEndChild2.iterator();
-				while (iteratorEndChild2.hasNext()) {
-					PlannedFeature plannedTask = (PlannedFeature) iteratorEndChild2.next();
-					if (!child2.isAlreadyPlanned(plannedTask.getFeature())) {
-						child2.scheduleAtTheEnd(plannedTask.getFeature(), plannedTask.getEmployee());
-						iteratorEndChild2.remove();
-					}
-				}
-				
-				// Exchanging the tasks
-				iteratorEndChild1 = futurEndChild1.iterator();
-				iteratorEndChild2 = futurEndChild2.iterator();
-				while (iteratorEndChild1.hasNext() && iteratorEndChild2.hasNext()) {
-					PlannedFeature task = iteratorEndChild1.next();
-					child1.scheduleAtTheEnd(task.getFeature(), task.getEmployee());
-					task = iteratorEndChild2.next();
-					child2.scheduleAtTheEnd(task.getFeature(), task.getEmployee());
-				}
-			}
-		}
+		offspring.add(new PlanningSolution(parent1.getProblem(), false)) ;
+		offspring.add(new PlanningSolution(parent1.getProblem(), false)) ;
+
+        int sizeP1 = parent1.getNumberOfPlannedFeatures();
+        int sizeP2 = parent2.getNumberOfPlannedFeatures();
+
+        int minSize = Math.min(sizeP1, sizeP2);
+        PlanningSolution shorterParent = sizeP1 < sizeP2 ? parent1 : parent2;
+        PlanningSolution largerParent = sizeP1 < sizeP2 ? parent2 : parent1;
+
+        for (PlanningSolution child : offspring) {
+            int i = 0;
+            for (; i < minSize; ++i) {
+                PlannedFeature pf;
+                if (randomGenerator.nextDouble() < 0.5)
+                    pf = shorterParent.getPlannedFeatures().get(i);
+                else
+                    pf = largerParent.getPlannedFeatures().get(i);
+
+                //child.getPlannedFeatures().add(new PlannedFeature(pf));
+                child.scheduleAtTheEnd(pf.getFeature(), pf.getEmployee());
+            }
+            List<PlannedFeature> uncrossed = largerParent.getEndPlannedFeaturesSubListCopy(i);
+            for (PlannedFeature pf : uncrossed) {
+                if (randomGenerator.nextDouble() < 0.5)
+                    //child.getPlannedFeatures().add(new PlannedFeature(pf));
+                    child.scheduleAtTheEnd(pf.getFeature(), pf.getEmployee());
+            }
+        }
+
+
+
 		
 		/*RepairOperator reparator = new RepairOperator(problem);
 		for (PlanningSolution planningSolution : offspring) {

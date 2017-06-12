@@ -3,18 +3,17 @@
  */
 package logic.operators;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.util.JMetalException;
-import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-
 import entities.Employee;
 import entities.PlannedFeature;
 import entities.parameters.DefaultAlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
+import org.uma.jmetal.operator.MutationOperator;
+import org.uma.jmetal.util.JMetalException;
+import org.uma.jmetal.util.pseudorandom.JMetalRandom;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Vavou
@@ -85,32 +84,31 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	/* --- Methods --- */
 	
 	@Override
-	public PlanningSolution execute(PlanningSolution parent) {
-		PlanningSolution child = new PlanningSolution(parent);
-		int nbPlannedTasks = child.getNumberOfPlannedFeatures();
+	public PlanningSolution execute(PlanningSolution solution) {
+		int nbPlannedTasks = solution.getNumberOfPlannedFeatures();
 		
 		for (int i = 0 ; i < nbPlannedTasks ; i++) {
 			if (doMutation()) { // If we have to do a mutation
-				PlannedFeature taskToMutate = child.getPlannedFeature(i);
+				PlannedFeature taskToMutate = solution.getPlannedFeature(i);
 				if (randomGenerator.nextDouble() < 0.5) {
 					changeEmployee(taskToMutate);
 				}
 				else {
-					changeTask(child, taskToMutate, i);
+					changeTask(solution, taskToMutate, i);
 				}
 			}
 		}
 		
 		for (int i = nbPlannedTasks ; i < problem.getFeatures().size() ; i++) {
 			if (doMutation()) {
-				addNewTask(child);
+				addNewTask(solution);
 			}
 		}
 		
 		/*RepairOperator reparator = new RepairOperator(problem);
 		reparator.repair(child);*/
 		
-		return child;
+		return solution;
 	}
 	
 	/**
@@ -150,6 +148,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 			solution.exchange(taskPosition, randomPosition);
 		}
 		else { // If the random selected task is not yet planned, let's do it
+			// Why would you unschedule it if you're saying it's not planned?
 			solution.unschedule(taskToChange);
 			solution.scheduleRandomFeature(taskPosition);
 		}
