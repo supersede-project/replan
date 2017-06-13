@@ -255,8 +255,8 @@ getDataFromController <- function(d, baseURL, projectID, releaseID) {
         getID("F", planData$jobs$feature$id[i]),
         getID("F", planData$jobs$feature$id[i]),
         # FIX: date format from controller is not 100% compatible. This reformat the date. 
-        as.character(strptime(planData$jobs$starts[i], "%Y-%m-%dT%H:%M:%S.000Z")),
-        as.character(strptime(planData$jobs$ends[i], "%Y-%m-%dT%H:%M:%S.000Z")),
+        as.character(strptime(planData$jobs$starts[i], "%Y-%m-%dT%H:%M:%S")),
+        as.character(strptime(planData$jobs$ends[i], "%Y-%m-%dT%H:%M:%S")),
         getID("E", planData$jobs$resource$id[i]),
         "range",
         planData$jobs$feature$priority[i],

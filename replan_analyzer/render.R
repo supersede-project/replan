@@ -198,7 +198,7 @@ renderResources <- function(output, d, dataFromController) {
       
       if(dataFromController) { # FIX: compute hours as office time (9:00 to 17:00)
         endhours <- as.numeric(difftime_office_hours(as.POSIXct(starthours), as.POSIXct(endhours), c(9, 17))) / 3600
-        
+        names(endhours) <- names(usedhours)
         startendhours <- tapply(as.numeric(difftime_office_hours(as.POSIXct(d$plan$start), as.POSIXct(d$plan$end), c(9, 17))) / 3600, d$plan$group, FUN=sum)
       } else {
         endhours <- difftime(endhours, starthours, units = "hours")
