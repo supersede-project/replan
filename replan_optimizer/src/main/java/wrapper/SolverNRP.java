@@ -51,7 +51,7 @@ public class SolverNRP {
 
     public SolverNRP() {
         algorithm = null;
-        algorithmType = AlgorithmType.MOCell;
+        algorithmType = AlgorithmType.NSGAII;
     }
 
     public SolverNRP(AlgorithmType algorithmType) {
