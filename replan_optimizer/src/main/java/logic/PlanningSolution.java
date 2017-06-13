@@ -46,7 +46,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public List<PlannedFeature> getEndPlannedFeaturesSubListCopy(int beginPosition) {
 		return new ArrayList<>(plannedFeatures.subList(beginPosition, plannedFeatures.size()));
 	}
-	private List<Feature> getUndoneFeatures() {
+	public List<Feature> getUndoneFeatures() {
 		return undoneFeatures;
 	}
 	public Map<Employee, List<EmployeeWeekAvailability>> getEmployeesPlanning() {
@@ -191,8 +191,8 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	private void initializePlannedFeatureVariables() {
 		int numberOfFeatures = problem.getFeatures().size();
 		// TODO: All the solutions will have all the features. This is a temporal solution.
-        int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
-		//int nbFeaturesToDo = numberOfFeatures;
+        //int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
+		int nbFeaturesToDo = numberOfFeatures;
 		
 		undoneFeatures = new CopyOnWriteArrayList<Feature>();
 		undoneFeatures.addAll(problem.getFeatures());
