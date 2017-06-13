@@ -15,7 +15,7 @@ public class DefaultAlgorithmParameters {
 	/**
 	 * The proportion of solutions that will not be generated entirely randomly
 	 */
-	public final static double RATE_OF_NOT_RANDOM_GENERATED_SOLUTION = 0.1;
+	public final static double RATE_OF_NOT_RANDOM_GENERATED_SOLUTION = 0.25;
 	
 	/**
 	 * Return the default value of mutation probability considering the number of features
