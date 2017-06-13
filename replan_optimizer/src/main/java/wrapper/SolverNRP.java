@@ -7,6 +7,7 @@ import entities.parameters.IterationParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.PopulationFilter;
+import logic.SolutionQuality;
 import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
@@ -29,9 +30,6 @@ import java.util.Set;
 
 
 public class SolverNRP {
-
-    private static int POPULATION = 2500;   // Con sqrt entera porque si no peta
-    private static int ITERATIONS = 25000;
 
     public enum AlgorithmType {
         NSGAII("NSGA-II"), MOCell("MOCell"), SPEA2("SPEA2"), PESA2("PESA2"), SMSEMOA("SMSEMOA");
@@ -73,31 +71,31 @@ public class SolverNRP {
 
         switch (algorithmType) {
             case NSGAII:
-                return new NSGAIIBuilder<PlanningSolution>(problem, crossover, mutation)
+                return new NSGAIIBuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
                         .setMaxIterations(500)
                         .setPopulationSize(100)
                         .build();
             case MOCell:
-                return new MOCellBuilder<PlanningSolution>(problem, crossover, mutation)
+                return new MOCellBuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(ITERATIONS) // TODO: Does it work better by having 50000? or it is the same with 500? as in the other cases. Execution time is also important.
-                        .setPopulationSize(POPULATION) // TODO: any number > 100 makes the algorithm to trigger an exception: org.uma.jmetal.util.JMetalException: The solution list size 101 is not equal to the grid size: 10 * 10
-                        .setNeighborhood(new C9<>((int) Math.sqrt(POPULATION), (int) Math.sqrt(POPULATION)))
+                        .setMaxEvaluations(25000)
+                        .setPopulationSize(2500)    // sqrt(populationSize) tiene que ser entero
+                        .setNeighborhood(new C9<>((int) Math.sqrt(2500), (int) Math.sqrt(2500)))
                         .build();
             case SPEA2:
-                return new SPEA2Builder<PlanningSolution>(problem, crossover, mutation)
+                return new SPEA2Builder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
                         .setMaxIterations(500)
                         .setPopulationSize(200)
                         .build();
             case PESA2:
-                return new PESA2Builder<PlanningSolution>(problem, crossover, mutation)
+                return new PESA2Builder<>(problem, crossover, mutation)
                         .setMaxEvaluations(500)
                         .setPopulationSize(200)
                         .build();
             case SMSEMOA:
-                return new SMSEMOABuilder<PlanningSolution>(problem, crossover, mutation)
+                return new SMSEMOABuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
                         .setMaxEvaluations(500)
                         .setPopulationSize(200)
@@ -124,8 +122,6 @@ public class SolverNRP {
         clearSolutionIfNotValid(solution);
 
         return solution;
-
-        //return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
     }
 
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
@@ -138,11 +134,9 @@ public class SolverNRP {
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
-        // TODO: Since we may obtain several solutions, we should return the first one without violations (and if all have violations, and empty one).
-
         clearSolutionIfNotValid(solution);
 
-        return new PlanningSolutionWrapper(solution, solution.getPlannedFeatures());
+        return solution;
     }
 
     /*
@@ -166,6 +160,20 @@ public class SolverNRP {
         new AlgorithmRunner.Executor(algorithm).execute();
 
         List<PlanningSolution> population = algorithm.getResult();
+
+        SolutionQuality solutionQuality = new SolutionQuality();
+        double totalQuality = 0.0;
+        int totalPlannedFeatures = 0;
+        for (PlanningSolution solution : population) {
+            totalQuality += solutionQuality.getAttribute(solution);
+            totalPlannedFeatures += solution.getPlannedFeatures().size();
+        }
+
+        double averageQuality = totalQuality/population.size();
+        int averagePlannedFeatures = totalPlannedFeatures/population.size();
+
+        System.out.println("Average solution quality: " + averageQuality + ". Average planned features: " + averagePlannedFeatures);
+
         Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(population);
 
         return bestSolutions.iterator().next();
