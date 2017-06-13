@@ -107,13 +107,11 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
                 else
                     pf = largerParent.getPlannedFeatures().get(i);
 
-                //child.getPlannedFeatures().add(new PlannedFeature(pf));
                 child.scheduleAtTheEnd(pf.getFeature(), pf.getEmployee());
             }
             List<PlannedFeature> uncrossed = largerParent.getEndPlannedFeaturesSubListCopy(i);
             for (PlannedFeature pf : uncrossed) {
                 if (randomGenerator.nextDouble() < 0.5)
-                    //child.getPlannedFeatures().add(new PlannedFeature(pf));
                     child.scheduleAtTheEnd(pf.getFeature(), pf.getEmployee());
             }
         }

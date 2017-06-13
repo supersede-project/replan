@@ -180,13 +180,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
     }
 
 
-	// TODO: read
-	/*
-	     OK, I think I understand it now. The way it creates the schedule is wrong, but it doesn't affect the algorithm
-	     result that much because evaluateConstraints() is called right after evaluate() and gives a bad quality to the
-	     wrong ones. It will eventually get to a valid solution (most likely), but only based on the randomness of
-	     the algorithm and not because evaluate() is doing a good job.
-	*/
 	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
 		double endPlanningHour = 0.0;
@@ -305,8 +298,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
                 if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
                     solution.unschedule(currentPlannedFeature);
                 }
-            } else {
-			    throw new IllegalStateException(".");
             }
 
 			schedule.put(employee, employeeSchedule);
@@ -331,30 +322,23 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 
 		double priorityObjective = solution.getPriorityScore();
+        // TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
         double endDateObjective = solution.getPlannedFeatures().isEmpty() ? worstEndDate : endHour;
 
-		// TODO From here to the end is the evaluation of the solution.
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, priorityObjective);
-		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
         solution.setObjective(INDEX_END_DATE_OBJECTIVE, endDateObjective);
 
-		// TODO: maybe these values can be the values of the objectives.
         double unplannedFeatures = solution.getUndoneFeatures().size();
         double totalFeatures = solution.getPlannedFeatures().size() + unplannedFeatures;
         double penalty = worstEndDate/totalFeatures;
 
-		double endDateQuality = Math.max(
-		        0.0,
-		        //1.0 - ((endDateObjective + penalty * unplannedFeatures) / worstEndDate)
-		        endDateObjective  / (worstEndDate + penalty * unplannedFeatures)
-        );
+        // TODO: maybe these values can be the values of the objectives.
+        double endDateQuality = Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
 		endDateQuality = Math.min(1.0, endDateQuality);
-
-        double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
+        double priorityQuality = 1.0 - priorityObjective / worstScore;
 
 		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
 		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
-
 	}
 
 	private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
