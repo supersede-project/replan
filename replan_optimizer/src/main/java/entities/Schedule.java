@@ -1,7 +1,6 @@
 package entities;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represents the schedule of an employee during a certain number of weeks
@@ -10,15 +9,19 @@ import java.util.List;
 public class Schedule {
     private List<EmployeeWeekAvailability> weeks;
     private Employee employee;
+    private Set<PlannedFeature> plannedFeatures;
 
     // The number of hours left this employee has for the whole iteration
     private double totalHoursLeft;
+    private int nbWeeks;
 
     public Schedule(Employee employee, int nbWeeks) {
         this.employee = employee;
+        this.nbWeeks = nbWeeks;
         totalHoursLeft = nbWeeks * employee.getWeekAvailability();
 
         weeks = new ArrayList<>();
+        plannedFeatures = new HashSet<>();
     }
 
     /**
@@ -55,7 +58,7 @@ public class Schedule {
             week.setRemainHoursAvailable(remainingWeekHours - featureHoursLeft);
             week.setEndHour(pf.getEndHour());
 
-
+            plannedFeatures.add(pf);
 
             totalHoursLeft -= featureHoursLeft;
         } else {
@@ -63,6 +66,8 @@ public class Schedule {
             double pfEndHour = pfBeginHour;
             while (featureHoursLeft > 0.0) {
                 week.addPlannedFeature(pf);
+
+                plannedFeatures.add(pf);
 
                 double doneHours = Math.min(featureHoursLeft, remainingWeekHours);
 
@@ -161,4 +166,22 @@ public class Schedule {
         }
         return false;
     }
+
+    public List<PlannedFeature> getPlannedFeatures() {
+        return new ArrayList<>(plannedFeatures);
+    }
+
+    @Override
+    public String toString() {
+        double availability = employee.getWeekAvailability();
+        double hours = availability * nbWeeks - totalHoursLeft;
+
+        return String.format(
+                "%f hours planned over %d weeks with an availability of %f hours",
+                hours, getAllWeeks().size(), availability);
+    }
+
+
+
+
 }
