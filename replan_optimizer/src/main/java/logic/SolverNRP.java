@@ -1,13 +1,9 @@
-package wrapper;
+package logic;
 
 import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
 import entities.parameters.IterationParameters;
-import logic.NextReleaseProblem;
-import logic.PlanningSolution;
-import logic.PopulationFilter;
-import logic.SolutionQuality;
 import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
@@ -159,23 +155,27 @@ public class SolverNRP {
 
         new AlgorithmRunner.Executor(algorithm).execute();
 
-        List<PlanningSolution> population = algorithm.getResult();
+        List<PlanningSolution> result = algorithm.getResult();
 
+        printQuality(result);
+
+        Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(result);
+
+        return bestSolutions.iterator().next();
+    }
+
+    private void printQuality(List<PlanningSolution> solutions) {
         SolutionQuality solutionQuality = new SolutionQuality();
         double totalQuality = 0.0;
         int totalPlannedFeatures = 0;
-        for (PlanningSolution solution : population) {
+        for (PlanningSolution solution : solutions) {
             totalQuality += solutionQuality.getAttribute(solution);
             totalPlannedFeatures += solution.getPlannedFeatures().size();
         }
 
-        double averageQuality = totalQuality/population.size();
-        int averagePlannedFeatures = totalPlannedFeatures/population.size();
+        double averageQuality = totalQuality/solutions.size();
+        int averagePlannedFeatures = totalPlannedFeatures/solutions.size();
 
         System.out.println("Average solution quality: " + averageQuality + ". Average planned features: " + averagePlannedFeatures);
-
-        Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(population);
-
-        return bestSolutions.iterator().next();
     }
 }
