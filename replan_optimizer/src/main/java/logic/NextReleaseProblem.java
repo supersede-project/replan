@@ -21,8 +21,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private static final boolean USE_NEW_EVALUATION = true;
 
 	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
-	public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
+
+    public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
 	public final static int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
+	public final static int INDEX_DISTRIBUTION_OBJECTIVE = 2;
 
 	// PROBLEM
 	private List<Feature> features;
@@ -82,7 +84,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
 		setNumberOfVariables(1);
-		setNumberOfObjectives(2);
+		setNumberOfObjectives(3);
 		features = new ArrayList<>();
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
@@ -151,34 +153,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		else
 			evaluateOld(solution);
 	}
-
-
-	public double similarity(PlanningSolution s1, PlanningSolution s2) {
-	    Map<Employee, List<EmployeeWeekAvailability>> planning1 = s1.getEmployeesPlanning();
-	    Map<Employee, List<EmployeeWeekAvailability>> planning2 = s2.getEmployeesPlanning();
-
-	    double count = 0.0;
-        double coincidences = 0.0;
-	    for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : planning1.entrySet()) {
-	        Employee e = entry.getKey();
-	        List<EmployeeWeekAvailability> weeksS1 = entry.getValue();
-	        List<EmployeeWeekAvailability> weeksS2 = planning2.get(e);
-
-	        for (int i = 0; i < weeksS1.size(); ++i) {
-	            for (PlannedFeature pf : weeksS1.get(i).getPlannedFeatures()) {
-	                EmployeeWeekAvailability weekS2 = weeksS2.get(i);
-                    if (weekS2.getPlannedFeatures().contains(pf)) {
-                        ++coincidences;
-                    }
-                    ++count;
-                }
-            }
-        }
-
-        return coincidences/count;
-
-    }
-
 
 	public void evaluateOld(PlanningSolution solution) {
 		double newBeginHour;
@@ -287,18 +261,14 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		solution.resetHours();
 
         for (PlannedFeature currentPlannedFeature : plannedFeatures) {
-
             computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
-
 			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks));
 
-			if (!employeeSchedule.contains(currentPlannedFeature)) {
-                if (!employeeSchedule.scheduleFeature(currentPlannedFeature)) {
+			if (!employeeSchedule.contains(currentPlannedFeature))
+                if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
                     solution.unschedule(currentPlannedFeature);
-                }
-            }
 
 			schedule.put(employee, employeeSchedule);
         }
@@ -315,30 +285,20 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 			        endHour = Math.max(endHour, pf.getEndHour());
 
 			employeesTimeSlots.put(e, weeks);
-		}
+        }
 
 		solution.setEmployeesPlanning(employeesTimeSlots);
 		solution.setEndDate(endHour);
 
 
-		double priorityObjective = solution.getPriorityScore();
-        // TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
-        double endDateObjective = solution.getPlannedFeatures().isEmpty() ? worstEndDate : endHour;
+		/* Objectives and quality evaluation */
+		SolutionEvaluator evaluator = SolutionEvaluator.getInstance();
 
-		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, priorityObjective);
-        solution.setObjective(INDEX_END_DATE_OBJECTIVE, endDateObjective);
+		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, evaluator.priorityObjective(solution));
+        solution.setObjective(INDEX_END_DATE_OBJECTIVE, evaluator.endDateObjective(solution));
+        solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
 
-        double unplannedFeatures = solution.getUndoneFeatures().size();
-        double totalFeatures = solution.getPlannedFeatures().size() + unplannedFeatures;
-        double penalty = worstEndDate/totalFeatures;
-
-        // TODO: maybe these values can be the values of the objectives.
-        double endDateQuality = Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
-		endDateQuality = Math.min(1.0, endDateQuality);
-        double priorityQuality = 1.0 - priorityObjective / worstScore;
-
-		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
-		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
+		solutionQuality.setAttribute(solution, evaluator.quality(solution));
 	}
 
 	private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
@@ -469,8 +429,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		numberOfViolatedConstraints.setAttribute(solution, violatedConstraints);
 		overallConstraintViolation.setAttribute(solution, overall);
-		if (violatedConstraints > 0) {
+		if (violatedConstraints > 0)
 			solutionQuality.setAttribute(solution, 0.0);
-		}
 	}
 }
