@@ -84,7 +84,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
 		setNumberOfVariables(1);
-		setNumberOfObjectives(3);
+		setNumberOfObjectives(2);
 		features = new ArrayList<>();
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
@@ -264,7 +264,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
-			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks));
+			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
 
 			if (!employeeSchedule.contains(currentPlannedFeature))
                 if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
@@ -296,7 +296,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, evaluator.priorityObjective(solution));
         solution.setObjective(INDEX_END_DATE_OBJECTIVE, evaluator.endDateObjective(solution));
-        solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
+        //solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
 
 		solutionQuality.setAttribute(solution, evaluator.quality(solution));
 	}

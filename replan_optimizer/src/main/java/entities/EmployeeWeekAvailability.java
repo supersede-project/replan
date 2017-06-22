@@ -10,24 +10,16 @@ import java.util.List;
  */
 public class EmployeeWeekAvailability {
 
-	/**
-	 * The begin hour of the employee in the week
-	 */
+	// The begining hour of the employee in the week
 	private double beginHour;
 	
-	/**
-	 * The remain hours of the employee
-	 */
+	// The remaining hours of the employee
 	private double remainHoursAvailable;
 	
-	/**
-	 * The end hour of the employee in the week
-	 */
+	// The ending hour of the employee in the week
 	private double endHour;
 	
-	/**
-	 * The features done during the week
-	 */
+	// The features done during the week
 	private List<PlannedFeature> plannedFeatures;
 	
 	
