@@ -3,7 +3,7 @@ package logic;
 import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
-import entities.parameters.IterationParameters;
+import entities.parameters.AlgorithmParameters;
 import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
@@ -65,36 +65,40 @@ public class SolverNRP {
         mutation = new PlanningMutationOperator(problem);
         selection = new BinaryTournamentSelection<>(new PlanningSolutionDominanceComparator());
 
+        AlgorithmParameters parameters = problem.getAlgorithmParameters();
+        int nbIterations = parameters.getNumberOfIterations();
+        int populationSize = parameters.getPopulationSize();
+
         switch (algorithmType) {
             case NSGAII:
                 return new NSGAIIBuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxIterations(500)
-                        .setPopulationSize(100)
+                        .setMaxIterations(nbIterations)
+                        .setPopulationSize(populationSize)
                         .build();
             case MOCell:
                 return new MOCellBuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(25000)
-                        .setPopulationSize(2500)    // sqrt(populationSize) tiene que ser entero
+                        .setMaxEvaluations(nbIterations)
+                        .setPopulationSize(populationSize)    // sqrt(populationSize) tiene que ser entero
                         .setNeighborhood(new C9<>((int) Math.sqrt(2500), (int) Math.sqrt(2500)))
                         .build();
             case SPEA2:
                 return new SPEA2Builder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxIterations(500)
-                        .setPopulationSize(200)
+                        .setMaxIterations(nbIterations)
+                        .setPopulationSize(populationSize)
                         .build();
             case PESA2:
                 return new PESA2Builder<>(problem, crossover, mutation)
-                        .setMaxEvaluations(500)
-                        .setPopulationSize(200)
+                        .setMaxEvaluations(nbIterations)
+                        .setPopulationSize(populationSize)
                         .build();
             case SMSEMOA:
                 return new SMSEMOABuilder<>(problem, crossover, mutation)
                         .setSelectionOperator(selection)
-                        .setMaxEvaluations(500)
-                        .setPopulationSize(200)
+                        .setMaxEvaluations(nbIterations)
+                        .setPopulationSize(populationSize)
                         .build();
             default:
                 return createAlgorithm(AlgorithmType.MOCell, problem);
@@ -111,7 +115,8 @@ public class SolverNRP {
     public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
 
         NextReleaseProblem problem =
-                new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+                new NextReleaseProblem(features, employees, nbWeeks, hoursPerweek.doubleValue());
+        problem.setAlgorithmParameters(new AlgorithmParameters(AlgorithmType.NSGAII));
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
@@ -124,7 +129,8 @@ public class SolverNRP {
                                        List<Employee> employees, PlanningSolution previousSolution) {
 
         NextReleaseProblem problem =
-                new NextReleaseProblem(features, employees, new IterationParameters(nbWeeks, hoursPerweek.doubleValue()));
+                new NextReleaseProblem(features, employees, nbWeeks, hoursPerweek.doubleValue());
+        problem.setAlgorithmParameters(new AlgorithmParameters(AlgorithmType.NSGAII));
 
         problem.setPreviousSolution(previousSolution);
 

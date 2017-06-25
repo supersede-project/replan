@@ -4,7 +4,7 @@
 package logic;
 
 import entities.*;
-import entities.parameters.IterationParameters;
+import entities.parameters.AlgorithmParameters;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -32,6 +32,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private PlanningSolution previousSolution;
 	private int nbWeeks; // The number of weeks of the iteration
 	private double nbHoursByWeek; // The number of worked hours by week
+	private AlgorithmParameters algorithmParameters;
 
 	// SOLUTION
 	private NumberOfViolatedConstraints<PlanningSolution> numberOfViolatedConstraints;
@@ -80,6 +81,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		return worstScore;
 	}
 
+	public AlgorithmParameters getAlgorithmParameters() { return algorithmParameters; }
+	public void setAlgorithmParameters(AlgorithmParameters algorithmParameters) { this.algorithmParameters = algorithmParameters; }
+
 	// Constructor (empty)
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
@@ -89,15 +93,16 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
 		solutionQuality = new SolutionQuality();
+		algorithmParameters = new AlgorithmParameters(SolverNRP.AlgorithmType.NSGAII);
 	}
 
 	// Constructor (normal)
-	public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam) {
+	public NextReleaseProblem(List<Feature> features, List<Employee> employees, int nbWeeks, double nbHoursPerWeek) {
 		this();
 
 		this.employees = employees;
-		this.nbWeeks = iterationParam.getNumberOfWeek();
-		this.nbHoursByWeek = iterationParam.getHoursByWeek();
+		this.nbWeeks = nbWeeks;
+		this.nbHoursByWeek = nbHoursPerWeek;
 
 		// TODO: If a feature is not included because 1. lack of skills or 2. the dependee is not included; this information should be noted somewhere and send back to the controller once the plan is produced).
 		// checks that features can be satisfied by the skills of the resources and the dependencies are included
@@ -113,8 +118,9 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	}
 
 	// Constructor (with previous plan)
-	public NextReleaseProblem(List<Feature> features, List<Employee> employees, IterationParameters iterationParam, PlanningSolution previousSolution) {
-		this(features, employees, iterationParam);
+	public NextReleaseProblem(List<Feature> features, List<Employee> employees,
+							  int nbWeeks, double nbHoursPerWeek, PlanningSolution previousSolution) {
+		this(features, employees, nbWeeks, nbHoursPerWeek);
 		this.previousSolution = previousSolution;
 	}
 

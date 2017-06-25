@@ -2,7 +2,6 @@
 package logic;
 
 import entities.*;
-import entities.parameters.DefaultAlgorithmParameters;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -199,7 +198,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
 
 		if (INITIALIZE_ON_CREATE) {
-            if (randomGenerator.nextDouble() > DefaultAlgorithmParameters.RATE_OF_NOT_RANDOM_GENERATED_SOLUTION)
+            if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
                 initializePlannedFeaturesRandomly(nbFeaturesToDo);
             else
                 initializePlannedFeaturesWithPrecedences(nbFeaturesToDo);

@@ -4,7 +4,7 @@
 package logic.operators;
 
 import entities.PlannedFeature;
-import entities.parameters.DefaultAlgorithmParameters;
+import entities.parameters.AlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -43,11 +43,11 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
 	
 	/**
 	 * Constructor that initializes the crossover probability with it default value
-	 * Default value from {@link DefaultAlgorithmParameters}
+	 * Default value from {@link AlgorithmParameters}
 	 * @param problem
 	 */
 	public PlanningCrossoverOperator(NextReleaseProblem problem) {
-		this(problem, DefaultAlgorithmParameters.CROSSOVER_PROBABILITY);
+		this(problem, problem.getAlgorithmParameters().getCrossoverProbability());
 	}
 
 	/**

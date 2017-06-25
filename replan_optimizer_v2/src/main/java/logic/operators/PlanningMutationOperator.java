@@ -5,7 +5,7 @@ package logic.operators;
 
 import entities.Employee;
 import entities.PlannedFeature;
-import entities.parameters.DefaultAlgorithmParameters;
+import entities.parameters.AlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import org.uma.jmetal.operator.MutationOperator;
@@ -57,11 +57,11 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	
 	/**
 	 * Constructs a new PlanningMutationOperator with a default value for the mutation probability
-	 * Default value from {@link DefaultAlgorithmParameters}
+	 * Default value from {@link AlgorithmParameters}
 	 * @param problem the next release problem to solve
 	 */
 	public PlanningMutationOperator(NextReleaseProblem problem) {
-		this(problem, DefaultAlgorithmParameters.MUTATION_PROBABILITY(problem.getFeatures().size()));
+		this(problem, problem.getAlgorithmParameters().getMutationProbability(problem.getFeatures().size()));
 	}
 	
 	/**
