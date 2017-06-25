@@ -56,7 +56,7 @@ public class Schedule {
             week.addPlannedFeature(pf);
             week.setRemainHoursAvailable(remainingWeekHours - featureHoursLeft);
 
-            pf.setEndHour(pf.getBeginHour() + featureHoursLeft);
+            pf.setEndHour(pf.getBeginHour() + normalizeHours(featureHoursLeft));
 
             week.setEndHour(pf.getEndHour());
 
@@ -76,7 +76,7 @@ public class Schedule {
                 featureHoursLeft -= doneHours;
                 totalHoursLeft -= doneHours;
 
-                pfEndHour += featureHoursLeft > 0.0 ? normalizeDoneHours(doneHours) : doneHours;
+                pfEndHour += featureHoursLeft > 0.0 ? normalizeHours(doneHours) : doneHours;
 
                 week.setRemainHoursAvailable(remainingWeekHours - doneHours);
                 week.setEndHour(pfEndHour);
@@ -93,18 +93,8 @@ public class Schedule {
 
 
     /* --- PRIVATE --- */
-    private double normalizeDoneHours(double doneHours) {
+    private double normalizeHours(double doneHours) {
         return doneHours * (hoursPerWeek/employee.getWeekAvailability());
-    }
-
-    // Normalizes the ending hour of a PlannedFeature to a week of hoursPerWeek hours
-    private void normalize(PlannedFeature pf, EmployeeWeekAvailability week) {
-        int weekNumber = weeks.indexOf(week) + 1;
-        pf.setEndHour(hoursPerWeek * weekNumber);
-    }
-
-    private boolean isOver(EmployeeWeekAvailability week) {
-        return week.getRemainHoursAvailable() == 0;
     }
 
     // Returns the first non-full week of the employee, or a new one if there isn't any.
