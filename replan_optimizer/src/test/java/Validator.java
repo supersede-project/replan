@@ -28,6 +28,7 @@ public class Validator {
             "Feature %s depends on itself at some point.";
 
 
+    /* --- PUBLIC --- */
     public void validateDependencies(PlanningSolution solution) {
         List<PlannedFeature> jobs = solution.getPlannedFeatures();
         Map<Feature, PlannedFeature> dependences = new HashMap<>();

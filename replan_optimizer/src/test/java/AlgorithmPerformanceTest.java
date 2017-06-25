@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
-import wrapper.SolverNRP;
+import logic.SolverNRP;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,7 +81,8 @@ public class AlgorithmPerformanceTest {
 
         for (int i = 0; i < nbIterations; ++i) {
 
-            PlanningSolution solution = solver.executeNRP(20, 40.0, features, employees);
+            PlanningSolution solution = solver.executeNRP(20, 40.0,
+                    features, employees);
 
             validator.validateAll(solution);
 
@@ -146,8 +147,10 @@ public class AlgorithmPerformanceTest {
         //solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
         //runWith(solver, 20, features, skills, employees);
 
-        solver = new SolverNRP(SolverNRP.AlgorithmType.MOCell);
-        runWith(solver, 20, features, skills, employees);
+        solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+
+        for (int i = 0; i < 5; ++i)
+            runWith(solver, 20, features, skills, employees);
 
         //solver = new SolverNRP(SolverNRP.AlgorithmType.PESA2);
         //runWith(solver, 20, features, skills, employees);

@@ -6,7 +6,7 @@ import logic.PlanningSolution;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import wrapper.SolverNRP;
+import logic.SolverNRP;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +60,6 @@ public class SolverNRPTest {
         File f = new File(fullPath);
         f.getParentFile().mkdirs();
 
-
         try {
             Files.write(f.toPath(), solution.toR().getBytes());
         } catch (IOException e) {
@@ -70,7 +69,7 @@ public class SolverNRPTest {
 
     @BeforeClass
     public static void setUpBeforeClass() {
-        solver = new SolverNRP();
+        solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
         random = new RandomThings();
         validator = new Validator();
     }
@@ -392,15 +391,20 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(skills.get(0));
         features.get(19).getRequiredSkills().add(skills.get(3));
 
-        PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
+        features.get(19).getRequiredSkills().add(new Skill("No one has this skill"));
 
-        System.out.print(solution.toR());
 
-        Assert.assertTrue(solution.getPlannedFeatures().size() <= 20 ); // and done by the skilled employee
+        for (int i = 0; i < 10; ++i) {
+            PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
 
-        validator.validateAll(solution);
+            //System.out.print(solution.toR());
 
-        solutionToDataFile(solution);
+            Assert.assertTrue(solution.getPlannedFeatures().size() <= 20); // and done by the skilled employee
+
+            validator.validateAll(solution);
+
+            solutionToDataFile(solution);
+        }
     }
 
     @Test
