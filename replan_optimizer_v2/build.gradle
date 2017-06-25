@@ -1,0 +1,62 @@
+group 'SUPERSEDE'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'war'
+
+war {
+    baseName = 'replan_optimizer_v2'
+    version =  '0.0.1'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    maven { url "http://repo.spring.io/snapshot" }
+    maven { url "http://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/release" }
+    maven { url "http://repo.spring.io/libs-snapshot" }
+    mavenCentral()
+}
+
+buildscript {
+    ext {
+        springBootVersion = '1.3.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.4.1.RELEASE")
+    }
+}
+apply plugin: 'spring-boot'
+
+springBoot {
+    mainClass = 'io.swagger.Swagger2SpringBoot'
+}
+
+dependencies {
+    compile group: 'org.springframework', name: 'spring-context', version: '4.3.2.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-gradle-plugin', version: '1.4.1.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-web:1.4.1.RELEASE'
+//    compile 'org.springframework.boot:spring-boot-starter-tomcat:1.2.4.RELEASE'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.4.0.RELEASE'
+    compile group: 'org.uma.jmetal', name: 'jmetal-core', version: '5.0'
+    compile group: 'org.uma.jmetal', name: 'jmetal-algorithm', version: '5.0'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '1.4.0.RELEASE'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '8.0.23'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-el', version: '8.0.23'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-logging-juli', version: '8.0.23'
+    compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '8.0.23'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.2.1'
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.4.0'
+    compile group: 'io.swagger', name: 'swagger-annotations', version: '1.5.10'
+    compile 'com.google.code.gson:gson:2.8.1'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.knowm.xchart', name: 'xchart', version: '3.3.0'
+    testCompile group: 'org.springframework', name: 'spring-test', version: '2.5'
+}
