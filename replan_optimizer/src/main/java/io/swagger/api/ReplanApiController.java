@@ -9,7 +9,7 @@ import logic.PlanningSolution;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import wrapper.SolverNRP;
+import logic.SolverNRP;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
