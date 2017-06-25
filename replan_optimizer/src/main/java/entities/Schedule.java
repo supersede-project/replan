@@ -56,7 +56,7 @@ public class Schedule {
             week.addPlannedFeature(pf);
             week.setRemainHoursAvailable(remainingWeekHours - featureHoursLeft);
 
-            pf.setEndHour(pf.getBeginHour() + normalizeHours(featureHoursLeft));
+            pf.setEndHour(pf.getBeginHour() + featureHoursLeft);
 
             week.setEndHour(pf.getEndHour());
 
