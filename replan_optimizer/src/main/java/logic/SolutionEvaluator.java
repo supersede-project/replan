@@ -64,7 +64,7 @@ public class SolutionEvaluator {
             result += rating/nbEmployees;
         }
 
-        return result;
+        return 1.0 - result;    // Because the algorithm minimizes objectives
     }
 
 
@@ -79,9 +79,9 @@ public class SolutionEvaluator {
 
         double endDateQuality = Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
         double priorityQuality = 1.0 - priorityObjective(solution) / calculateWorstScore(problem);
-        double distributionQuality = distributionObjective(solution);
+        double distributionQuality = 1.0 - distributionObjective(solution);
 
-        return (endDateQuality + priorityQuality + distributionQuality) / 3;
+        return (endDateQuality*0.5 + priorityQuality*0.5 + distributionQuality*0.0);
     }
 
 
