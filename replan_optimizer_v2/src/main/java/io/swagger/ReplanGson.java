@@ -2,6 +2,7 @@ package io.swagger;
 
 import com.google.gson.*;
 import entities.PriorityLevel;
+import logic.SolverNRP;
 
 import java.lang.reflect.Type;
 
@@ -31,9 +32,18 @@ public class ReplanGson {
             }
         };
 
+        JsonDeserializer<SolverNRP.AlgorithmType> algorithmTypeDeserializer = new JsonDeserializer<SolverNRP.AlgorithmType>() {
+            @Override
+            public SolverNRP.AlgorithmType deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                return SolverNRP.AlgorithmType.fromName(json.getAsString());
+            }
+        };
+
+
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(PriorityLevel.class, prioritySerializer);
         gsonBuilder.registerTypeAdapter(PriorityLevel.class, priorityDeserializer);
+        gsonBuilder.registerTypeAdapter(SolverNRP.AlgorithmType.class, algorithmTypeDeserializer);
 
         gson = gsonBuilder.create();
     }

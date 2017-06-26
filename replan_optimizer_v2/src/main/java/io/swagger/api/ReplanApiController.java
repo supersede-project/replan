@@ -5,11 +5,12 @@ import com.google.gson.Gson;
 import io.swagger.ReplanGson;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
+import logic.NextReleaseProblem;
 import logic.PlanningSolution;
+import logic.SolverNRP;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import logic.SolverNRP;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
@@ -23,22 +24,21 @@ public class ReplanApiController implements ReplanApi {
     private static Gson gson = ReplanGson.getGson();
 
 
-    public ResponseEntity<String> replan(
-
- HttpServletRequest request
-
-) {
+    public ResponseEntity<String> replan(HttpServletRequest request) {
         // Deserialize
         String body = getBodyAsJsonString(request);
         if (body == null)
-            return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<String>("", HttpStatus.BAD_REQUEST);
 
-        ApiNextReleaseProblem problem = gson.fromJson(body, ApiNextReleaseProblem.class);
+        ApiNextReleaseProblem p = gson.fromJson(body, ApiNextReleaseProblem.class);
 
         // Execute
         SolverNRP solver = new SolverNRP();
-        PlanningSolution solution =
-                solver.executeNRP(problem.getNbWeeks(), problem.getHoursPerWeek(), problem.getFeatures(), problem.getResources());
+
+        NextReleaseProblem problem =
+                new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
+        problem.setAlgorithmParameters(p.getAlgorithmParameters());
+        PlanningSolution solution = solver.executeNRP(problem);
 
         ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution.getPlannedFeatures());
 

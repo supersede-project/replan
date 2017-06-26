@@ -2,6 +2,7 @@ package io.swagger.model;
 
 import entities.Employee;
 import entities.Feature;
+import entities.parameters.AlgorithmParameters;
 import io.swagger.annotations.ApiModelProperty;
 import logic.PlanningSolution;
 
@@ -23,6 +24,8 @@ public class ApiNextReleaseProblem {
     private List<Feature> features = new ArrayList<>();
 
     private List<Employee> resources = new ArrayList<>();
+
+    private AlgorithmParameters algorithmParameters = null;
 
 
     /* --- CONSTRUCTORS --- */
@@ -98,6 +101,10 @@ public class ApiNextReleaseProblem {
 
     public void setResources(List<Employee> resources) { this.resources = resources; }
 
+    @ApiModelProperty(value="")
+    public AlgorithmParameters getAlgorithmParameters() { return algorithmParameters; }
+
+    public void setAlgorithmParameters(AlgorithmParameters algorithmParameters) { this.algorithmParameters = algorithmParameters; }
 
 
 

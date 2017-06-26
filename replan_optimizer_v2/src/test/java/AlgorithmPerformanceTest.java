@@ -1,6 +1,7 @@
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
+import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -81,8 +82,8 @@ public class AlgorithmPerformanceTest {
 
         for (int i = 0; i < nbIterations; ++i) {
 
-            PlanningSolution solution = solver.executeNRP(20, 40.0,
-                    features, employees);
+            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 20, 40.0);
+            PlanningSolution solution = solver.executeNRP(problem);
 
             validator.validateAll(solution);
 

@@ -26,4 +26,13 @@ public class RequestMocker {
 
         return request;
     }
+
+    public MockHttpServletRequest request(String content) {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setContentType("application/json");
+
+        request.setContent(content.getBytes());
+
+        return request;
+    }
 }

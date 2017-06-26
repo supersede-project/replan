@@ -2,11 +2,12 @@ import entities.Employee;
 import entities.Feature;
 import entities.PlannedFeature;
 import entities.Skill;
+import logic.NextReleaseProblem;
 import logic.PlanningSolution;
+import logic.SolverNRP;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import logic.SolverNRP;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +89,8 @@ public class SolverNRPTest {
         f.getRequiredSkills().addAll(skills);
         e.getSkills().add(skills.get(0));
 
-        PlanningSolution solution = solver.executeNRP(3, 40.0, asList(f), asList(e));
+        NextReleaseProblem problem = new NextReleaseProblem(asList(f), asList(e), 3, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
         validator.validateSkills(solution);
@@ -113,7 +115,8 @@ public class SolverNRPTest {
 
         features.get(1).getPreviousFeatures().add(features.get(0));
 
-        PlanningSolution solution = solver.executeNRP(3, 40, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         validator.validateDependencies(solution);
     }
@@ -130,7 +133,9 @@ public class SolverNRPTest {
 
         f1.getPreviousFeatures().add(f1);
 
-        PlanningSolution solution = solver.executeNRP(3, 40, asList(f1), asList(e1));
+        NextReleaseProblem problem = new NextReleaseProblem(asList(f1), asList(e1), 3, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
+
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
@@ -152,7 +157,9 @@ public class SolverNRPTest {
         f0.getPreviousFeatures().add(f1);
         f1.getPreviousFeatures().add(f0);
 
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
+
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
@@ -164,11 +171,13 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution s1 = solver.executeNRP(3, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
+        PlanningSolution s1 = solver.executeNRP(problem);
 
         random.freeze(s1);
 
-        PlanningSolution s2 = solver.executeNRP(3, 40.0, features, employees, s1);
+        problem = new NextReleaseProblem(features, employees, 3, 40.0);
+        PlanningSolution s2 = solver.executeNRP(problem);
 
         validator.validateFrozen(s1, s2);
     }
@@ -181,7 +190,9 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution s1 = solver.executeNRP(problem);
+
         PlanningSolution s1Prime = new PlanningSolution(s1);
 
         random.violatePrecedences(s1Prime);
@@ -193,7 +204,8 @@ public class SolverNRPTest {
             // OK
         }
 
-        PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1Prime);
+        problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution s2 = solver.executeNRP(problem, s1Prime);
 
         validator.validateFrozen(s1, s2);
     }
@@ -208,7 +220,8 @@ public class SolverNRPTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(20, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         validator.validateAll(solution);
 
@@ -224,7 +237,8 @@ public class SolverNRPTest {
 
             random.mix(features, skills, employees);
 
-            PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+            PlanningSolution solution = solver.executeNRP(problem);
 
             validator.validateAll(solution);
         }
@@ -240,13 +254,15 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution s1 = solver.executeNRP(5, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution s1 = solver.executeNRP(problem);
 
         random.freeze(s1);
         removeNullSkillsFromFeatures(features);
         removeNullSkillsFromEmployees(employees);
 
-        PlanningSolution s2 = solver.executeNRP(5, 40.0, features, employees, s1);
+        problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution s2 = solver.executeNRP(problem, s1);
 
         validator.validateAll(s1, s2);
     }
@@ -259,7 +275,8 @@ public class SolverNRPTest {
 
         e.getSkills().add(s);
 
-        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
+        NextReleaseProblem problem = new NextReleaseProblem(asList(f), asList(e), 4, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         List<PlannedFeature> jobs = solution.getPlannedFeatures();
         PlannedFeature pf = jobs.get(0);
@@ -271,7 +288,8 @@ public class SolverNRPTest {
     public void featureWithNoRequiredSkillsCanBeDoneByANonSkilledEmployee() {
         Feature f = random.feature();
         Employee e = random.employee();
-        PlanningSolution solution = solver.executeNRP(4, 40.0, asList(f), asList(e));
+        NextReleaseProblem problem = new NextReleaseProblem(asList(f), asList(e), 4, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         List<PlannedFeature> jobs = solution.getPlannedFeatures();
         PlannedFeature pf = jobs.get(0);
@@ -296,7 +314,8 @@ public class SolverNRPTest {
         features.get(0).getRequiredSkills().add(skills.get(0));
         features.get(0).getRequiredSkills().add(skills.get(1));
 
-        PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         Assert.assertTrue(solution.getPlannedFeatures().size() == 1 && // is planned
                 solution.getPlannedFeatures().get(0).getEmployee().equals(employees.get(1))); // and done by the skilled employee
@@ -395,11 +414,8 @@ public class SolverNRPTest {
 
 
         for (int i = 0; i < 10; ++i) {
-            PlanningSolution solution = solver.executeNRP(4, 40.0, features, employees);
-
-            //System.out.print(solution.toR());
-
-            Assert.assertTrue(solution.getPlannedFeatures().size() <= 20); // and done by the skilled employee
+            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
+            PlanningSolution solution = solver.executeNRP(problem);
 
             validator.validateAll(solution);
 
@@ -415,7 +431,8 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(5, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         validator.validateNoOverlappedJobs(solution);
     }
@@ -428,7 +445,8 @@ public class SolverNRPTest {
 
         random.mix(features, skills, employees);
 
-        PlanningSolution solution = solver.executeNRP(3, 40.0, features, employees);
+        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 3, 40.0);
+        PlanningSolution solution = solver.executeNRP(problem);
 
         validator.validateAll(solution);
 

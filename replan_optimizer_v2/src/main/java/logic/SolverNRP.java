@@ -1,7 +1,5 @@
 package logic;
 
-import entities.Employee;
-import entities.Feature;
 import entities.PlannedFeature;
 import entities.parameters.AlgorithmParameters;
 import logic.comparators.PlanningSolutionDominanceComparator;
@@ -22,7 +20,7 @@ import org.uma.jmetal.util.neighborhood.impl.C9;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 
 
 public class SolverNRP {
@@ -38,6 +36,22 @@ public class SolverNRP {
 
         public String getName() {
             return name;
+        }
+
+        public static AlgorithmType fromName(String name) {
+            switch (name) {
+                case "NSGA-II":
+                    return NSGAII;
+                case "MOCell":
+                    return MOCell;
+                case "SPEA2":
+                    return SPEA2;
+                case "PESA2":
+                    return PESA2;
+                case "SMSEMOA":
+                    return SMSEMOA;
+            }
+            return null;
         }
     }
 
@@ -112,11 +126,11 @@ public class SolverNRP {
 
 
 
-    public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features, List<Employee> employees){
-
-        NextReleaseProblem problem =
-                new NextReleaseProblem(features, employees, nbWeeks, hoursPerweek.doubleValue());
-        problem.setAlgorithmParameters(new AlgorithmParameters(AlgorithmType.NSGAII));
+    public PlanningSolution executeNRP(NextReleaseProblem problem){
+        if (problem.getAlgorithmParameters() == null)
+            problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
+        else
+            algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
@@ -125,12 +139,11 @@ public class SolverNRP {
         return solution;
     }
 
-    public PlanningSolution executeNRP(int nbWeeks, Number hoursPerweek, List<Feature> features,
-                                       List<Employee> employees, PlanningSolution previousSolution) {
-
-        NextReleaseProblem problem =
-                new NextReleaseProblem(features, employees, nbWeeks, hoursPerweek.doubleValue());
-        problem.setAlgorithmParameters(new AlgorithmParameters(AlgorithmType.NSGAII));
+    public PlanningSolution executeNRP(NextReleaseProblem problem, PlanningSolution previousSolution) {
+        if (problem.getAlgorithmParameters() == null)
+            problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
+        else
+            algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
 
         problem.setPreviousSolution(previousSolution);
 
@@ -163,14 +176,14 @@ public class SolverNRP {
 
         List<PlanningSolution> result = algorithm.getResult();
 
-        printQuality(result);
+        PlanningSolution bestSolution = PopulationFilter.getBestSolutions(result).iterator().next();
 
-        Set<PlanningSolution> bestSolutions = PopulationFilter.getBestSolutions(result);
+        printQuality(result, bestSolution);
 
-        return bestSolutions.iterator().next();
+        return bestSolution;
     }
 
-    private void printQuality(List<PlanningSolution> solutions) {
+    private void printQuality(List<PlanningSolution> solutions, PlanningSolution best) {
         SolutionQuality solutionQuality = new SolutionQuality();
         double totalQuality = 0.0;
         int totalPlannedFeatures = 0;
@@ -182,6 +195,12 @@ public class SolverNRP {
         double averageQuality = totalQuality/solutions.size();
         int averagePlannedFeatures = totalPlannedFeatures/solutions.size();
 
-        System.out.println("Average solution quality: " + averageQuality + ". Average planned features: " + averagePlannedFeatures);
+        int nbFeatures = solutions.get(0).getProblem().getFeatures().size();
+
+        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %d/%d)";
+        System.out.println(
+                String.format(Locale.ENGLISH, message,
+                        averageQuality, averagePlannedFeatures, nbFeatures,
+                        best.getPlannedFeatures().size(), nbFeatures));
     }
 }
