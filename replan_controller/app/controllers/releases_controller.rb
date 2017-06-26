@@ -54,6 +54,7 @@ class ReleasesController < ApplicationController
     force_new = @release.plan.nil? ||
                 (!params[:force_new].nil? && (params[:force_new] == "true" ||
                                               params[:force_new] == "yes"))
+    puts "Calling to: #{request.headers["Host"]}"
     @plan = Plan.get_plan(@release, force_new)
     render json: @plan
   end
