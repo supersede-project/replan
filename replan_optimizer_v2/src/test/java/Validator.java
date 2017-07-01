@@ -107,12 +107,12 @@ public class Validator {
     }
 
     public void validateNoOverlappedJobs(PlanningSolution solution) {
-        Map<Employee, List<EmployeeWeekAvailability>> schedule = solution.getEmployeesPlanning();
-        for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : schedule.entrySet()) {
-            for (EmployeeWeekAvailability week : entry.getValue()) {
+        Map<Employee, Schedule> schedule = solution.getEmployeesPlanning();
+        for (Map.Entry<Employee, Schedule> entry : schedule.entrySet()) {
+            for (WeekSchedule week : entry.getValue()) {
                 double endHour = 0.0;
                 List<PlannedFeature> employeeJobs = week.getPlannedFeatures();
-                PlannedFeature previous = employeeJobs.get(0);
+                PlannedFeature previous = employeeJobs.isEmpty() ? null : employeeJobs.get(0);
 
                 for (PlannedFeature pf : employeeJobs) {
                     if (pf != previous) {

@@ -1,7 +1,5 @@
-import entities.Employee;
-import entities.Feature;
-import entities.PlannedFeature;
-import entities.Skill;
+import entities.*;
+import logic.Analytics;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolverNRP;
@@ -225,6 +223,17 @@ public class SolverNRPTest {
 
         validator.validateAll(solution);
 
+        /*
+        solution.getEmployeesPlanning().clear();
+        for (Employee e : employees)
+            solution.getEmployeesPlanning().put(e, new Schedule(e, 4, 40.0));
+
+        for (PlannedFeature pf : solution.getPlannedFeatures())
+            solution.unschedule(pf);
+        */
+
+        Analytics analytics = new Analytics(solution);
+
         solutionToDataFile(solution);
     }
 
@@ -349,7 +358,7 @@ public class SolverNRPTest {
         //features.get(3).getPreviousFeatures().add(features.get(0));
         //features.get(3).getPreviousFeatures().add(features.get(1));
 
-        features.get(7).getPreviousFeatures().add(features.get(3));
+        features.get(7).getPreviousFeatures().add(features.get(9));
 
         features.get(10).getPreviousFeatures().add(features.get(2));
 
@@ -418,6 +427,8 @@ public class SolverNRPTest {
             PlanningSolution solution = solver.executeNRP(problem);
 
             validator.validateAll(solution);
+
+            Analytics analytics = new Analytics(solution);
 
             solutionToDataFile(solution);
         }
