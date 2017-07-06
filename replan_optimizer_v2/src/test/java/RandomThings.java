@@ -1,4 +1,5 @@
 import entities.*;
+import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import org.junit.Assert;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
@@ -130,6 +131,52 @@ public class RandomThings {
         }
     }
 
+    public void dependencies(List<Feature> features) {
+        while (true) {
+            removeDependencies(features);
+
+            boolean mutated = false;
+            for (Feature f1 : features) {
+                if (shouldMutate()) {
+                    Feature f2 = features.get(random.nextInt(0, features.size() - 1));
+
+                    if (!f1.equals(f2)) {
+                        f2.getPreviousFeatures().add(f1);
+                        mutated = true;
+                    }
+                }
+            }
+            while (!mutated) {
+                Feature f1 = features.get(random.nextInt(0, features.size() - 1));
+                Feature f2 = features.get(random.nextInt(0, features.size() - 1));
+
+                if (!f1.equals(f2)) {
+                    f2.getPreviousFeatures().add(f1);
+                    mutated = true;
+                }
+            }
+
+            try {
+                validator.validateNoDependencyDeadlocks(features);
+                break;
+            } catch (AssertionError e) {
+                // Go on
+            }
+        }
+    }
+
+    public NextReleaseProblem all(int nSkills, int nFeatures, int nEmployees, int nWeeks, double hoursPerWeek) {
+        List<Skill> skills = skillList(nSkills);
+        List<Feature> features = featureList(nFeatures);
+        List<Employee> employees = employeeList(nEmployees);
+
+        mix(features, skills, employees);
+
+        validator.validateNoUnassignedSkills(skills, employees);
+
+        return new NextReleaseProblem(features, employees, nWeeks, hoursPerWeek);
+    }
+
 
 
     private void skillsToFeatures(List<Feature> features, List<Skill> skills) {
@@ -179,39 +226,7 @@ public class RandomThings {
         Assert.assertTrue(assignedSkills.size() == skills.size());
     }
 
-    public void dependencies(List<Feature> features) {
-        while (true) {
-            removeDependencies(features);
 
-            boolean mutated = false;
-            for (Feature f1 : features) {
-                if (shouldMutate()) {
-                    Feature f2 = features.get(random.nextInt(0, features.size() - 1));
-
-                    if (!f1.equals(f2)) {
-                        f2.getPreviousFeatures().add(f1);
-                        mutated = true;
-                    }
-                }
-            }
-            while (!mutated) {
-                Feature f1 = features.get(random.nextInt(0, features.size() - 1));
-                Feature f2 = features.get(random.nextInt(0, features.size() - 1));
-
-                if (!f1.equals(f2)) {
-                    f2.getPreviousFeatures().add(f1);
-                    mutated = true;
-                }
-            }
-
-            try {
-                validator.validateNoDependencyDeadlocks(features);
-                break;
-            } catch (AssertionError e) {
-                // Go on
-            }
-        }
-    }
 
     private boolean shouldMutate() {
         return random.nextDouble() <= MUTATION_PROBABILITY;
