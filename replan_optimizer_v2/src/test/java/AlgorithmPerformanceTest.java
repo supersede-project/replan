@@ -1,14 +1,11 @@
-import entities.Employee;
-import entities.Feature;
-import entities.Skill;
+import entities.parameters.AlgorithmParameters;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
+import logic.SolverNRP;
 import org.junit.BeforeClass;
-import org.junit.Test;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
-import logic.SolverNRP;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,125 +40,106 @@ public class AlgorithmPerformanceTest {
         return Arrays.asList(elements);
     }
 
-    private void removeNullSkillsFromEmployees(List<Employee> employees) {
-        Skill nil = new Skill("null");
-        for (Employee e : employees) {
-            if (e.getSkills().contains(nil))
-                e.getSkills().remove(nil);
+    private PlanningSolution execute(NextReleaseProblem problem, SolverNRP solver)
+    {
+        PlanningSolution solution = solver.executeNRP(problem);
+        validator.validateAll(solution);
+        return solution;
+    }
+
+    private void saveChart(XYChart chart, String filename) {
+        try {
+            String base = "src/test/charts";
+            String fullPath = String.format("%s/%s", base, filename);
+            File f = new File(fullPath);
+            f.getParentFile().mkdirs();
+
+            BitmapEncoder.saveBitmapWithDPI(chart, fullPath, BitmapEncoder.BitmapFormat.PNG, 300);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    private void removeNullSkillsFromFeatures(List<Feature> features) {
-        Skill nil = new Skill("null");
-        for (Feature f : features) {
-            if (f.getRequiredSkills().contains(nil))
-                f.getRequiredSkills().remove(nil);
-        }
+    private String algorithmName(SolverNRP solver) {
+        return solver.getAlgorithmType().getName();
     }
 
-
-    private void runWith(SolverNRP solver, int nbIterations) {
-        List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(40);
-        List<Employee> employees = random.employeeList(8);
-
-        random.mix(features, skills, employees);
-
-        validator.validateNoUnassignedSkills(skills, employees);
-
-        runWith(solver, nbIterations, features, skills, employees);
+    private String timestamp() {
+        return dateFormat.format(Calendar.getInstance().getTime());
     }
 
-    private void runWith(SolverNRP solver, int nbIterations, List<Feature> features, List<Skill> skills,
-                         List<Employee> employees) {
+    /*   -------
+        | TESTS |
+         -------
+     */
+
+    //@Test
+    private void AveragePlannedFeaturesTest()
+    {
+        NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
+        SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
 
         List<Integer> iterations = new ArrayList<>();
         List<Integer> nbPlannedFeatures = new ArrayList<>();
 
         int totalPlannedFeatures = 0;
-
+        int nbIterations = 20;
         for (int i = 0; i < nbIterations; ++i) {
 
-            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 20, 40.0);
-            PlanningSolution solution = solver.executeNRP(problem);
+            NextReleaseProblem problem = new NextReleaseProblem(base);
+            PlanningSolution solution = execute(problem, solver);
 
-            validator.validateAll(solution);
-
-            iterations.add(i);
+            iterations.add(i+1);
             nbPlannedFeatures.add(solution.getPlannedFeatures().size());
 
             totalPlannedFeatures += solution.getPlannedFeatures().size();
         }
-        String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Dummy");
+        String title = String.format("Algorithm: %s. Test set: %s", solver.getAlgorithmType().getName(), "Random");
         XYChart chart = new XYChartBuilder().width(1024).height(512).title(title)
                 .xAxisTitle("Iteration").yAxisTitle("Number of features planned").build();
         chart.addSeries("Number of planned features", iterations, nbPlannedFeatures);
 
         List<Double> average = new ArrayList<>();
         for (int i = 0; i < nbIterations; ++i)
-            average.add((double) totalPlannedFeatures / nbIterations);
+            average.add((double) totalPlannedFeatures/nbIterations);
 
         chart.addSeries("Average planned features", iterations, average);
         chart.getStyler().setXAxisMin(0.0).setYAxisMin(0.0)
-                .setXAxisMax((double) iterations.size()).setYAxisMax((double) features.size());
+                .setXAxisMax((double) iterations.size()).setYAxisMax((double) base.getFeatures().size());
 
-        try {
+        saveChart(chart, String.format("AveragePlannedFeatures_%s_%s", algorithmName(solver), timestamp()));
+    }
 
-            String base = "src/test/charts";
-            String filename = String.format("%s_%s", solver.getAlgorithmType().getName(),
-                    dateFormat.format(Calendar.getInstance().getTime()));
+    //@Test
+    public void populationSizeTest() {
+        NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
+        SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
 
-            String fullPath = String.format("%s/%s", base, filename);
-            File f = new File(fullPath);
-            f.getParentFile().mkdirs();
+        List<Integer> populationSize = new ArrayList<>();
+        List<Double> executionTime = new ArrayList<>();
+        List<Integer> plannedFeatures = new ArrayList<>();
+        for (int i = 0; i < 15; ++i) {
+            AlgorithmParameters params = new AlgorithmParameters(SolverNRP.AlgorithmType.NSGAII);
+            params.setPopulationSize(params.getPopulationSize() + i*10);
 
-            BitmapEncoder.saveBitmapWithDPI(chart, fullPath, BitmapEncoder.BitmapFormat.PNG, 300);
-        } catch (IOException e) {
-            e.printStackTrace();
+            NextReleaseProblem problem = new NextReleaseProblem(base);
+            problem.setAlgorithmParameters(params);
+
+            long start = System.currentTimeMillis();
+            PlanningSolution solution = execute(problem, solver);
+            long elapsed = System.currentTimeMillis() - start;
+
+            populationSize.add(params.getPopulationSize());
+            executionTime.add(elapsed/1000.0);
+            plannedFeatures.add(solution.size());
         }
-    }
 
-    // TODO: I commented this test because it takes too much time.
-    //@Test
-    public void NSGAIITest() {
-        runWith(new SolverNRP(SolverNRP.AlgorithmType.NSGAII), 20);
-    }
+        XYChart chart = new XYChartBuilder().width(1024).height(512).title("Population/Performance chart")
+                .xAxisTitle("Population size").build();
+        chart.addSeries("Execution time (seconds)", populationSize, executionTime);
+        chart.addSeries("Number of planned features", populationSize, plannedFeatures);
 
-    // TODO: I commented this test because it does not work on the development server.
-    //@Test
-    public void MOCellTest() {
-        runWith(new SolverNRP(SolverNRP.AlgorithmType.MOCell), 20);
-    }
-
-    // TODO: I commented this test because it does not work on the development server.
-    @Test
-    public void runAllWithSameInput() {
-        List<Skill> skills = random.skillList(7);
-        List<Feature> features = random.featureList(20);
-        List<Employee> employees = random.employeeList(5);
-
-        random.mix(features, skills, employees);
-
-        validator.validateNoUnassignedSkills(skills, employees);
-
-        SolverNRP solver;
-        //solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
-        //runWith(solver, 20, features, skills, employees);
-
-        solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
-
-        for (int i = 0; i < 5; ++i)
-            runWith(solver, 20, features, skills, employees);
-
-        //solver = new SolverNRP(SolverNRP.AlgorithmType.PESA2);
-        //runWith(solver, 20, features, skills, employees);
-/*
-        // Too slow (1:39 min one iteration)
-        solver = new SolverNRP(SolverNRP.AlgorithmType.SPEA2);
-        runWith(solver, 2, features, skills, employees);
-
-        // Never ends
-        solver = new SolverNRP(SolverNRP.AlgorithmType.SMSEMOA);
-        runWith(solver, 20, features, skills, employees);*/
+        saveChart(chart, String.format("PopulationSizeTest_%s_%s", algorithmName(solver), timestamp()));
     }
 }
