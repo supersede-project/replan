@@ -1,14 +1,10 @@
 swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner. Wrapper of Valentin's Implementation
-  version: "1.1.0"
-# the domain of the service
+  version: 1.2.0
 host: localhost
-#release-planner-ui-api.herokuapp.com
-# array of all schemes that your API supports
 schemes:
   - http
-# will be prefixed to all paths
 basePath: /api/v1
 produces:
   - application/json
@@ -24,13 +20,13 @@ paths:
           schema:
             $ref: '#/definitions/NextReleaseProblem'
       responses:
-        200:
+        '200':
           description: Success
           schema:
             $ref: '#/definitions/PlanningSolution'
-        400:
+        '400':
           description: Bad Request
-        422:
+        '422':
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/Error'
@@ -78,8 +74,34 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/Skill'
+  AlgorithmParameters:
+    type: object
+    properties:
+      algorithmType:
+        type: string
+        enum:
+          - NSGA-II
+          - MOCell
+          - SPEA2
+          - PESA2
+          - SMSEMOA
+      crossoverProbability:
+        type: number
+        format: double
+      rateOfNotRandomSolution:
+        type: number
+        format: double
+      numberOfIterations:
+        type: integer
+      populationSize:
+        type: integer
   NextReleaseProblem:
     type: object
+    required:
+      - nbWeeks
+      - hoursPerWeek
+      - features
+      - resources
     properties:
       nbWeeks:
         type: integer
@@ -96,6 +118,8 @@ definitions:
           $ref: '#/definitions/Resource'
       currentPlan:
         $ref: '#/definitions/PlanningSolution'
+      algorithmParameters:
+        $ref: '#/definitions/AlgorithmParameters'
   PlannedFeature:
     type: object
     properties:
