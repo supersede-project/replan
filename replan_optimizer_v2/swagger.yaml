@@ -1,0 +1,156 @@
+swagger: '2.0'
+info:
+  title: SUPERSEDE ReleasePlanner. Wrapper of Valentin's Implementation
+  version: 1.2.0
+host: localhost
+schemes:
+  - http
+basePath: /api/v1
+produces:
+  - application/json
+paths:
+  /replan:
+    post:
+      summary: Generates a Planning Solution for a given Next Release Problem
+      operationId: replan
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/NextReleaseProblem'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/PlanningSolution'
+        '400':
+          description: Bad Request
+        '422':
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  Skill:
+    type: object
+    properties:
+      name:
+        type: string
+  Priority:
+    type: object
+    properties:
+      level:
+        type: integer
+      score:
+        type: integer
+  Feature:
+    type: object
+    properties:
+      name:
+        type: string
+      duration:
+        type: number
+        format: double
+      priority:
+        $ref: '#/definitions/Priority'
+      required_skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+      depends_on:
+        type: array
+        description: array of features
+        items:
+          $ref: '#/definitions/Feature'
+  Resource:
+    type: object
+    properties:
+      name:
+        type: string
+      availability:
+        type: number
+        format: double
+      skills:
+        type: array
+        items:
+          $ref: '#/definitions/Skill'
+  AlgorithmParameters:
+    type: object
+    properties:
+      algorithmType:
+        type: string
+        enum:
+          - NSGA-II
+          - MOCell
+          - SPEA2
+          - PESA2
+          - SMSEMOA
+      crossoverProbability:
+        type: number
+        format: double
+      rateOfNotRandomSolution:
+        type: number
+        format: double
+      numberOfIterations:
+        type: integer
+      populationSize:
+        type: integer
+  NextReleaseProblem:
+    type: object
+    required:
+      - nbWeeks
+      - hoursPerWeek
+      - features
+      - resources
+    properties:
+      nbWeeks:
+        type: integer
+      hoursPerWeek:
+        type: number
+        format: double
+      features:
+        type: array
+        items:
+          $ref: '#/definitions/Feature'
+      resources:
+        type: array
+        items:
+          $ref: '#/definitions/Resource'
+      currentPlan:
+        $ref: '#/definitions/PlanningSolution'
+      algorithmParameters:
+        $ref: '#/definitions/AlgorithmParameters'
+  PlannedFeature:
+    type: object
+    properties:
+      beginHour:
+        type: number
+        format: double
+      endHour:
+        type: number
+        format: double
+      frozen:
+        type: boolean
+        default: false
+        description: if true means it cannot be rescheduled
+      resource:
+        $ref: '#/definitions/Resource'
+      feature:
+        $ref: '#/definitions/Feature'
+  PlanningSolution:
+    type: object
+    properties:
+      jobs:
+        type: array
+        items:
+          $ref: '#/definitions/PlannedFeature'
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      fields:
+        type: string
