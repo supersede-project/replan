@@ -2,6 +2,7 @@ package io.swagger.api;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.swagger.ReplanGson;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
@@ -31,23 +32,33 @@ public class ReplanApiController implements ReplanApi {
         if (content == null)
             return new ResponseEntity<String>("", HttpStatus.BAD_REQUEST);
 
-        ApiNextReleaseProblem p = gson.fromJson(content, ApiNextReleaseProblem.class);
+        try {
+            ApiNextReleaseProblem p = gson.fromJson(content, ApiNextReleaseProblem.class);
 
-        // Convert to internal model
-        NextReleaseProblem problem =
-                new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
-        problem.setPreviousSolution(p.getPreviousSolution());
+            // Convert to internal model
+            NextReleaseProblem problem =
+                    new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
+            problem.setPreviousSolution(p.getPreviousSolution());
 
 
-        // Execute
-        SolverNRP solver = new SolverNRP();
+            // Execute
+            SolverNRP solver = new SolverNRP();
 
-        problem.setAlgorithmParameters(problem.getAlgorithmParameters());
-        PlanningSolution solution = solver.executeNRP(problem);
+            problem.setAlgorithmParameters(problem.getAlgorithmParameters());
+            PlanningSolution solution = solver.executeNRP(problem);
 
-        ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);
+            ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);
 
-        return new ResponseEntity<String>(gson.toJson(apiSolution), HttpStatus.OK);
+            return new ResponseEntity<String>(gson.toJson(apiSolution), HttpStatus.OK);
+        }
+        catch (JsonSyntaxException e) {
+            return new ResponseEntity<String>("Invalid JSON", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<String>(
+                    "Something went bad. There's a slight chance of the problem being that you passed some really " +
+                            "unexpected data. If that's not the case, it might actually be out fault.",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String requestContentAsString(HttpServletRequest request) {

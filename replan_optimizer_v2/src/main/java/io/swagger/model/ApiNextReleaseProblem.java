@@ -1,10 +1,15 @@
 package io.swagger.model;
 
+import com.google.gson.JsonSyntaxException;
 import entities.Employee;
 import entities.Feature;
 import entities.parameters.AlgorithmParameters;
+import io.swagger.ReplanGson;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -16,11 +21,14 @@ import java.util.stream.Collectors;
  * Just because the one in model is pretty crowded and complex.
  */
 public class ApiNextReleaseProblem {
+
+    private static final String DATASET_PATH = "src/test/datasets";
+
     private ApiPlanningSolution previousSolution = null;
 
-    private Integer nbWeeks = null;
+    private int nbWeeks;
 
-    private Double hoursPerWeek = null;
+    private double hoursPerWeek;
 
     private List<Feature> features = new ArrayList<>();
 
@@ -41,7 +49,6 @@ public class ApiNextReleaseProblem {
         this.hoursPerWeek = hoursPerWeek;
         this.features = features;
         this.resources = resources;
-        previousSolution = null;
     }
 
     public ApiNextReleaseProblem(
@@ -50,6 +57,27 @@ public class ApiNextReleaseProblem {
     {
         this(nbWeeks, hoursPerWeek, features, resources);
         this.previousSolution = previousSolution;
+    }
+
+    /**
+     * Constructs a problem from a file containing a JSON representation of a NextReleaseProblem similar to that
+     * passed to the API replan call. If only a filename is provided as path, it searches the default dataset
+     * location: '/src/test/datasets'.
+     * Returns null if the file doesn't exist or the file data is invalid.
+     */
+    public static ApiNextReleaseProblem fromFile(String location) {
+        if (location.split("/").length == 1)    // Filename only
+            location = String.format("%s/%s", DATASET_PATH, location);
+
+        location = location.endsWith(".txt") ? location : location + ".txt";
+
+        try {
+            String data = new String(Files.readAllBytes(Paths.get(location)));
+            return ReplanGson.getGson().fromJson(data, ApiNextReleaseProblem.class);
+        }
+        catch (IOException | JsonSyntaxException e) {
+            return null;
+        }
     }
 
 
@@ -66,35 +94,20 @@ public class ApiNextReleaseProblem {
     }
 
     @ApiModelProperty(value = "")
-    public Integer getNbWeeks() { return nbWeeks; }
+    public int getNbWeeks() { return nbWeeks; }
 
-    public void setNbWeeks(Integer nbWeeks) { this.nbWeeks = nbWeeks; }
-
-    public ApiNextReleaseProblem hoursPerWeek(Double hoursPerWeek) {
-        this.hoursPerWeek = hoursPerWeek;
-        return this;
-    }
+    public void setNbWeeks(int nbWeeks) { this.nbWeeks = nbWeeks; }
 
     @ApiModelProperty(value = "")
-    public Double getHoursPerWeek() { return hoursPerWeek; }
+    public double getHoursPerWeek() { return hoursPerWeek; }
 
-    public void setHoursPerWeek(Double hoursPerWeek) { this.hoursPerWeek = hoursPerWeek; }
-
-    public ApiNextReleaseProblem addFeaturesItem(Feature featuresItem) {
-        this.features.add(featuresItem);
-        return this;
-    }
-
+    public void setHoursPerWeek(double hoursPerWeek) { this.hoursPerWeek = hoursPerWeek; }
 
     @ApiModelProperty(value = "")
     public List<Feature> getFeatures() { return features; }
 
     public void setFeatures(List<Feature> features) { this.features = features; }
 
-    public ApiNextReleaseProblem addResourcesItem(Employee resourcesItem) {
-        this.resources.add(resourcesItem);
-        return this;
-    }
 
     @ApiModelProperty(value = "")
     public List<Employee> getResources() { return resources; }

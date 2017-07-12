@@ -2,6 +2,8 @@
    "id":3,
    "name":"May 2017",
    "description":"Release plan for may 2017",
+   "nbWeeks": 2,
+   "hoursPerWeek": 40.0,
    "starts_at":"2017-05-01T11:08:05.290Z",
    "deadline":"2017-05-15T11:08:05.290Z",
    "resources":[
@@ -54,5 +56,487 @@
             }
          ]
       }
-   ]
+   ],
+   "features": [  
+   {  
+      "id":23,
+      "code":4380,
+      "name":"mobility section is not opening",
+      "description":"",
+      "duration":"4.0",
+      "deadline":"2017-05-15",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":24,
+      "code":4377,
+      "name":"improvement of meter exchanging",
+      "description":"",
+      "duration":"20.0",
+      "deadline":"2017-05-15",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":25,
+      "code":4381,
+      "name":"similar households calculation",
+      "description":"",
+      "duration":"45.0",
+      "deadline":"2017-05-15",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":26,
+      "code":4373,
+      "name":"optimization of site for mobile devices",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-05-15",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":27,
+      "code":4364,
+      "name":"export of data via email+csv inside of the app",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-05-15",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":28,
+      "code":4363,
+      "name":"average consumption visualization",
+      "description":"",
+      "duration":"8.0",
+      "deadline":"2017-05-05",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":29,
+      "code":4376,
+      "name":"export of the data and the visualized data",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-05-15",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":30,
+      "code":4362,
+      "name":"bills and exchanged meters problems",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-05-15",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":31,
+      "code":4365,
+      "name":"high-low-electricity contract bill",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-05-15",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":32,
+      "code":4372,
+      "name":"photovoltaic with heatpump improvements",
+      "description":"",
+      "duration":"48.0",
+      "deadline":"2017-05-15",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":33,
+      "code":4375,
+      "name":"electric vehicle consumption for winter+summer",
+      "description":"",
+      "duration":"8.0",
+      "deadline":"2017-05-15",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":34,
+      "code":4378,
+      "name":"electric vehicles data entry",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-18",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":35,
+      "code":4371,
+      "name":"electric vehicle form improvement",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-18",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":36,
+      "code":4370,
+      "name":"electric vehicle form improvement",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-25",
+      "priority":1,
+      "required_skills":[  
+
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":37,
+      "code":4369,
+      "name":"electric vehicle simplify form request",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-11",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":38,
+      "code":4368,
+      "name":"electric vehicle charged amount",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-18",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":39,
+      "code":4366,
+      "name":"electric vehicle bill",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-05-15",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":40,
+      "code":4367,
+      "name":"pv and heating interaction",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-25",
+      "priority":1,
+      "required_skills":[  
+
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":41,
+      "code":4374,
+      "name":"more forms in app",
+      "description":"",
+      "duration":"48.0",
+      "deadline":"2017-05-15",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":42,
+      "code":4382,
+      "name":"similar households calculation",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-05-25",
+      "priority":1,
+      "required_skills":[  
+
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   },
+   {  
+      "id":43,
+      "code":4379,
+      "name":"export of meter readings at once",
+      "description":"",
+      "duration":"8.0",
+      "deadline":"2017-05-15",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":3
+      }
+   }
+]
 }

@@ -113,33 +113,35 @@ public class AlgorithmPerformanceTest {
 
     //@Test
     public void populationSizeTest() {
-        NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
-        SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
+        for (int k = 0; k < 5; ++k) {
+            NextReleaseProblem base = random.all(7, 20, 5, 4, 40.0);
+            SolverNRP solver = new SolverNRP(SolverNRP.AlgorithmType.NSGAII);
 
-        List<Integer> populationSize = new ArrayList<>();
-        List<Double> executionTime = new ArrayList<>();
-        List<Integer> plannedFeatures = new ArrayList<>();
-        for (int i = 0; i < 15; ++i) {
-            AlgorithmParameters params = new AlgorithmParameters(SolverNRP.AlgorithmType.NSGAII);
-            params.setPopulationSize(params.getPopulationSize() + i*10);
+            List<Integer> populationSize = new ArrayList<>();
+            List<Double> executionTime = new ArrayList<>();
+            List<Integer> plannedFeatures = new ArrayList<>();
+            for (int i = 0; i < 15; ++i) {
+                AlgorithmParameters params = new AlgorithmParameters(SolverNRP.AlgorithmType.NSGAII);
+                params.setPopulationSize(params.getPopulationSize() + ++i * 10);
 
-            NextReleaseProblem problem = new NextReleaseProblem(base);
-            problem.setAlgorithmParameters(params);
+                NextReleaseProblem problem = new NextReleaseProblem(base);
+                problem.setAlgorithmParameters(params);
 
-            long start = System.currentTimeMillis();
-            PlanningSolution solution = execute(problem, solver);
-            long elapsed = System.currentTimeMillis() - start;
+                long start = System.currentTimeMillis();
+                PlanningSolution solution = execute(problem, solver);
+                long elapsed = System.currentTimeMillis() - start;
 
-            populationSize.add(params.getPopulationSize());
-            executionTime.add(elapsed/1000.0);
-            plannedFeatures.add(solution.size());
+                populationSize.add(params.getPopulationSize());
+                executionTime.add(elapsed / 1000.0);
+                plannedFeatures.add(solution.size());
+            }
+
+            XYChart chart = new XYChartBuilder().width(1024).height(512).title("Population/Performance chart")
+                    .xAxisTitle("Population size").build();
+            chart.addSeries("Execution time (seconds)", populationSize, executionTime);
+            chart.addSeries("Number of planned features", populationSize, plannedFeatures);
+
+            saveChart(chart, String.format("PopulationSizeTest_%s_%s", algorithmName(solver), timestamp()));
         }
-
-        XYChart chart = new XYChartBuilder().width(1024).height(512).title("Population/Performance chart")
-                .xAxisTitle("Population size").build();
-        chart.addSeries("Execution time (seconds)", populationSize, executionTime);
-        chart.addSeries("Number of planned features", populationSize, plannedFeatures);
-
-        saveChart(chart, String.format("PopulationSizeTest_%s_%s", algorithmName(solver), timestamp()));
     }
 }

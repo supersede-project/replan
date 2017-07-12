@@ -1,6 +1,8 @@
 {
    "id":7,
    "name":"SMART-ATOS Sotware Evolution",
+   "nbWeeks": 8,
+   "hoursPerWeek": 40.0,
    "description":"SMART-ATOS Sotware Evolution, after RIO 2016 ",
    "starts_at":"2017-04-16T10:44:08.415Z",
    "deadline":"2017-06-18T10:44:08.415Z",
@@ -70,5 +72,546 @@
             }
          ]
       }
-   ]
+   ],
+   "features": [  
+   {  
+      "id":53,
+      "code":4162,
+      "name":"Labels incremental",
+      "description":"",
+      "duration":"40.0",
+      "deadline":"2017-04-07",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":12,
+            "name":"Testing manager ",
+            "description":"Testing manager "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":69,
+            "code":4152,
+            "name":"Connection issues",
+            "description":"",
+            "duration":"48.0",
+            "deadline":"2017-04-07",
+            "priority":1,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":54,
+      "code":4733,
+      "name":"Keyword: connection [Watching Olympics on satellite is SO MUCH BETTER than streaming on barely-there rural internet connection. ITS EMOTIONAL.]",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":12,
+            "name":"Testing manager ",
+            "description":"Testing manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":55,
+      "code":4155,
+      "name":"Fail over",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":10,
+            "name":"Software Analist ",
+            "description":"Software Analist "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":56,
+      "code":4161,
+      "name":"Improve startup",
+      "description":"",
+      "duration":"40.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":63,
+            "code":4159,
+            "name":"Advertising needs to be monitored",
+            "description":"",
+            "duration":"40.0",
+            "deadline":"2017-04-07",
+            "priority":2,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":57,
+      "code":4149,
+      "name":"SLA management/Policy for severities ",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":58,
+      "code":4642,
+      "name":"Check the Windows Client and solve the bug",
+      "description":"",
+      "duration":"64.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":10,
+            "name":"Software Analist ",
+            "description":"Software Analist "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":59,
+      "code":4165,
+      "name":"Load files",
+      "description":"",
+      "duration":"56.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":11,
+            "name":"WEB Software Programmer  ",
+            "description":"WEB Software Programmer  "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":61,
+            "code":4163,
+            "name":"Convert xml to jsons",
+            "description":"",
+            "duration":"16.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":60,
+      "code":4164,
+      "name":"VPN for Development and Support",
+      "description":"",
+      "duration":"80.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":11,
+            "name":"WEB Software Programmer  ",
+            "description":"WEB Software Programmer  "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":69,
+            "code":4152,
+            "name":"Connection issues",
+            "description":"",
+            "duration":"48.0",
+            "deadline":"2017-04-07",
+            "priority":1,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":61,
+      "code":4163,
+      "name":"Convert xml to jsons",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":10,
+            "name":"Software Analist ",
+            "description":"Software Analist "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":53,
+            "code":4162,
+            "name":"Labels incremental",
+            "description":"",
+            "duration":"40.0",
+            "deadline":"2017-04-07",
+            "priority":5,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":62,
+      "code":4160,
+      "name":"Testing environment",
+      "description":"",
+      "duration":"8.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":63,
+      "code":4159,
+      "name":"Advertising needs to be monitored",
+      "description":"",
+      "duration":"40.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":64,
+      "code":4157,
+      "name":"Insufficient Monitoring",
+      "description":"",
+      "duration":"8.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":65,
+      "code":4158,
+      "name":"Third party integration",
+      "description":"",
+      "duration":"24.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":8,
+            "name":"Hardware/network management ",
+            "description":"Network and Manager Expert"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":71,
+            "code":4150,
+            "name":"Client expectations",
+            "description":"",
+            "duration":"40.0",
+            "deadline":"2017-04-07",
+            "priority":1,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":66,
+      "code":4156,
+      "name":"Insufficient security level",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":12,
+            "name":"Testing manager ",
+            "description":"Testing manager "
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":71,
+            "code":4150,
+            "name":"Client expectations",
+            "description":"",
+            "duration":"40.0",
+            "deadline":"2017-04-07",
+            "priority":1,
+            "release":{  
+               "release_id":7
+            }
+         }
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":67,
+      "code":4154,
+      "name":"Infra not 100% redundant",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":8,
+            "name":"Hardware/network management ",
+            "description":"Network and Manager Expert"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":68,
+      "code":4153,
+      "name":"Requirements gathering",
+      "description":"",
+      "duration":"24.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":69,
+      "code":4152,
+      "name":"Connection issues",
+      "description":"",
+      "duration":"48.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":11,
+            "name":"WEB Software Programmer  ",
+            "description":"WEB Software Programmer  "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":70,
+      "code":4151,
+      "name":"24/7 is needed",
+      "description":"",
+      "duration":"24.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":71,
+      "code":4150,
+      "name":"Client expectations",
+      "description":"",
+      "duration":"40.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":10,
+            "name":"Software Analist ",
+            "description":"Software Analist "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":72,
+      "code":4148,
+      "name":"SLA management",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":9,
+            "name":"Project Manager ",
+            "description":"Project Manager "
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   },
+   {  
+      "id":74,
+      "code":4147,
+      "name":"Interface Portal - Players",
+      "description":"",
+      "duration":"32.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":8,
+            "name":"Hardware/network management ",
+            "description":"Network and Manager Expert"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":7
+      }
+   }
+]
 }

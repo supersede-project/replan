@@ -5,6 +5,7 @@ package logic;
 
 import entities.*;
 import entities.parameters.AlgorithmParameters;
+import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
@@ -124,6 +125,12 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem(NextReleaseProblem origin) {
 		this(origin.getFeatures(), origin.getEmployees(), origin.getNbWeeks(), origin.getNbHoursByWeek());
 	}
+
+	public NextReleaseProblem(ApiNextReleaseProblem p) {
+		this(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek(), p.getPreviousSolution());
+	}
+
+	/* ------------ */
 
 	// Initializes the worst score
 	private void initializeWorstScore() {

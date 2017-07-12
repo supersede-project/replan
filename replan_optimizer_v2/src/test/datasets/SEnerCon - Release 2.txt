@@ -2,6 +2,8 @@
    "id":2,
    "name":"Release in April",
    "description":"the release plan in April",
+   "nbWeeks": 4,
+   "hoursPerWeek": 40.0,
    "starts_at":"2017-04-01T09:15:13.857Z",
    "deadline":"2017-04-30T09:15:13.857Z",
    "resources":[
@@ -67,5 +69,478 @@
             }
          ]
       }
-   ]
+   ],
+   "features": [  
+   {  
+      "id":9,
+      "code":4175,
+      "name":"read-write-access to accounts",
+      "description":"",
+      "duration":"1.0",
+      "deadline":"2017-04-30",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":10,
+      "code":4172,
+      "name":"electric vehicles creation",
+      "description":"",
+      "duration":"24.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":11,
+      "code":4217,
+      "name":"electric vehicles visualization",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":4,
+      "required_skills":[  
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":21,
+            "code":4173,
+            "name":"electric vehicles calculations",
+            "description":"",
+            "duration":"16.0",
+            "deadline":"2017-04-07",
+            "priority":5,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":12,
+      "code":4177,
+      "name":"typical consumptions core",
+      "description":"",
+      "duration":"2.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":13,
+      "code":4180,
+      "name":"typical consumptions water section",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":14,
+      "code":4184,
+      "name":"additional meters",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":15,
+      "code":4179,
+      "name":"typical consumptions electricity section",
+      "description":"",
+      "duration":"10.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":16,
+      "code":4178,
+      "name":"typical consumptions heating section",
+      "description":"",
+      "duration":"20.0",
+      "deadline":"2017-04-07",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":17,
+      "code":4181,
+      "name":"typical consumptions photovoltaic section",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-04-07",
+      "priority":2,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":18,
+      "code":4183,
+      "name":"typical consumptions climatization section",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":19,
+      "code":4182,
+      "name":"typical consumptions mobility section",
+      "description":"",
+      "duration":"12.0",
+      "deadline":"2017-04-07",
+      "priority":3,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":6,
+            "name":"iesa diagram engine",
+            "description":"knowledge of the generation of diagrams in iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":12,
+            "code":4177,
+            "name":"typical consumptions core",
+            "description":"",
+            "duration":"2.0",
+            "deadline":"2017-04-07",
+            "priority":3,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":20,
+      "code":4176,
+      "name":"monthly email with overview of aviable account consumptions",
+      "description":"",
+      "duration":"60.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":21,
+      "code":4173,
+      "name":"electric vehicles calculations",
+      "description":"",
+      "duration":"16.0",
+      "deadline":"2017-04-07",
+      "priority":5,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         },
+         {  
+            "id":7,
+            "name":"iesa calculations",
+            "description":"knowledge of the calculations in iesa"
+         }
+      ],
+      "depends_on":[  
+         {  
+            "id":10,
+            "code":4172,
+            "name":"electric vehicles creation",
+            "description":"",
+            "duration":"24.0",
+            "deadline":"2017-04-07",
+            "priority":4,
+            "release":{  
+               "release_id":2
+            }
+         }
+      ],
+      "release":{  
+         "release_id":2
+      }
+   },
+   {  
+      "id":22,
+      "code":4174,
+      "name":"timeline of inhabitans in a household",
+      "description":"",
+      "duration":"30.0",
+      "deadline":"2017-04-07",
+      "priority":1,
+      "required_skills":[  
+         {  
+            "id":5,
+            "name":"iesa knowledge",
+            "description":"knowledge of the tool iesa"
+         }
+      ],
+      "depends_on":[  
+
+      ],
+      "release":{  
+         "release_id":2
+      }
+   }
+]
 }

@@ -30,8 +30,13 @@ public class ReplanGson {
         JsonDeserializer<PriorityLevel> priorityDeserializer = new JsonDeserializer<PriorityLevel>() {
             @Override
             public PriorityLevel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                int level = json.getAsJsonObject().get("level").getAsInt();
-                return PriorityLevel.fromValues(level, level);
+                if (json instanceof JsonObject) {
+                    int level = json.getAsJsonObject().get("level").getAsInt();
+                    return PriorityLevel.fromValues(level, level);
+                } else {
+                    int level = json.getAsInt();
+                    return PriorityLevel.getPriorityByLevel(level);
+                }
             }
         };
 

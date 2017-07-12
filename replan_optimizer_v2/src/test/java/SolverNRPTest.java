@@ -1,4 +1,5 @@
 import entities.*;
+import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
 import logic.analytics.Analytics;
 import logic.NextReleaseProblem;
@@ -470,5 +471,49 @@ public class SolverNRPTest {
             );
     }
 
+    @Test
+    public void ATOSRelease7() {
+        ApiNextReleaseProblem p = ApiNextReleaseProblem.fromFile("ATOS - Release 7.txt");
+
+        if (p == null)
+            throw new AssertionError("Dataset file does not exist or contains invalid data.");
+
+        NextReleaseProblem problem = new NextReleaseProblem(p);
+        PlanningSolution solution = new SolverNRP().executeNRP(problem);
+
+        validator.validateAll(solution);
+
+        solutionToDataFile(solution);
+    }
+
+    @Test
+    public void SenerconRelease2() {
+        ApiNextReleaseProblem p = ApiNextReleaseProblem.fromFile("SEnerCon - Release 2.txt");
+
+        if (p == null)
+            throw new AssertionError("Dataset file does not exist or contains invalid data.");
+
+        NextReleaseProblem problem = new NextReleaseProblem(p);
+        PlanningSolution solution = new SolverNRP().executeNRP(problem);
+
+        validator.validateAll(solution);
+
+        solutionToDataFile(solution);
+    }
+
+    @Test
+    public void SenerconRelease3() {
+        ApiNextReleaseProblem p = ApiNextReleaseProblem.fromFile("SEnerCon - Release 3.txt");
+
+        if (p == null)
+            throw new AssertionError("Dataset file does not exist or contains invalid data.");
+
+        NextReleaseProblem problem = new NextReleaseProblem(p);
+        PlanningSolution solution = new SolverNRP().executeNRP(problem);
+
+        validator.validateAll(solution);
+
+        solutionToDataFile(solution);
+    }
 
 }
