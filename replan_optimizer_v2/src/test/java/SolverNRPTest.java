@@ -218,7 +218,7 @@ public class SolverNRPTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 1; ++i) {
             NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
             PlanningSolution solution = solver.executeNRP(problem);
 
@@ -417,7 +417,7 @@ public class SolverNRPTest {
         features.get(19).getRequiredSkills().add(new Skill("No one has this skill"));
 
 
-        for (int i = 0; i < 10; ++i) {
+        for (int i = 0; i < 1; ++i) {
             NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
             PlanningSolution solution = solver.executeNRP(problem);
 
