@@ -85,7 +85,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	
 	@Override
 	public PlanningSolution execute(PlanningSolution solution) {
-		int nbPlannedTasks = solution.getNumberOfPlannedFeatures();
+		int nbPlannedTasks = solution.size();
 		
 		for (int i = 0 ; i < nbPlannedTasks ; i++) {
 			if (doMutation()) { // If we have to do a mutation
@@ -141,7 +141,7 @@ public class PlanningMutationOperator implements MutationOperator<PlanningSoluti
 	 */
 	private void changeTask(PlanningSolution solution, PlannedFeature taskToChange, int taskPosition) {
 		int randomPosition = randomGenerator.nextInt(0, numberOfTasks);
-		if (randomPosition < solution.getNumberOfPlannedFeatures() - 1) { // If the random selected task is already planned then exchange with the current
+		if (randomPosition < solution.size() - 1) { // If the random selected task is already planned then exchange with the current
 			if (taskPosition == randomPosition) { 
 				randomPosition++; // If problem then apply a % (modulo) size
 			}

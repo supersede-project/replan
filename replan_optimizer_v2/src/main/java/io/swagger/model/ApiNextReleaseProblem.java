@@ -8,7 +8,9 @@ import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Convenience data class for receiving data from the API call.
@@ -132,15 +134,11 @@ public class ApiNextReleaseProblem {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class NextReleaseProblem {\n");
-
-        sb.append("    nbWeeks: ").append(toIndentedString(nbWeeks)).append("\n");
-        sb.append("    hoursPerWeek: ").append(toIndentedString(hoursPerWeek)).append("\n");
-        sb.append("    features: ").append(toIndentedString(features)).append("\n");
-        sb.append("    resources: ").append(toIndentedString(resources)).append("\n");
-        sb.append("}");
-        return sb.toString();
+        String f = features.stream().map(Feature::getName).collect(Collectors.joining(", "));
+        String r = resources.stream().map(Employee::getName).collect(Collectors.joining(", "));
+        return String.format(
+                Locale.ENGLISH, "nbWeeks: %d, hoursPerWeek: %.2f, features: %s, resources: %s",
+                nbWeeks, hoursPerWeek, f, r);
     }
 
     /**

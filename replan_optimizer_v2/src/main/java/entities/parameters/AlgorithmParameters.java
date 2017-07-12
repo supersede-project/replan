@@ -54,7 +54,7 @@ public class AlgorithmParameters {
                 break;
             default:
                 setNumberOfIterations(1000);
-                setPopulationSize(100);
+                setPopulationSize(110);
         }
     }
 

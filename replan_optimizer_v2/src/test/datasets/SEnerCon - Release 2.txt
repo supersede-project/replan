@@ -1,0 +1,71 @@
+{
+   "id":2,
+   "name":"Release in April",
+   "description":"the release plan in April",
+   "starts_at":"2017-04-01T09:15:13.857Z",
+   "deadline":"2017-04-30T09:15:13.857Z",
+   "resources":[
+      {
+         "id":6,
+         "name":"Oleg",
+         "description":"",
+         "availability":"100.0",
+         "skills":[
+            {
+               "id":5,
+               "name":"iesa knowledge",
+               "description":"knowledge of the tool iesa"
+            },
+            {
+               "id":6,
+               "name":"iesa diagram engine",
+               "description":"knowledge of the generation of diagrams in iesa"
+            },
+            {
+               "id":7,
+               "name":"iesa calculations",
+               "description":"knowledge of the calculations in iesa"
+            }
+         ]
+      },
+      {
+         "id":7,
+         "name":"Igor",
+         "description":"",
+         "availability":"100.0",
+         "skills":[
+            {
+               "id":5,
+               "name":"iesa knowledge",
+               "description":"knowledge of the tool iesa"
+            }
+         ]
+      },
+      {
+         "id":8,
+         "name":"Markus",
+         "description":"",
+         "availability":"100.0",
+         "skills":[
+            {
+               "id":5,
+               "name":"iesa knowledge",
+               "description":"knowledge of the tool iesa"
+            }
+         ]
+      },
+      {
+         "id":9,
+         "name":"Philipp",
+         "description":"",
+         "availability":"100.0",
+         "skills":[
+            {
+               "id":5,
+               "name":"iesa knowledge",
+               "description":"knowledge of the tool iesa"
+            }
+         ]
+      }
+   ]
+}

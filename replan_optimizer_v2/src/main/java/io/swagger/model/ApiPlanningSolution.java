@@ -1,6 +1,8 @@
 package io.swagger.model;
 
 import entities.PlannedFeature;
+import logic.analytics.Analytics;
+import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,8 @@ public class ApiPlanningSolution {
 
     private List<PlannedFeature> jobs;
 
+    private Analytics analytics;
+
 
 
     /* --- CONSTRUCTORS --- */
@@ -19,8 +23,9 @@ public class ApiPlanningSolution {
         jobs = new ArrayList<>();
     }
 
-    public ApiPlanningSolution(List<PlannedFeature> jobs) {
-        this.jobs = jobs;
+    public ApiPlanningSolution(PlanningSolution solution) {
+        jobs = solution.getPlannedFeatures();
+        analytics = new Analytics(solution);
     }
 
 
@@ -34,4 +39,8 @@ public class ApiPlanningSolution {
     public void setJobs(List<PlannedFeature> jobs) {
         this.jobs = jobs;
     }
+
+    public Analytics getAnalytics() { return analytics; }
+
+    public void setAnalytics(Analytics analytics) { this.analytics = analytics; }
 }

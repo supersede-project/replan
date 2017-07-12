@@ -1,7 +1,14 @@
 package logic;
 
+import entities.Employee;
+import entities.Feature;
 import entities.PlannedFeature;
+import entities.Schedule;
 import entities.parameters.AlgorithmParameters;
+import logic.analytics.Analytics;
+import logic.analytics.EmployeeAnalytics;
+import logic.analytics.FeatureAnalytics;
+import logic.analytics.Utils;
 import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
 import logic.operators.PlanningMutationOperator;
@@ -19,8 +26,11 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.neighborhood.impl.C9;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class SolverNRP {
@@ -127,16 +137,7 @@ public class SolverNRP {
 
 
     public PlanningSolution executeNRP(NextReleaseProblem problem){
-        if (problem.getAlgorithmParameters() == null)
-            problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
-        else
-            algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
-
-        PlanningSolution solution = this.generatePlanningSolution(problem);
-
-        clearSolutionIfNotValid(solution);
-
-        return solution;
+        return executeNRP(problem, null);
     }
 
     public PlanningSolution executeNRP(NextReleaseProblem problem, PlanningSolution previousSolution) {
@@ -149,9 +150,60 @@ public class SolverNRP {
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 
+        solution.setAnalytics(new Analytics(solution));
+
+        //postprocess(solution);
+
         clearSolutionIfNotValid(solution);
 
         return solution;
+    }
+
+    /*
+        Tries to schedule undone features to the least busy employee if there is enough time
+     */
+    private void postprocess(PlanningSolution solution) {
+        Utils utils = new Utils(solution);
+
+        Map<Employee, EmployeeAnalytics> employeesInfo = new HashMap<>();
+        Map<Feature, FeatureAnalytics> featuresInfo = new HashMap<>();
+
+        for (Feature f : solution.getProblem().getFeatures())
+            featuresInfo.put(f, new FeatureAnalytics(f, solution));
+        for (Employee e : solution.getProblem().getEmployees())
+            employeesInfo.put(e, new EmployeeAnalytics(e, solution));
+
+        for (Feature f : solution.getUndoneFeatures()) {
+            if (utils.allPrecedencesArePlanned(f)) {
+                List<Employee> doableBy = featuresInfo.get(f).doableBy.stream()
+                        .filter(e -> utils.hadEnoughTime(e, f))
+                        .filter(e -> utils.couldRespectPrecedences(e, f))
+                        .collect(Collectors.toList());
+
+                if (!doableBy.isEmpty()) {
+                    Employee e = doableBy.get(0);
+
+                    // Let's assign it to the least busy employee
+                    for (Employee e2 : doableBy)
+                        if (employeesInfo.get(e2).workload < employeesInfo.get(e).workload)
+                            e = e2;
+
+                    PlannedFeature pf = new PlannedFeature(f, e);
+                    utils.computeHours(pf);
+                    Schedule s = solution.getEmployeesPlanning().get(e);
+
+                    boolean adjustHours = false;
+                    if (s.size() > 0)
+                        adjustHours = pf.getBeginHour() < s.getPlannedFeatures().get(s.size() - 1).getEndHour();
+
+
+                    solution.getEmployeesPlanning().get(e).scheduleFeature(pf, adjustHours);
+
+                    // Don't forget to update the solution's internal state
+                    solution.getPlannedFeatures().add(pf);
+                }
+            }
+        }
     }
 
     /*
@@ -171,11 +223,9 @@ public class SolverNRP {
     private PlanningSolution generatePlanningSolution(NextReleaseProblem problem) {
 
         algorithm = createAlgorithm(algorithmType, problem);
-
         new AlgorithmRunner.Executor(algorithm).execute();
 
         List<PlanningSolution> result = algorithm.getResult();
-
         PlanningSolution bestSolution = PopulationFilter.getBestSolutions(result).iterator().next();
 
         printQuality(result, bestSolution);

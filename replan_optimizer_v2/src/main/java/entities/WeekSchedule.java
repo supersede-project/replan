@@ -8,13 +8,13 @@ import java.util.List;
  * @author Vavou
  *
  */
-public class EmployeeWeekAvailability {
+public class WeekSchedule {
 
 	// The begining hour of the employee in the week
 	private double beginHour;
 	
 	// The remaining hours of the employee
-	private double remainHoursAvailable;
+	private double remainingHours;
 	
 	// The ending hour of the employee in the week
 	private double endHour;
@@ -26,17 +26,17 @@ public class EmployeeWeekAvailability {
 	/* --- Getters and Setters --- */
 	
 	/**
-	 * @return the remainHoursAvailable
+	 * @return the remainingHours
 	 */
-	public double getRemainHoursAvailable() {
-		return remainHoursAvailable;
+	public double getRemainingHours() {
+		return remainingHours;
 	}
 
 	/**
-	 * @param remainHoursAvailable the remainHoursAvailable to set
+	 * @param remainingHours the remainingHours to set
 	 */
-	public void setRemainHoursAvailable(double remainHoursAvailable) {
-		this.remainHoursAvailable = remainHoursAvailable;
+	public void setRemainingHours(double remainingHours) {
+		this.remainingHours = remainingHours;
 	}
 
 	/**
@@ -82,11 +82,11 @@ public class EmployeeWeekAvailability {
 	/**
 	 * Constructor
 	 * @param beginHour the begin hour of the employee in the week
-	 * @param remainHoursAvailable the number of hours the employee can do in the week
+	 * @param remainingHours the number of hours the employee can do in the week
 	 */
-	public EmployeeWeekAvailability(double beginHour, double remainHoursAvailable) {
+	public WeekSchedule(double beginHour, double remainingHours) {
 		this.beginHour = beginHour;
-		this.remainHoursAvailable = remainHoursAvailable;
+		this.remainingHours = remainingHours;
 		endHour = beginHour;
 		this.plannedFeatures = new ArrayList<>();
 	}
@@ -95,9 +95,9 @@ public class EmployeeWeekAvailability {
 	 * Copy constructor
 	 * @param origin the object to copy
 	 */
-	public EmployeeWeekAvailability(EmployeeWeekAvailability origin) {
+	public WeekSchedule(WeekSchedule origin) {
 		this.beginHour = origin.getBeginHour();
-		this.remainHoursAvailable = origin.getRemainHoursAvailable();
+		this.remainingHours = origin.getRemainingHours();
 		this.endHour = origin.getEndHour();
 		this.plannedFeatures = new ArrayList<>(origin.getPlannedFeatures().size());
 		for (PlannedFeature plannedFeature : origin.getPlannedFeatures()) {
@@ -110,10 +110,10 @@ public class EmployeeWeekAvailability {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EmployeeWeekAvailability that = (EmployeeWeekAvailability) o;
+        WeekSchedule that = (WeekSchedule) o;
 
         if (Double.compare(that.beginHour, beginHour) != 0) return false;
-        if (Double.compare(that.remainHoursAvailable, remainHoursAvailable) != 0) return false;
+        if (Double.compare(that.remainingHours, remainingHours) != 0) return false;
         if (Double.compare(that.endHour, endHour) != 0) return false;
         return plannedFeatures != null ? plannedFeatures.equals(that.plannedFeatures) : that.plannedFeatures == null;
     }
@@ -124,7 +124,7 @@ public class EmployeeWeekAvailability {
         long temp;
         temp = Double.doubleToLongBits(beginHour);
         result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(remainHoursAvailable);
+        temp = Double.doubleToLongBits(remainingHours);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(endHour);
         result = 31 * result + (int) (temp ^ (temp >>> 32));

@@ -40,7 +40,7 @@ public class ReplanApiController implements ReplanApi {
         problem.setAlgorithmParameters(p.getAlgorithmParameters());
         PlanningSolution solution = solver.executeNRP(problem);
 
-        ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution.getPlannedFeatures());
+        ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);
 
 
 

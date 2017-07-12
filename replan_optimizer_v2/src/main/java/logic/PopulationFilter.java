@@ -33,21 +33,18 @@ public class PopulationFilter {
 	 * @param population The population with only the best solutions
 	 */
 	public static Set<PlanningSolution> getBestSolutions(List<PlanningSolution> population) {
-		Set<PlanningSolution> bestSolutions = new HashSet<PlanningSolution>();
+		Set<PlanningSolution> bestSolutions = new HashSet<>();
 		
-		if (population.size() == 0) {
+		if (population.size() == 0)
 			return bestSolutions;
-		}
 		
 		PlanningSolution bestSolution = getBestSolution(population);
 		
 		Comparator<PlanningSolution> comparator = new PlanningSolutionDominanceComparator();
 
-		for (PlanningSolution currentSolution : population) {
-			if (comparator.compare(currentSolution, bestSolution) == 0) {
+		for (PlanningSolution currentSolution : population)
+			if (comparator.compare(currentSolution, bestSolution) == 0)
 				bestSolutions.add(currentSolution);
-			}
-		}
 		
 		return bestSolutions;
 	}

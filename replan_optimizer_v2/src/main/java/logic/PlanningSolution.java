@@ -1,10 +1,12 @@
 // @author Vavou
 package logic;
 
+import com.google.gson.annotations.SerializedName;
 import entities.*;
+import io.swagger.annotations.ApiModelProperty;
+import logic.analytics.Analytics;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
-import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,42 +20,54 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
     private boolean INITIALIZE_ON_CREATE = true;
 	
-	private List<PlannedFeature> plannedFeatures; // included features
-	private List<Feature> undoneFeatures; // not included features
-    private Map<Employee, List<EmployeeWeekAvailability>> employeesPlanning; // The employees' week planning
-	private double endDate; // The end hour of the solution. It's updated only when isUpToDate field is true
-    private NextReleaseProblem NRP;
+	@SerializedName("jobs") private List<PlannedFeature> plannedFeatures; // included features
+	private transient List<Feature> undoneFeatures; // not included features
+    private transient Map<Employee, Schedule> employeesPlanning; // The employees' week planning
+	private transient double endDate; // The end hour of the solution. It's updated only when isUpToDate field is true
+    private Analytics analytics = null;
 
-    // GETTERS / SETTERS
+    /* --- GETTERS / SETTERS --- */
 	public double getEndDate() {
 		return endDate;
 	}
 	public void setEndDate(double endDate) {
 		this.endDate = endDate;
 	}
-	public int getNumberOfPlannedFeatures() {
+
+	public int size() {
 		return plannedFeatures.size();
 	}
-	public List<PlannedFeature> getPlannedFeatures() {
-		return new ArrayList<>(plannedFeatures);
+
+    @ApiModelProperty()
+    public List<PlannedFeature> getPlannedFeatures() {
+		return plannedFeatures;
 	}
 	public PlannedFeature getPlannedFeature(int position) {
 		if (position >= 0 && position < plannedFeatures.size())
 			return plannedFeatures.get(position);
 		return null;
 	}
+
 	public List<PlannedFeature> getEndPlannedFeaturesSubListCopy(int beginPosition) {
 		return new ArrayList<>(plannedFeatures.subList(beginPosition, plannedFeatures.size()));
 	}
+
 	public List<Feature> getUndoneFeatures() {
 		return undoneFeatures;
 	}
-	public Map<Employee, List<EmployeeWeekAvailability>> getEmployeesPlanning() {
+
+	public Map<Employee, Schedule> getEmployeesPlanning() {
 		return employeesPlanning;
 	}
-	public void setEmployeesPlanning(Map<Employee, List<EmployeeWeekAvailability>> employeesPlanning) {
+	public void setEmployeesPlanning(Map<Employee, Schedule> employeesPlanning) {
 		this.employeesPlanning = employeesPlanning;
 	}
+
+    public NextReleaseProblem getProblem() { return problem; }
+
+    @ApiModelProperty()
+    public Analytics getAnalytics() { return analytics; }
+    public void setAnalytics(Analytics analytics) { this.analytics = analytics; }
 
 
 	/* --- CONSTRUCTORS --- */
@@ -61,22 +75,15 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
     // constructor (normal)
 	public PlanningSolution(NextReleaseProblem problem) {
 		super(problem);
-
-        NRP=problem;
 	    numberOfViolatedConstraints = 0;
-
 	    initializePlannedFeatureVariables();
 	    initializeObjectiveValues();
 	}
 
     public PlanningSolution(NextReleaseProblem problem, boolean initializeOnCreate) {
         super(problem);
-
         INITIALIZE_ON_CREATE = initializeOnCreate;
-
-        NRP=problem;
         numberOfViolatedConstraints = 0;
-
         initializePlannedFeatureVariables();
         initializeObjectiveValues();
     }
@@ -85,16 +92,16 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public PlanningSolution(NextReleaseProblem problem, List<PlannedFeature> plannedFeatures) {
 	    super(problem);
 
-	    NRP=problem;
 	    numberOfViolatedConstraints = 0;
-
-	    undoneFeatures = new CopyOnWriteArrayList<Feature>();
+	    undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
-		this.plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
+
+		this.plannedFeatures = new CopyOnWriteArrayList<>();
 		for (PlannedFeature plannedFeature : plannedFeatures) {
 			if (plannedFeature.isFrozen()) this.plannedFeatures.add(plannedFeature);
 			else scheduleAtTheEnd(plannedFeature.getFeature(), plannedFeature.getEmployee());
 		}
+
 	    initializeObjectiveValues();
 	}
 
@@ -103,42 +110,29 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		super(origin.problem);
 
 	    numberOfViolatedConstraints = origin.numberOfViolatedConstraints;
-	    NRP=origin.NRP;
-	    
+
 	    plannedFeatures = new CopyOnWriteArrayList<>();
-	    for (PlannedFeature plannedFeature : origin.getPlannedFeatures()) {
+	    for (PlannedFeature plannedFeature : origin.getPlannedFeatures())
 			plannedFeatures.add(new PlannedFeature(plannedFeature));
-		}
 	    
 	    // Copy constraints and quality
 	    this.attributes.putAll(origin.attributes);
 	    
 	    employeesPlanning = new HashMap<>();
-	    
 	    for (Employee e : origin.employeesPlanning.keySet()) {
-	    	List<EmployeeWeekAvailability> old = origin.employeesPlanning.get(e);
-			List<EmployeeWeekAvailability> availabilities = new ArrayList<>(old.size());
-			for (EmployeeWeekAvailability employeeWeekAvailability : old) {
-				availabilities.add(new EmployeeWeekAvailability(employeeWeekAvailability));
-			}
-			employeesPlanning.put(e, availabilities);
+	    	Schedule old = origin.employeesPlanning.get(e);
+			employeesPlanning.put(e, new Schedule(old));
 		}
 	    
-	    for (int i = 0 ; i < origin.getNumberOfObjectives() ; i++) {
+	    for (int i = 0 ; i < origin.getNumberOfObjectives() ; i++)
 	    	this.setObjective(i, origin.getObjective(i));
-	    }
-	    
+
 	    endDate = origin.getEndDate();
 	    undoneFeatures = new CopyOnWriteArrayList<>(origin.getUndoneFeatures());
 	}
 
-	public NextReleaseProblem getProblem() {
-	    return problem;
-    }
 
 
-
-	// TODO [Andrés] This doesn't make sense to my version of the algorithm
 	// Exchange the two features in positions pos1 and pos2
 	public void exchange(int pos1, int pos2) {
 		if (pos1 >= 0 && pos2 >= 0 && pos1 < plannedFeatures.size() && pos2 < plannedFeatures.size() && pos1 != pos2) {
@@ -160,22 +154,18 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	public List<PlannedFeature> getFeaturesDoneBy(Employee e) {
 		List<PlannedFeature> featuresOfEmployee = new ArrayList<>();
 		for (PlannedFeature plannedFeature : plannedFeatures)
-			if (plannedFeature.getEmployee() == e)
+			if (plannedFeature.getEmployee().equals(e))
 				featuresOfEmployee.add(plannedFeature);
 		return featuresOfEmployee;
 	}
 
 	// Return true if the feature is already in the planned features
 	public boolean isAlreadyPlanned(Feature feature) {
-		boolean found = false;
-		Iterator<PlannedFeature> it = plannedFeatures.iterator();
-		
-		while (!found && it.hasNext()) {
-			PlannedFeature plannedFeature = (PlannedFeature) it.next();
-			if (plannedFeature.getFeature().equals(feature))
-				found = true;
-		}
-		return found;
+		for (PlannedFeature pf : plannedFeatures)
+			if (pf.getFeature().equals(feature))
+				return true;
+
+		return false;
 	}
 
 	// Returns the planned feature corresponding to the feature given in parameter
@@ -188,14 +178,11 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	
 	// Initialize the variables. Load a random number of planned features
 	private void initializePlannedFeatureVariables() {
-		int numberOfFeatures = problem.getFeatures().size();
-		// TODO: All the solutions will have all the features. This is a temporal solution.
-        //int nbFeaturesToDo = randomGenerator.nextInt(0, numberOfFeatures);
-		int nbFeaturesToDo = numberOfFeatures;
+		int nbFeaturesToDo = problem.getFeatures().size();
 		
-		undoneFeatures = new CopyOnWriteArrayList<Feature>();
+		undoneFeatures = new CopyOnWriteArrayList<>();
 		undoneFeatures.addAll(problem.getFeatures());
-		plannedFeatures = new CopyOnWriteArrayList<PlannedFeature>();
+		plannedFeatures = new CopyOnWriteArrayList<>();
 
 		if (INITIALIZE_ON_CREATE) {
             if (randomGenerator.nextDouble() > getProblem().getAlgorithmParameters().getRateOfNotRandomSolution())
@@ -248,13 +235,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		
 	// Schedule a feature in the planning
 	public void scheduleAtTheEnd(Feature feature, Employee e) {
-	    // TODO: is this correct? it assumes that if already planned nothing happens. It may be associated to another employee or is not at the end.
-		/*if (!isAlreadyPlanned(feature)) {
-			undoneFeatures.remove(feature);
-			plannedFeatures.add(new PlannedFeature(feature, e));
-		}*/
-
-		// DAVID: my proposal
 		if (isAlreadyPlanned(feature)) plannedFeatures.remove(findPlannedFeature(feature));
 		else undoneFeatures.remove(feature);
         plannedFeatures.add(new PlannedFeature(feature, e));
@@ -311,7 +291,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
 	@Override
 	public String getVariableValueString(int index) {
-		//return getVariableValueString(index).toString();	// This recurses infinitely
 		return getVariableValue(index).toString();	// I guess this is what you want
 	}
 
@@ -335,41 +314,16 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 			return false;
 
 		PlanningSolution other = (PlanningSolution) obj;
-		
-		int size = this.getPlannedFeatures().size();
-		boolean equals = other.getPlannedFeatures().size() == size;
-		int i = 0;
-		while (equals && i < size) {
-			if (!other.getPlannedFeatures().contains(this.getPlannedFeatures().get(i))) {
-				equals = false;
-			}
-			i++;
-		}
 
-		return equals;
+		if (this.getPlannedFeatures().size() == other.getPlannedFeatures().size())
+			return this.getPlannedFeatures().containsAll(other.getPlannedFeatures());
+
+		return false;
 	}
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		String lineSeparator = System.getProperty("line.separator");
-		
-		sb.append('(');
-		for (int i = 0 ; i < getNumberOfObjectives() ; i++) {
-			sb.append(getObjective(i)).append('\t');
-		}
-		
-		sb.append(new NumberOfViolatedConstraints<>().getAttribute(this));
-		sb.append(')').append(lineSeparator);
-		
-		for (PlannedFeature feature : getPlannedFeatures()) {
-			sb.append("-").append(feature);
-			sb.append(lineSeparator);
-		}
-		
-		sb.append("End Date: ").append(getEndDate()).append(lineSeparator);
-		
-		return sb.toString();
+		return String.format("%d/%d features planned", plannedFeatures.size(), plannedFeatures.size() + undoneFeatures.size());
 	}
 
 	public String toR() {
@@ -431,7 +385,7 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
         sb.append(lineSeparator);
 
-        sb.append("  d$nWeeks <- ").append(NRP.getNbWeeks()).append(lineSeparator);
+        sb.append("  d$nWeeks <- ").append(problem.getNbWeeks()).append(lineSeparator);
 
         sb.append(lineSeparator);
 
@@ -451,4 +405,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
             if(!employees.contains(feature.getEmployee())) employees.add(feature.getEmployee());
         return employees;
     }
+
+
 }

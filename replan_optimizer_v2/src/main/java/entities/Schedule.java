@@ -6,15 +6,15 @@ import java.util.*;
  * Represents the schedule of an employee during a certain number of weeks
  * and takes care of assigning features to said employee.
  */
-public class Schedule {
-    private List<EmployeeWeekAvailability> weeks;
+public class Schedule implements Iterable<WeekSchedule> {
+    private List<WeekSchedule> weeks;
     private Employee employee;
     private Set<PlannedFeature> plannedFeatures;
 
-    // The number of hours left this employee has for the whole iteration
+    // The number of hours left this employee has for the whole release
     private double totalHoursLeft;
-    private int nbWeeks;
-    private double hoursPerWeek;
+    private final int nbWeeks;
+    private final double hoursPerWeek;
 
     public Schedule(Employee employee, int nbWeeks, double hoursPerWeek) {
         this.employee = employee;
@@ -27,23 +27,45 @@ public class Schedule {
         plannedFeatures = new HashSet<>();
     }
 
+    // Copy constructor
+    public Schedule(Schedule origin) {
+        this(origin.employee, origin.nbWeeks, origin.hoursPerWeek);
+
+        totalHoursLeft = origin.totalHoursLeft;
+
+        weeks = new ArrayList<>();
+        for (WeekSchedule week : weeks)
+            weeks.add(new WeekSchedule(week));
+
+        plannedFeatures = new HashSet<>();
+        for (PlannedFeature pf : origin.plannedFeatures)
+            plannedFeatures.add(new PlannedFeature(pf));
+    }
+
+    /* --- PUBLIC --- */
+
+    public boolean scheduleFeature(PlannedFeature pf) {
+        return scheduleFeature(pf, true);
+    }
+
     /**
      * Tries to schedule a PlannedFeature in the first available week
      * @param pf the PlannedFeature to be scheduled
      * @return a boolean indicating whether the PlannedFeature could be scheduled or not
      */
-    public boolean scheduleFeature(PlannedFeature pf) {
+    public boolean scheduleFeature(PlannedFeature pf, boolean adjustHours) {
 
         double featureHoursLeft = pf.getFeature().getDuration();
 
         // Not enough hours left for this feature in the iteration
-        if (totalHoursLeft < featureHoursLeft) return false;
+        if (totalHoursLeft < featureHoursLeft)
+            return false;
 
-        EmployeeWeekAvailability week = getCurrentWeek();
+        WeekSchedule week = getCurrentWeek();
 
-        double remainingWeekHours = week.getRemainHoursAvailable();
+        double remainingWeekHours = week.getRemainingHours();
 
-        EmployeeWeekAvailability previousWeek = getPreviousWeek(week);
+        WeekSchedule previousWeek = getPreviousWeek(week);
 
 
         PlannedFeature lastPlanned = getLastPlannedFeature(week, previousWeek);
@@ -51,10 +73,11 @@ public class Schedule {
 
         if (featureHoursLeft <= remainingWeekHours) {
             double newBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
+            newBeginHour = adjustHours ? newBeginHour : pf.getBeginHour();
             pf.setBeginHour(newBeginHour);
 
             week.addPlannedFeature(pf);
-            week.setRemainHoursAvailable(remainingWeekHours - featureHoursLeft);
+            week.setRemainingHours(remainingWeekHours - featureHoursLeft);
 
             pf.setEndHour(pf.getBeginHour() + featureHoursLeft);
 
@@ -78,11 +101,11 @@ public class Schedule {
 
                 pfEndHour += featureHoursLeft > 0.0 ? normalizeHours(doneHours) : doneHours;
 
-                week.setRemainHoursAvailable(remainingWeekHours - doneHours);
+                week.setRemainingHours(remainingWeekHours - doneHours);
                 week.setEndHour(pfEndHour);
 
                 week = getCurrentWeek();
-                remainingWeekHours = week.getRemainHoursAvailable();
+                remainingWeekHours = week.getRemainingHours();
             }
             pf.setBeginHour(pfBeginHour);
             pf.setEndHour(pfEndHour);
@@ -92,22 +115,54 @@ public class Schedule {
     }
 
 
+    public WeekSchedule getWeek(int i) { return weeks.get(i); }
+
+    public int size() { return weeks.size(); }
+
+    public boolean isEmpty() { return plannedFeatures.isEmpty(); }
+
+    public List<WeekSchedule> getAllWeeks() {
+        weeks.removeIf(week -> week.getPlannedFeatures().isEmpty());
+        return weeks;
+    }
+
+    public boolean contains(PlannedFeature pf) { return plannedFeatures.contains(pf); }
+
+    public Employee getEmployee() { return employee; }
+
+    public List<PlannedFeature> getPlannedFeatures() {
+        return new ArrayList<>(plannedFeatures);
+    }
+
+    public double getTotalHoursLeft() { return totalHoursLeft; }
+
+    public void clear() {
+        weeks.clear();
+        plannedFeatures.clear();
+        totalHoursLeft = nbWeeks * employee.getWeekAvailability();
+    }
+
+    @Override
+    public Iterator<WeekSchedule> iterator() { return weeks.iterator(); }
+
+
+
     /* --- PRIVATE --- */
     private double normalizeHours(double doneHours) {
         return doneHours * (hoursPerWeek/employee.getWeekAvailability());
     }
 
     // Returns the first non-full week of the employee, or a new one if there isn't any.
-    private EmployeeWeekAvailability getCurrentWeek() {
-        for (EmployeeWeekAvailability week : this.weeks)
-            if (week.getRemainHoursAvailable() > 0.0)
+    private WeekSchedule getCurrentWeek() {
+        for (WeekSchedule week : this.weeks)
+            if (week.getRemainingHours() > 0.0)
                 return week;
 
-        EmployeeWeekAvailability week = new EmployeeWeekAvailability(0.0, employee.getWeekAvailability());
+        WeekSchedule week = new WeekSchedule(0.0, employee.getWeekAvailability());
 
         weeks.add(week);
 
-        EmployeeWeekAvailability previous = getPreviousWeek(week);
+        WeekSchedule previous = getPreviousWeek(week);
 
         if (previous != null) {
             week.setBeginHour(previous.getEndHour());
@@ -118,13 +173,13 @@ public class Schedule {
     }
 
     // Returns the previous week to the given one, null if the given one is the first
-    private EmployeeWeekAvailability getPreviousWeek(EmployeeWeekAvailability week) {
+    private WeekSchedule getPreviousWeek(WeekSchedule week) {
         int index = weeks.indexOf(week) - 1;
 
         return index < 0 ? null : weeks.get(index);
     }
 
-    private PlannedFeature getLastPlannedFeature(EmployeeWeekAvailability week, EmployeeWeekAvailability previousWeek) {
+    public PlannedFeature getLastPlannedFeature(WeekSchedule week, WeekSchedule previousWeek) {
         List<PlannedFeature> jobs = week.getPlannedFeatures();
         if (!jobs.isEmpty())
             return jobs.get(jobs.size() - 1);
@@ -139,25 +194,7 @@ public class Schedule {
     }
 
 
-    /* --- PUBLIC --- */
 
-    public List<EmployeeWeekAvailability> getAllWeeks() {
-        weeks.removeIf(week -> week.getPlannedFeatures().isEmpty());
-        return weeks;
-    }
-
-    public boolean contains(PlannedFeature pf) {
-        for (EmployeeWeekAvailability week : weeks) {
-            if (week.getPlannedFeatures().contains(pf)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<PlannedFeature> getPlannedFeatures() {
-        return new ArrayList<>(plannedFeatures);
-    }
 
     @Override
     public String toString() {

@@ -12,60 +12,44 @@ import java.util.List;
  *
  */
 public class Employee {
-	
-	/* --- Atributes --- */
-
 
 	private String name;
-
 	private List<Skill> skills;
-	
-	/**
-	 * The available number of hours per week
-	 */
-	@SerializedName("availability")
-	private double weekAvailability;
+	@SerializedName("availability") private double weekAvailability;	// In hours
 
 	
-	/* --- Getters and setters --- */
+	/* --- GETTERS / SETTERS --- */
 
-	@ApiModelProperty(value = "")
-	public String getName() {
+	@ApiModelProperty(value = "") public String getName() {
 		return name;
 	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	@ApiModelProperty(value = "")
-	public List<Skill> getSkills() {
+	@ApiModelProperty(value = "") public List<Skill> getSkills() {
 		return skills;
 	}
-
 	public void setSkills(List<Skill> skills) {
 		this.skills = skills;
 	}
 
-	@ApiModelProperty(value = "")
-	public double getWeekAvailability() {
+	@ApiModelProperty(value = "") public double getWeekAvailability() {
 		return weekAvailability;
 	}
-
 	public void setWeekAvailability(double weekAvailability) {
 		this.weekAvailability = weekAvailability;
 	}
 	
-	
-	/* --- Constructor --- */
 
-    public Employee() {
+
+	/* --- CONSTRUCTORS --- */
+
+	public Employee() {
         skills = new ArrayList<>();
     }
 	
 	/**
-	 * Constructs a new employee
-	 * @param name
 	 * @param weekAvailability in hours per week
 	 */
 	public Employee(String name, double weekAvailability, List<Skill> skills) {
@@ -74,10 +58,9 @@ public class Employee {
 		this.skills = skills == null ? new ArrayList<Skill>() : skills;
 	}
 	
-	/**
-	 * Returns the name of the employee
-	 * @return the name of the employee
-	 */
+
+
+	/* --- OTHER --- */
 	@Override 
 	public String toString() {
 		List<String> skillNames = new ArrayList<>();
@@ -86,11 +69,7 @@ public class Employee {
 
 		return String.format("%s. Skills: [%s].", getName(), String.join(", ", skillNames));
 	}
-	
-	/**
-	 * Two employees are equals if they have the same name
-	 * @param obj The other object to compare
-	 */
+
 	@Override 
 	public boolean equals(Object obj) {
 		if (this == obj)

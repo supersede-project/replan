@@ -91,8 +91,8 @@ public class PlanningCrossoverOperator implements CrossoverOperator<PlanningSolu
 		offspring.add(new PlanningSolution(parent1.getProblem(), false)) ;
 		offspring.add(new PlanningSolution(parent1.getProblem(), false)) ;
 
-        int sizeP1 = parent1.getNumberOfPlannedFeatures();
-        int sizeP2 = parent2.getNumberOfPlannedFeatures();
+        int sizeP1 = parent1.size();
+        int sizeP2 = parent2.size();
 
         int minSize = Math.min(sizeP1, sizeP2);
         PlanningSolution shorterParent = sizeP1 < sizeP2 ? parent1 : parent2;

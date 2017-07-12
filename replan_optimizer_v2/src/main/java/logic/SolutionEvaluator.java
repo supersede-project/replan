@@ -1,12 +1,8 @@
 package logic;
 
-import entities.Employee;
-import entities.EmployeeWeekAvailability;
-import entities.Feature;
-import entities.PlannedFeature;
+import entities.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,10 +34,10 @@ public class SolutionEvaluator {
     public double distributionObjective(PlanningSolution solution) {
         Map<Employee, Double> hoursPerEmployee = new HashMap<>();
         double totalHours = 0.0;
-        for (Map.Entry<Employee, List<EmployeeWeekAvailability>> entry : solution.getEmployeesPlanning().entrySet()) {
+        for (Map.Entry<Employee, Schedule> entry : solution.getEmployeesPlanning().entrySet()) {
             Employee employee = entry.getKey();
             hoursPerEmployee.put(employee, 0.0);
-            for (EmployeeWeekAvailability week : entry.getValue()) {
+            for (WeekSchedule week : entry.getValue()) {
                 double aux = hoursPerEmployee.get(employee);
                 for (PlannedFeature pf : week.getPlannedFeatures()) {
                     totalHours += pf.getFeature().getDuration();
@@ -78,15 +74,15 @@ public class SolutionEvaluator {
         double penalty = worstEndDate/totalFeatures;
 
         double endDateQuality = Math.max(0.0, 1.0 - (penalty * unplannedFeatures) / worstEndDate);
-        double priorityQuality = 1.0 - priorityObjective(solution) / calculateWorstScore(problem);
+        double priorityQuality = 1.0 - priorityObjective(solution) / worstScore(problem);
         double distributionQuality = 1.0 - distributionObjective(solution);
 
-        return (endDateQuality*0.5 + priorityQuality*0.5 + distributionQuality*0.0);
+        return (endDateQuality*0.3 + priorityQuality*0.4 + distributionQuality*0.3);
     }
 
 
     /* --- PRIVATE AUX --- */
-    private double calculateWorstScore(NextReleaseProblem problem) {
+    private double worstScore(NextReleaseProblem problem) {
         return problem.getFeatures().stream()
                 .map(Feature::getPriority)
                 .reduce(0.0, (sum, next) -> sum += next.getScore(), Double::sum);

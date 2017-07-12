@@ -8,9 +8,12 @@ import java.lang.reflect.Type;
 
 /**
  * Created by kredes on 12/06/2017.
+ *
+ * Initializes a Gson instance adapted to (De)serialize all the necessary Replan entities.
  */
 public class ReplanGson {
-    private static Gson gson;
+
+    private static final Gson gson;
 
     static {
         JsonSerializer<PriorityLevel> prioritySerializer = new JsonSerializer<PriorityLevel>() {

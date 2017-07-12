@@ -27,17 +27,8 @@ public class Feature {
 	@SerializedName("depends_on")
 	private List<Feature> previousFeatures = new ArrayList<Feature>();;
 
-	private transient Report report;
-
 	
 	/* --- Getters and setters --- */
-
-	public Report getReport() { return report; }
-
-	public void setReport(Report report) { this.report = report; }
-
-
-
 	@ApiModelProperty(value = "")
 	public String getName() {
 		return name;
@@ -76,26 +67,11 @@ public class Feature {
     public boolean dependsOn(Feature f) {
         return previousFeatures.contains(f);
     }
-
-    public void addInfo(String info) {
-    	report.addInfo(info);
-	}
-
-	public void addError(String error) {
-    	report.addError(error);
-	}
-
-	public void addWarning(String warning) {
-    	report.addWarning(warning);
-	}
-
 	
 	
 	/* --- Constructors --- */
 
-    public Feature() {
-        report = new Report();
-    }
+    public Feature() {}
 	
 	/**
 	 * Construct a feature
@@ -111,7 +87,6 @@ public class Feature {
 		this.duration = duration;
 		this.previousFeatures = previousFeatures == null ? new ArrayList<>() : previousFeatures;
 		this.requiredSkills = requiredSkills == null ? new ArrayList<>() : requiredSkills;
-		report = new Report();
 	}
 
 	
@@ -130,7 +105,6 @@ public class Feature {
 		this.previousFeatures = previousFeatures == null ? new ArrayList<Feature>() : previousFeatures;
 		this.requiredSkills = new ArrayList<>();
 		requiredSkills.add(requiredSkill);
-		report = new Report();
 	}
 	
 	@Override

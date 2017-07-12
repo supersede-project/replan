@@ -13,7 +13,7 @@ public class Validator {
 
     private static final String DEPENDENCE_FAIL_MESSAGE =
             "Feature %s depends on feature %s, but planning does not respect this precedence.\n" +
-                    " Dependence -> beginHour: %f, endHour: %f.\n Dependant -> beginHour: %f, endHour: %f";
+                    " Dependent -> beginHour: %f, endHour: %f.\n Dependency -> beginHour: %f, endHour: %f";
 
     private static final String SKILL_FAIL_MESSAGE =
             "Feature %s requires skill %s, but employee %s does not have it.";
@@ -116,10 +116,14 @@ public class Validator {
 
                 for (PlannedFeature pf : employeeJobs) {
                     if (pf != previous) {
-                        Assert.assertTrue(
-                                String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
-                                pf.getBeginHour() >= endHour
-                        );
+                        try {
+                            Assert.assertTrue(
+                                    String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
+                                    pf.getBeginHour() >= endHour
+                            );
+                        } catch (AssertionError e ){
+                            throw e;
+                        }
                     }
                     endHour = pf.getEndHour();
                     previous = pf;

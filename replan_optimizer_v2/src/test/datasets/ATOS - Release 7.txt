@@ -1,0 +1,74 @@
+{
+   "id":7,
+   "name":"SMART-ATOS Sotware Evolution",
+   "description":"SMART-ATOS Sotware Evolution, after RIO 2016 ",
+   "starts_at":"2017-04-16T10:44:08.415Z",
+   "deadline":"2017-06-18T10:44:08.415Z",
+   "resources":[
+      {
+         "id":10,
+         "name":"Juan Miguel Villaverde",
+         "description":"",
+         "availability":"50.0",
+         "skills":[
+            {
+               "id":9,
+               "name":"Project Manager ",
+               "description":"Project Manager "
+            }
+         ]
+      },
+      {
+         "id":11,
+         "name":"Antonio Muriana",
+         "description":"",
+         "availability":"75.0",
+         "skills":[
+            {
+               "id":8,
+               "name":"Hardware/network management ",
+               "description":"Network and Manager Expert"
+            }
+         ]
+      },
+      {
+         "id":12,
+         "name":"Jose Miguel Garrido",
+         "description":"",
+         "availability":"75.0",
+         "skills":[
+            {
+               "id":10,
+               "name":"Software Analist ",
+               "description":"Software Analist "
+            }
+         ]
+      },
+      {
+         "id":13,
+         "name":"Enrique Quiros",
+         "description":"",
+         "availability":"100.0",
+         "skills":[
+            {
+               "id":11,
+               "name":"WEB Software Programmer  ",
+               "description":"WEB Software Programmer  "
+            }
+         ]
+      },
+      {
+         "id":14,
+         "name":"Felipe Vicens",
+         "description":"",
+         "availability":"50.0",
+         "skills":[
+            {
+               "id":12,
+               "name":"Testing manager ",
+               "description":"Testing manager "
+            }
+         ]
+      }
+   ]
+}

@@ -88,7 +88,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
 		setNumberOfVariables(1);
-		setNumberOfObjectives(2);
+		setNumberOfObjectives(3);
 		features = new ArrayList<>();
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();
@@ -124,6 +124,11 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		this.previousSolution = previousSolution;
 	}
 
+	// Copy constructor
+	public NextReleaseProblem(NextReleaseProblem origin) {
+		this(origin.getFeatures(), origin.getEmployees(), origin.getNbWeeks(), origin.getNbHoursByWeek());
+	}
+
 	// Initializes the worst score
 	private void initializeWorstScore() {
 		worstScore = 0.0;
@@ -154,114 +159,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	@Override
 	public void evaluate(PlanningSolution solution) {
-		if (USE_NEW_EVALUATION)
-			evaluateNew(solution);
-		else
-			evaluateOld(solution);
-	}
-
-	public void evaluateOld(PlanningSolution solution) {
-		double newBeginHour;
-		double endPlanningHour = 0.0;
-		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
-		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
-
-		solution.resetHours();
-
-		// TODO: I'm not sure that this is part of the evaluation, I think this is part of the solution creation.
-		// NOTE this for is to build the employeesTimeSlots and (by the way, calculate the endPlanningHour).
-		for (PlannedFeature currentPlannedFeature : plannedFeatures) {
-			newBeginHour = 0.0;
-			Feature currentFeature = currentPlannedFeature.getFeature();
-
-			// Checks the dependencies end hour
-			// TODO: this part assumes that dependee features have been processed before. I.e., the order matters.
-			// NOTE: the order of the list of features seems to be the other in which the features are implemented in the timeline.
-
-			for (Feature previousFeature : currentFeature.getPreviousFeatures()) {
-				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
-				if (previousPlannedFeature != null) {
-					// TODO: this part assumes that hours are absolute values. But they are relative to the availability of the resource.
-					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
-				}
-			}
-
-			// Checks the employee availability
-			Employee currentEmployee = currentPlannedFeature.getEmployee();
-			List<EmployeeWeekAvailability> employeeTimeSlots = employeesTimeSlots.get(currentEmployee);
-			int currentWeek;
-
-			if (employeeTimeSlots == null) {
-				employeeTimeSlots = new ArrayList<>();
-				employeeTimeSlots.add(new EmployeeWeekAvailability(newBeginHour, currentEmployee.getWeekAvailability()));
-				employeesTimeSlots.put(currentEmployee, employeeTimeSlots);
-				currentWeek = 0;
-			}
-			else {
-				currentWeek = employeeTimeSlots.size()-1;
-				newBeginHour = Math.max(newBeginHour, employeeTimeSlots.get(currentWeek).getEndHour());
-			}
-
-			currentPlannedFeature.setBeginHour(newBeginHour);
-
-			double remainFeatureHours = currentPlannedFeature.getFeature().getDuration();
-			double leftHoursInWeek;
-			EmployeeWeekAvailability currentWeekAvailability;
-
-			// TODO: this should be currentEmployee.getWeekAvailability() instead of nbHoursByWeek because the current week of the employee depends on his availability.
-			currentWeek = ((int) newBeginHour) / (int)nbHoursByWeek;
-
-			// TODO: this should be currentEmployee.getWeekAvailability() instead of nbHoursByWeek
-			// TODO: is this redundant? I think it will never enter.
-			while (newBeginHour > (currentWeek + 1) * nbHoursByWeek) {
-				System.err.println("go");
-				currentWeek++;
-			}
-
-			do {
-				currentWeekAvailability = employeeTimeSlots.get(employeeTimeSlots.size() - 1);
-				double newBeginHourInWeek = Math.max(newBeginHour, currentWeekAvailability.getEndHour());
-				leftHoursInWeek = Math.min((currentWeek + 1) * nbHoursByWeek - newBeginHourInWeek //Left Hours in the week
-						, currentWeekAvailability.getRemainHoursAvailable());
-
-				if (remainFeatureHours <= leftHoursInWeek) { // The feature can be ended before the end of the week
-					currentWeekAvailability.setRemainHoursAvailable(currentWeekAvailability.getRemainHoursAvailable() - remainFeatureHours);
-					currentWeekAvailability.setEndHour(newBeginHourInWeek + remainFeatureHours);
-					remainFeatureHours = 0.0;
-				}
-				else {
-					currentWeekAvailability.setRemainHoursAvailable(currentWeekAvailability.getRemainHoursAvailable() - leftHoursInWeek);
-					currentWeekAvailability.setEndHour(currentWeekAvailability.getEndHour() + leftHoursInWeek);
-					remainFeatureHours -= leftHoursInWeek;
-					currentWeek++;
-					employeeTimeSlots.add(new EmployeeWeekAvailability(currentWeek*nbHoursByWeek, currentEmployee.getWeekAvailability()));
-				}
-				currentWeekAvailability.addPlannedFeature(currentPlannedFeature);
-			} while (remainFeatureHours > 0.0);
-
-			currentPlannedFeature.setEndHour(currentWeekAvailability.getEndHour());
-
-			endPlanningHour = Math.max(currentPlannedFeature.getEndHour(), endPlanningHour);
-		}
-
-		solution.setEmployeesPlanning(employeesTimeSlots);
-		solution.setEndDate(endPlanningHour);
-
-		// TODO From here to the end is the evaluation of the solution.
-		solution.setObjective(INDEX_PRIORITY_OBJECTIVE, solution.getPriorityScore());
-		// TODO: Not urgent, but I think this needs to be calculated in a different way. We are setting the worstEndDate to a 0 planned features solution to let it with the worse overall quality.
-		solution.setObjective(INDEX_END_DATE_OBJECTIVE, plannedFeatures.size() == 0 ? worstEndDate : endPlanningHour);
-
-		// TODO: maybe these values can be the values of the objectives.
-		double endDateQuality = 1.0 - (solution.getObjective(INDEX_END_DATE_OBJECTIVE) / worstEndDate);
-		double priorityQuality = 1.0 - (solution.getObjective(INDEX_PRIORITY_OBJECTIVE) / worstScore);
-
-		// TODO: I'm not sure that this is used for anything. It seems that the PlanningSolutionDominanceComparator does it by itself
-		solutionQuality.setAttribute(solution, (endDateQuality + priorityQuality) / 2);
-    }
-
-	public void evaluateNew(PlanningSolution solution) {
-		Map<Employee, Schedule> schedule = new HashMap<>();
+		Map<Employee, Schedule> planning = new HashMap<>();
 		List<PlannedFeature> plannedFeatures = solution.getPlannedFeatures();
 
 		solution.resetHours();
@@ -270,30 +168,21 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
             computeHours(solution, currentPlannedFeature);
 
 			Employee employee = currentPlannedFeature.getEmployee();
-			Schedule employeeSchedule = schedule.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
+			Schedule employeeSchedule = planning.getOrDefault(employee, new Schedule(employee, nbWeeks, nbHoursByWeek));
 
 			if (!employeeSchedule.contains(currentPlannedFeature))
                 if (!employeeSchedule.scheduleFeature(currentPlannedFeature))
                     solution.unschedule(currentPlannedFeature);
 
-			schedule.put(employee, employeeSchedule);
+			planning.put(employee, employeeSchedule);
         }
 
         double endHour = 0.0;
-		Map<Employee, List<EmployeeWeekAvailability>> employeesTimeSlots = new HashMap<>();
-		for (Map.Entry<Employee, Schedule> entry : schedule.entrySet()) {
-			Employee e = entry.getKey();
-			Schedule s = entry.getValue();
+        for (Schedule schedule : planning.values())
+            for (PlannedFeature pf : schedule.getPlannedFeatures())
+                endHour = Math.max(endHour, pf.getEndHour());
 
-			List<EmployeeWeekAvailability> weeks = s.getAllWeeks();
-			for (EmployeeWeekAvailability week : weeks)
-			    for (PlannedFeature pf : week.getPlannedFeatures())
-			        endHour = Math.max(endHour, pf.getEndHour());
-
-			employeesTimeSlots.put(e, weeks);
-        }
-
-		solution.setEmployeesPlanning(employeesTimeSlots);
+		solution.setEmployeesPlanning(planning);
 		solution.setEndDate(endHour);
 
 
@@ -305,30 +194,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
         //solution.setObjective(INDEX_DISTRIBUTION_OBJECTIVE, evaluator.distributionObjective(solution));
 
 		solutionQuality.setAttribute(solution, evaluator.quality(solution));
-	}
-
-	private void computeHoursRecursive(PlanningSolution solution, PlannedFeature pf) {
-		Feature feature = pf.getFeature();
-		if (feature.getPreviousFeatures().isEmpty()) {
-            pf.setEndHour(feature.getDuration());
-		} else {
-		    double newBeginHour = 0.0;
-			for (Feature previous : feature.getPreviousFeatures()) {
-				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previous);
-
-				if (previousPlannedFeature != null) {
-					computeHoursRecursive(solution, previousPlannedFeature);
-					newBeginHour = Math.max(newBeginHour, previousPlannedFeature.getEndHour());
-				}
-			}
-			pf.setBeginHour(newBeginHour);
-            pf.setEndHour(pf.getBeginHour() + feature.getDuration());
-		}
-	}
-
-	private void computeHoursRecursive(PlanningSolution solution) {
-		for (PlannedFeature pf : solution.getPlannedFeatures())
-			computeHoursRecursive(solution, pf);
 	}
 
 	private void computeHours(PlanningSolution solution) {
@@ -358,23 +223,18 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		double overall;
 
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
-		    // Take advantage of this loop to clear the previous reports
-            currentFeature.getFeature().getReport().clear();
 
 			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
 			if (	previousSolution != null &&
 					previousSolution.findPlannedFeature(currentFeature.getFeature()) != null &&
 					previousSolution.getPlannedFeatures().contains(currentFeature))
 			{
-                currentFeature.getFeature().addInfo("Ignored precedence constraint because feature is frozen");
 			    continue;
             }
 
 			for (Feature previousFeature : currentFeature.getFeature().getPreviousFeatures()) {
 				PlannedFeature previousPlannedFeature = solution.findPlannedFeature(previousFeature);
 				if (previousPlannedFeature == null || previousPlannedFeature.getEndHour() > currentFeature.getBeginHour()) {
-                    currentFeature.getFeature().addError(
-                            String.format("Precedence violated: Feature %s should be done before", previousFeature.getName()));
 				    precedencesViolated++;
                 }
 			}
@@ -401,7 +261,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 					}
 				}
 				if (!hasSkill) {
-				    plannedFeature.getFeature().addError("Assigned employee does not have the required skills");
 					violatedConstraints++;
 					overall -= 1.0;
 				}
@@ -416,7 +275,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 				/* Frozen jobs constraint */
 				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {
-				    pf.getFeature().addError("Frozen feature should not be replanned");
 					violatedConstraints++;
 					overall -= 1.0;
 				}
@@ -427,7 +285,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 				if (previousFeatures.containsKey(pf.getFeature()) &&
 						!previousFeatures.get(pf.getFeature()).equals(pf.getEmployee()))
 				{
-				    pf.getFeature().addWarning("Feature assigned to a different employee on this replan");
 					overall -= 0.1;
 				}
 			}

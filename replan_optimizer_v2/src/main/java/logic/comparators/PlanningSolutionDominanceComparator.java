@@ -48,17 +48,9 @@ public class PlanningSolutionDominanceComparator implements Comparator<PlanningS
 					solution2.getNumberOfObjectives()) ;
 		}
 
-
 		int result = constraintViolationComparator.compare(solution1, solution2) ;
-		if (result == 0) {
-			/*if (	numberOfViolatedConstraints.getAttribute(solution1) == 0 &&
-					numberOfViolatedConstraints.getAttribute(solution2) == 0)
-				result = noViolationsDominanceTest(solution1, solution2);
-			else*/
-				result = dominanceTest(solution1, solution2) ;
-		}
 
-		return result;
+		return result != 0 ? result : dominanceTest(solution1, solution2);
 	}
 	
 	/**

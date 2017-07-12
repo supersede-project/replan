@@ -1,5 +1,5 @@
 import entities.*;
-import logic.Analytics;
+import logic.analytics.Analytics;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
 import logic.SolverNRP;
@@ -218,23 +218,18 @@ public class SolverNRPTest {
 
         validator.validateNoUnassignedSkills(skills, employees);
 
-        NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
-        PlanningSolution solution = solver.executeNRP(problem);
+        for (int i = 0; i < 10; ++i) {
+            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 4, 40.0);
+            PlanningSolution solution = solver.executeNRP(problem);
 
-        validator.validateAll(solution);
+            validator.validateAll(solution);
 
-        /*
-        solution.getEmployeesPlanning().clear();
-        for (Employee e : employees)
-            solution.getEmployeesPlanning().put(e, new Schedule(e, 4, 40.0));
+            Analytics analytics = new Analytics(solution);
 
-        for (PlannedFeature pf : solution.getPlannedFeatures())
-            solution.unschedule(pf);
-        */
+            validator.validateAll(solution);
 
-        Analytics analytics = new Analytics(solution);
-
-        solutionToDataFile(solution);
+            solutionToDataFile(solution);
+        }
     }
 
     //@Test
@@ -431,6 +426,10 @@ public class SolverNRPTest {
             Analytics analytics = new Analytics(solution);
 
             solutionToDataFile(solution);
+
+            if (analytics.isPostprocessed()) {
+                String s = "test";
+            }
         }
     }
 
