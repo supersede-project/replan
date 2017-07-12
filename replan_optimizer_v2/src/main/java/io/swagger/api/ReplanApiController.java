@@ -25,60 +25,44 @@ public class ReplanApiController implements ReplanApi {
 
 
     public ResponseEntity<String> replan(HttpServletRequest request) {
+
         // Deserialize
-        String body = getBodyAsJsonString(request);
-        if (body == null)
+        String content = requestContentAsString(request);
+        if (content == null)
             return new ResponseEntity<String>("", HttpStatus.BAD_REQUEST);
 
-        ApiNextReleaseProblem p = gson.fromJson(body, ApiNextReleaseProblem.class);
+        ApiNextReleaseProblem p = gson.fromJson(content, ApiNextReleaseProblem.class);
+
+        // Convert to internal model
+        NextReleaseProblem problem =
+                new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
+        problem.setPreviousSolution(p.getPreviousSolution());
+
 
         // Execute
         SolverNRP solver = new SolverNRP();
 
-        NextReleaseProblem problem =
-                new NextReleaseProblem(p.getFeatures(), p.getResources(), p.getNbWeeks(), p.getHoursPerWeek());
-        problem.setAlgorithmParameters(p.getAlgorithmParameters());
+        problem.setAlgorithmParameters(problem.getAlgorithmParameters());
         PlanningSolution solution = solver.executeNRP(problem);
 
         ApiPlanningSolution apiSolution = new ApiPlanningSolution(solution);
 
-
-
-        /* Let's ignore previous plan for now
-        if (body.getPreviousPlan() == null) {
-            solution = solver.executeNRP(body.getNbWeeks(),
-                    body.getHoursPerWeek(),
-                    features,
-                    te.ListResource2Employee(body.getResources()));
-        } else {
-            // Dummy problem to be able to create a logic.PlanningSolution
-            EntitiesEvaluator ee = EntitiesEvaluator.getInstance();
-            logic.NextReleaseProblem problem = ee.nextReleaseProblemAddSkills(0, 0.0, new ArrayList<>(), new ArrayList<>());
-
-            solution = solver.executeNRP(body.getNbWeeks(),
-                    body.getHoursPerWeek(),
-                    features,
-                    te.ListResource2Employee(body.getResources()),
-                    te.planningSolutionToEntity(body.getPreviousPlan(), problem));
-        }
-        */
-
         return new ResponseEntity<String>(gson.toJson(apiSolution), HttpStatus.OK);
     }
 
-    private String getBodyAsJsonString(HttpServletRequest request) {
-        StringBuffer jb = new StringBuffer();
+    private String requestContentAsString(HttpServletRequest request) {
+        StringBuffer buffer = new StringBuffer();
         String line = null;
         try {
             BufferedReader reader = request.getReader();
             while ((line = reader.readLine()) != null)
-                jb.append(line);
+                buffer.append(line);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
 
-        return jb.toString();
+        return buffer.toString();
     }
 
 }

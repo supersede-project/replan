@@ -116,14 +116,10 @@ public class Validator {
 
                 for (PlannedFeature pf : employeeJobs) {
                     if (pf != previous) {
-                        try {
-                            Assert.assertTrue(
-                                    String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
-                                    pf.getBeginHour() >= endHour
-                            );
-                        } catch (AssertionError e ){
-                            throw e;
-                        }
+                        Assert.assertTrue(
+                                String.format(OVERLAPPING_FAIL_MESSAGE, pf, previous),
+                                pf.getBeginHour() >= endHour
+                        );
                     }
                     endHour = pf.getEndHour();
                     previous = pf;

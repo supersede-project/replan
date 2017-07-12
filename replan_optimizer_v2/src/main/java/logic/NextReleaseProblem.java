@@ -5,6 +5,7 @@ package logic;
 
 import entities.*;
 import entities.parameters.AlgorithmParameters;
+import io.swagger.model.ApiPlanningSolution;
 import org.uma.jmetal.problem.ConstrainedProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
 import org.uma.jmetal.util.solutionattribute.impl.NumberOfViolatedConstraints;
@@ -18,20 +19,18 @@ import java.util.Map;
 // Objectives: 0: Doing the high score in priority; 1: The shortest endDate
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
 
-	private static final boolean USE_NEW_EVALUATION = true;
-
 	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
 
-    public final static int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
-	public final static int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
-	public final static int INDEX_DISTRIBUTION_OBJECTIVE = 2;
+    private static final int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
+	private static final int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
+	private static final int INDEX_DISTRIBUTION_OBJECTIVE = 2;
 
 	// PROBLEM
 	private List<Feature> features;
 	private List<Employee> employees;
-	private PlanningSolution previousSolution;
-	private int nbWeeks; // The number of weeks of the iteration
-	private double nbHoursByWeek; // The number of worked hours by week
+	private ApiPlanningSolution previousSolution;
+	private int nbWeeks; 			// The number of weeks of the iteration
+	private double nbHoursByWeek; 	// The number of worked hours by week
 	private AlgorithmParameters algorithmParameters;
 
 	// SOLUTION
@@ -43,10 +42,10 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	private double worstEndDate; //The worst end date, if there is no planned feature
 
 	// GETTERS / SETTERS
-	public PlanningSolution getPreviousSolution() {
+	public ApiPlanningSolution getPreviousSolution() {
 		return previousSolution;
 	}
-	public void setPreviousSolution(PlanningSolution previousSolution) {
+	public void setPreviousSolution(ApiPlanningSolution previousSolution) {
 		this.previousSolution = previousSolution;
 	}
 	public List<Feature> getFeatures() {
@@ -60,9 +59,6 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	}
 	public double getNbHoursByWeek() {
 		return nbHoursByWeek;
-	}
-	public int getNumberOfEmployees() {
-		return employees.size();
 	}
 	public NumberOfViolatedConstraints<PlanningSolution> getNumberOfViolatedConstraints() {
 		return numberOfViolatedConstraints;
@@ -119,7 +115,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 
 	// Constructor (with previous plan)
 	public NextReleaseProblem(List<Feature> features, List<Employee> employees,
-							  int nbWeeks, double nbHoursPerWeek, PlanningSolution previousSolution) {
+							  int nbWeeks, double nbHoursPerWeek, ApiPlanningSolution previousSolution) {
 		this(features, employees, nbWeeks, nbHoursPerWeek);
 		this.previousSolution = previousSolution;
 	}
@@ -222,12 +218,13 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		int violatedConstraints;
 		double overall;
 
+		// Precedence constraint
 		for (PlannedFeature currentFeature : solution.getPlannedFeatures()) {
 
-			/* Ignore precedence constraint if the planned feature is frozen in the previous plan */
+			// Ignore precedence constraint if the planned feature is frozen in the previous plan
 			if (	previousSolution != null &&
-					previousSolution.findPlannedFeature(currentFeature.getFeature()) != null &&
-					previousSolution.getPlannedFeatures().contains(currentFeature))
+					previousSolution.findJobOf(currentFeature.getFeature()) != null &&
+					previousSolution.getJobs().contains(currentFeature))
 			{
 			    continue;
             }
@@ -243,6 +240,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		overall = -1.0 * precedencesViolated * precedenceConstraintOverall;
 		violatedConstraints = precedencesViolated;
 
+		// Check if the solution end date exceeds the deadline
 		if (solution.getEndDate() > nbWeeks * nbHoursByWeek) {
 			violatedConstraints++;
 			overall -= 1.0;
@@ -270,17 +268,17 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 		if (previousSolution != null) {
 			Map<Feature, Employee> previousFeatures = new HashMap<>();
 
-			for (PlannedFeature pf : previousSolution.getPlannedFeatures()) {
+			// Frozen jobs constraint
+			for (PlannedFeature pf : previousSolution.getJobs()) {
 				previousFeatures.put(pf.getFeature(), pf.getEmployee());
 
-				/* Frozen jobs constraint */
 				if (pf.isFrozen() && !solution.getPlannedFeatures().contains(pf)) {
 					violatedConstraints++;
 					overall -= 1.0;
 				}
 			}
 
-			/* Penalize for every feature that was already planned but was assigned another resource */
+			// Penalize for every feature that was already planned but was assigned another resource
 			for (PlannedFeature pf : solution.getPlannedFeatures()) {
 				if (previousFeatures.containsKey(pf.getFeature()) &&
 						!previousFeatures.get(pf.getFeature()).equals(pf.getEmployee()))

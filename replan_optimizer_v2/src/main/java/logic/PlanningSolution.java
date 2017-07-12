@@ -1,9 +1,7 @@
 // @author Vavou
 package logic;
 
-import com.google.gson.annotations.SerializedName;
 import entities.*;
-import io.swagger.annotations.ApiModelProperty;
 import logic.analytics.Analytics;
 import org.uma.jmetal.solution.Solution;
 import org.uma.jmetal.solution.impl.AbstractGenericSolution;
@@ -20,10 +18,10 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
     private boolean INITIALIZE_ON_CREATE = true;
 	
-	@SerializedName("jobs") private List<PlannedFeature> plannedFeatures; // included features
-	private transient List<Feature> undoneFeatures; // not included features
-    private transient Map<Employee, Schedule> employeesPlanning; // The employees' week planning
-	private transient double endDate; // The end hour of the solution. It's updated only when isUpToDate field is true
+    private List<PlannedFeature> plannedFeatures; 	            // Included features
+	private List<Feature> undoneFeatures; 						// Not included features
+    private Map<Employee, Schedule> employeesPlanning; 			// The employees' week planning
+	private double endDate;     // The end hour of the solution. It's updated only when isUpToDate field is true
     private Analytics analytics = null;
 
     /* --- GETTERS / SETTERS --- */
@@ -38,7 +36,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 		return plannedFeatures.size();
 	}
 
-    @ApiModelProperty()
     public List<PlannedFeature> getPlannedFeatures() {
 		return plannedFeatures;
 	}
@@ -65,7 +62,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 
     public NextReleaseProblem getProblem() { return problem; }
 
-    @ApiModelProperty()
     public Analytics getAnalytics() { return analytics; }
     public void setAnalytics(Analytics analytics) { this.analytics = analytics; }
 
@@ -130,7 +126,6 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
 	    endDate = origin.getEndDate();
 	    undoneFeatures = new CopyOnWriteArrayList<>(origin.getUndoneFeatures());
 	}
-
 
 
 	// Exchange the two features in positions pos1 and pos2
@@ -200,7 +195,10 @@ public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, Ne
         for (int i = 0 ; i < numFeaturesToPlan ; i++) {
             featureToDo = undoneFeatures.get(randomGenerator.nextInt(0, undoneFeatures.size()-1));
             skilledEmployees = problem.getSkilledEmployees(featureToDo.getRequiredSkills());
-            scheduleAtTheEnd(featureToDo, skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size()-1)));
+
+            if (skilledEmployees.size() > 0)
+                scheduleAtTheEnd(featureToDo,
+                        skilledEmployees.get(randomGenerator.nextInt(0, skilledEmployees.size() - 1)));
         }
     }
 

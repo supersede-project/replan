@@ -1,5 +1,6 @@
 package io.swagger.model;
 
+import entities.Feature;
 import entities.PlannedFeature;
 import logic.PlanningSolution;
 
@@ -35,5 +36,13 @@ public class ApiPlanningSolution {
 
     public void setJobs(List<PlannedFeature> jobs) {
         this.jobs = jobs;
+    }
+
+    public PlannedFeature findJobOf(Feature f) {
+        for (PlannedFeature pf : jobs)
+            if (pf.getFeature().equals(f))
+                return pf;
+
+        return null;
     }
 }

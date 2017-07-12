@@ -1,4 +1,5 @@
 import entities.*;
+import io.swagger.model.ApiPlanningSolution;
 import logic.analytics.Analytics;
 import logic.NextReleaseProblem;
 import logic.PlanningSolution;
@@ -203,7 +204,8 @@ public class SolverNRPTest {
         }
 
         problem = new NextReleaseProblem(features, employees, 5, 40.0);
-        PlanningSolution s2 = solver.executeNRP(problem, s1Prime);
+        problem.setPreviousSolution(new ApiPlanningSolution(s1Prime));
+        PlanningSolution s2 = solver.executeNRP(problem);
 
         validator.validateFrozen(s1, s2);
     }
@@ -266,7 +268,8 @@ public class SolverNRPTest {
         removeNullSkillsFromEmployees(employees);
 
         problem = new NextReleaseProblem(features, employees, 5, 40.0);
-        PlanningSolution s2 = solver.executeNRP(problem, s1);
+        problem.setPreviousSolution(new ApiPlanningSolution(s1));
+        PlanningSolution s2 = solver.executeNRP(problem);
 
         validator.validateAll(s1, s2);
     }

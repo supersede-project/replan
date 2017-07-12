@@ -18,7 +18,6 @@ import java.util.List;
 public class ReplanApiControllerTest {
     private static ReplanApiController apiController;
     private static RandomThings random;
-    private static Validator validator;
     private static RequestMocker mocker;
     private static Gson gson;
 
@@ -26,7 +25,6 @@ public class ReplanApiControllerTest {
     public static void setUpBeforeClass() {
         apiController = new ReplanApiController();
         random = new RandomThings();
-        validator = new Validator();
         mocker = new RequestMocker();
         gson = ReplanGson.getGson();
     }

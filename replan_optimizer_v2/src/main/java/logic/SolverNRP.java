@@ -135,18 +135,11 @@ public class SolverNRP {
 
 
 
-
-    public PlanningSolution executeNRP(NextReleaseProblem problem){
-        return executeNRP(problem, null);
-    }
-
-    public PlanningSolution executeNRP(NextReleaseProblem problem, PlanningSolution previousSolution) {
+    public PlanningSolution executeNRP(NextReleaseProblem problem) {
         if (problem.getAlgorithmParameters() == null)
             problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
         else
             algorithmType = problem.getAlgorithmParameters().getAlgorithmType();
-
-        problem.setPreviousSolution(previousSolution);
 
         PlanningSolution solution = this.generatePlanningSolution(problem);
 

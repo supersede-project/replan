@@ -4,7 +4,6 @@ import entities.Employee;
 import entities.Feature;
 import entities.parameters.AlgorithmParameters;
 import io.swagger.annotations.ApiModelProperty;
-import logic.PlanningSolution;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  * Just because the one in model is pretty crowded and complex.
  */
 public class ApiNextReleaseProblem {
-    private PlanningSolution previousPlan;
+    private ApiPlanningSolution previousSolution = null;
 
     private Integer nbWeeks = null;
 
@@ -42,30 +41,29 @@ public class ApiNextReleaseProblem {
         this.hoursPerWeek = hoursPerWeek;
         this.features = features;
         this.resources = resources;
-        previousPlan = null;
+        previousSolution = null;
     }
 
     public ApiNextReleaseProblem(
             Integer nbWeeks, Double hoursPerWeek, List<Feature> features, List<Employee> resources,
-            PlanningSolution previousPlan)
+            ApiPlanningSolution previousSolution)
     {
         this(nbWeeks, hoursPerWeek, features, resources);
-        this.previousPlan = previousPlan;
+        this.previousSolution = previousSolution;
     }
 
 
 
     /* --- GETTERS / SETTERS --- */
 
-    /*
+
     @ApiModelProperty(value = "")
-    public PlanningSolution getPreviousPlan() {
-        return previousPlan;
+    public ApiPlanningSolution getPreviousSolution() {
+        return previousSolution;
     }
-    public void setPreviousPlan(PlanningSolution plan) {
-        previousPlan = plan;
+    public void setPreviousSolution(ApiPlanningSolution plan) {
+        previousSolution = plan;
     }
-    */
 
     @ApiModelProperty(value = "")
     public Integer getNbWeeks() { return nbWeeks; }
