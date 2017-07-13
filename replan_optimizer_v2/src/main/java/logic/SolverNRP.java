@@ -145,9 +145,12 @@ public class SolverNRP {
 
         solution.setAnalytics(new Analytics(solution));
 
-        //postprocess(solution);
+        postprocess(solution);
 
         clearSolutionIfNotValid(solution);
+
+        System.out.println(String.format(" %d/%d after postprocessing)",
+                solution.getPlannedFeatures().size(), problem.getFeatures().size()));
 
         return solution;
     }
@@ -190,10 +193,11 @@ public class SolverNRP {
                         adjustHours = pf.getBeginHour() < s.getPlannedFeatures().get(s.size() - 1).getEndHour();
 
 
-                    solution.getEmployeesPlanning().get(e).scheduleFeature(pf, adjustHours);
+                    s.forceSchedule(pf);
 
                     // Don't forget to update the solution's internal state
                     solution.getPlannedFeatures().add(pf);
+                    solution.getUndoneFeatures().remove(f);
                 }
             }
         }
@@ -240,8 +244,8 @@ public class SolverNRP {
 
         int nbFeatures = solutions.get(0).getProblem().getFeatures().size();
 
-        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %d/%d)";
-        System.out.println(
+        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %d/%d, ";
+        System.out.print(
                 String.format(Locale.ENGLISH, message,
                         averageQuality, averagePlannedFeatures, nbFeatures,
                         best.getPlannedFeatures().size(), nbFeatures));

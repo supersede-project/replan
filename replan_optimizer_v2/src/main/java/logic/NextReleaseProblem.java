@@ -85,7 +85,7 @@ public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution>
 	public NextReleaseProblem() {
 		setName("Next Release Problem");
 		setNumberOfVariables(1);
-		setNumberOfObjectives(3);
+		setNumberOfObjectives(2);
 		features = new ArrayList<>();
 		numberOfViolatedConstraints = new NumberOfViolatedConstraints<>();
 		overallConstraintViolation = new OverallConstraintViolation<>();

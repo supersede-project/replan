@@ -73,7 +73,6 @@ public class Schedule implements Iterable<WeekSchedule> {
 
         if (featureHoursLeft <= remainingWeekHours) {
             double newBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
-            newBeginHour = adjustHours ? newBeginHour : pf.getBeginHour();
             pf.setBeginHour(newBeginHour);
 
             week.addPlannedFeature(pf);
@@ -87,7 +86,7 @@ public class Schedule implements Iterable<WeekSchedule> {
 
             totalHoursLeft -= featureHoursLeft;
         } else {
-            double pfBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();;
+            double pfBeginHour = lastPlanned == null ? week.getEndHour() : lastPlanned.getEndHour();
             double pfEndHour = pfBeginHour;
             while (featureHoursLeft > 0.0) {
                 week.addPlannedFeature(pf);
@@ -112,6 +111,53 @@ public class Schedule implements Iterable<WeekSchedule> {
         }
 
         return true;
+    }
+
+    public void forceSchedule(PlannedFeature pf) {
+        WeekSchedule week = getCurrentWeek();
+
+        PlannedFeature lastPlanned = getLastPlannedFeature(week, getPreviousWeek(week));
+        if (lastPlanned != null) {
+            pf.setBeginHour(Math.max(pf.getBeginHour(), lastPlanned.getEndHour()));
+            pf.setEndHour(pf.getBeginHour() + pf.getFeature().getDuration());
+        }
+
+        int i = weeks.indexOf(week);
+        while (pf.getBeginHour() > (i+1)*hoursPerWeek) {
+
+            totalHoursLeft -= (hoursPerWeek - week.getEndHour());
+
+            week.setBeginHour(i*hoursPerWeek);
+            week.setEndHour((i+1)*hoursPerWeek);
+
+            ++i;
+
+            if (i < weeks.size())
+                week = weeks.get(i);
+            else break;
+        }
+
+        double featureHoursLeft = pf.getFeature().getDuration();
+        double remainingWeekHours = week.getRemainingHours();
+        double pfEndHour = pf.getBeginHour();
+        while (featureHoursLeft > 0.0) {
+            week.addPlannedFeature(pf);
+
+            plannedFeatures.add(pf);
+
+            double doneHours = Math.min(featureHoursLeft, remainingWeekHours);
+
+            featureHoursLeft -= doneHours;
+            totalHoursLeft -= doneHours;
+
+            pfEndHour += featureHoursLeft > 0.0 ? normalizeHours(doneHours) : doneHours;
+
+            week.setRemainingHours(remainingWeekHours - doneHours);
+            week.setEndHour(pfEndHour);
+
+            week = getCurrentWeek();
+            remainingWeekHours = week.getRemainingHours();
+        }
     }
 
 
