@@ -1,7 +1,7 @@
 import com.google.gson.Gson;
 import entities.Employee;
 import entities.Feature;
-import io.swagger.ReplanGson;
+import io.swagger.api.ReplanGson;
 import io.swagger.model.ApiNextReleaseProblem;
 import org.springframework.mock.web.MockHttpServletRequest;
 

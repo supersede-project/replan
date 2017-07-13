@@ -17,14 +17,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// Objectives: 0: Doing the high score in priority; 1: The shortest endDate
+
+// TODO: The Frozen Features functionality needs to be remade to adapt it to the Schedule class
+/**
+ * A class representing a Next Release problem.
+ * Objectives:
+ * <ul>
+ *     <li>0: Maximize the priority score</li>
+ *     <li>1: Minimize endDate</li>
+ * </ul>;
+ */
 public class NextReleaseProblem extends AbstractGenericProblem<PlanningSolution> implements ConstrainedProblem<PlanningSolution> {
 
 	private static final long serialVersionUID = 3302475694747789178L; // Generated Id
 
     private static final int INDEX_PRIORITY_OBJECTIVE = 0; // The index of the priority score objective in the objectives list
 	private static final int INDEX_END_DATE_OBJECTIVE = 1; // The index of the end date objective in the objectives list
-	private static final int INDEX_DISTRIBUTION_OBJECTIVE = 2;
+	private static final int INDEX_DISTRIBUTION_OBJECTIVE = 2;	// Make sure to
 
 	// PROBLEM
 	private List<Feature> features;

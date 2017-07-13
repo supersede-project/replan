@@ -11,12 +11,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by kredes on 03/07/2017.
+ * Supporting class for {@link Analytics}. It generates some useful data from a given employee and solution.
+ * Yes, all fields are public to keep its {@link Analytics} more readable and I am ashamed because of  it.
  */
 public class EmployeeAnalytics {
     public Employee employee;
 
-    public double workload, doableFeatureHours, doneHours, totalAvailability;    // Percentage
+    public double workload, doableFeatureHours, doneHours, totalAvailability;
     public double startHour, endHour;
     public List<Feature> doableFeatures, doneFeatures;
 
@@ -41,5 +42,5 @@ public class EmployeeAnalytics {
         workload = (doneHours / totalAvailability) * 100;
     }
 
-
+    public double getWorkload() { return  workload; }
 }

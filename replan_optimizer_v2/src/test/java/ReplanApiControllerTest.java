@@ -2,7 +2,7 @@ import com.google.gson.Gson;
 import entities.Employee;
 import entities.Feature;
 import entities.Skill;
-import io.swagger.ReplanGson;
+import io.swagger.api.ReplanGson;
 import io.swagger.api.ReplanApiController;
 import io.swagger.model.ApiPlanningSolution;
 import org.junit.BeforeClass;

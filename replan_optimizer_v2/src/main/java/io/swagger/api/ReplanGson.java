@@ -1,4 +1,4 @@
-package io.swagger;
+package io.swagger.api;
 
 import com.google.gson.*;
 import entities.PriorityLevel;
@@ -7,9 +7,10 @@ import logic.SolverNRP;
 import java.lang.reflect.Type;
 
 /**
- * Created by kredes on 12/06/2017.
+ * Initializes a Gson instance customized for JSON (de)serialization of all the necessary Replan entities.
+ * See <a href="https://github.com/google/gson">Gson documentation</a> for further details on custom (de)serializers.
  *
- * Initializes a Gson instance adapted to (De)serialize all the necessary Replan entities.
+ * @author kredes
  */
 public class ReplanGson {
 
@@ -27,6 +28,13 @@ public class ReplanGson {
             }
         };
 
+        /*
+            We accept two different JSON representations for a priority:
+                1. {"level": int, "score": int}
+                2. a single int representing the level
+
+            "score" is ignored anyway as the scores are defined in the Priority enum and cannot be changed
+         */
         JsonDeserializer<PriorityLevel> priorityDeserializer = new JsonDeserializer<PriorityLevel>() {
             @Override
             public PriorityLevel deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

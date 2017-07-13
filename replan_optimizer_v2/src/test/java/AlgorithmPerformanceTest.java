@@ -17,7 +17,11 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by kredes on 09/05/2017.
+ * This isn't actually a test, but it is marked as one to make it easy to run.
+ * It can generate different charts to measure the performance of the planning algorithm.
+ *
+ * Make sure to comment out the @Test annotations after you're done running them,
+ * as they will cause a crash in the deployment environment if you don't.
  */
 // TODO: I think that this is not a test, it does not verify that the algorithm works fine, it just produces some charts but the test itself cannot fail. Therefore we can, rethink it as a test or place it somewhere else to be executed when we want to generate the charts.
 public class AlgorithmPerformanceTest {

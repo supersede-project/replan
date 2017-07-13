@@ -11,17 +11,24 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-// A solution of the NRP contains a plannedFeatures list which give the order of the features which are planned
+/**
+ * A solution for a particular {@link NextReleaseProblem}.
+ * It also includes chunks of logic which should probably go somewhere else.
+ */
 public class PlanningSolution extends AbstractGenericSolution<PlannedFeature, NextReleaseProblem> {
 
 	private static final long serialVersionUID = 615615442782301271L; //Generated Id
 
+    /**
+     * If true, the solution will be randomly initialized on creation. There is a particular case in which you won't
+     * want this to happen, when creating child solutions in {@link logic.operators.PlanningCrossoverOperator}.
+     */
     private boolean INITIALIZE_ON_CREATE = true;
 	
     private List<PlannedFeature> plannedFeatures; 	            // Included features
 	private List<Feature> undoneFeatures; 						// Not included features
-    private Map<Employee, Schedule> employeesPlanning; 			// The employees' week planning
-	private double endDate;     // The end hour of the solution. It's updated only when isUpToDate field is true
+    private Map<Employee, Schedule> employeesPlanning; 			// The employees' schedule
+	private double endDate;     								// The end hour of the solution
     private Analytics analytics = null;
 
     /* --- GETTERS / SETTERS --- */

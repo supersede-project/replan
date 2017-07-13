@@ -3,7 +3,6 @@ package io.swagger.api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import io.swagger.ReplanGson;
 import io.swagger.model.ApiNextReleaseProblem;
 import io.swagger.model.ApiPlanningSolution;
 import logic.NextReleaseProblem;

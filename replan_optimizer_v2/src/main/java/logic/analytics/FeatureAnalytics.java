@@ -8,7 +8,8 @@ import logic.PlanningSolution;
 import java.util.List;
 
 /**
- * Created by kredes on 03/07/2017.
+ * Supporting class for {@link Analytics}. It generates some useful data from a given feature and solution.
+ * Yes, all fields are public to keep its {@link Analytics} more readable and I am ashamed because of it.
  */
 public class FeatureAnalytics {
     private Feature feature;

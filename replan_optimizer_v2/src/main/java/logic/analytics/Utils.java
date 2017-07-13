@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Created by kredes on 03/07/2017.
+ * Class containing some frequently needed methods involving a solution and/or a problem.
  */
 public class Utils {
 

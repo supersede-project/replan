@@ -7,7 +7,8 @@ import java.util.*;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Created by kredes on 02/05/2017.
+ * A class that provides helpful methods to validate the correctness of solutions and entities.
+ * @author kredes
  */
 public class Validator {
 

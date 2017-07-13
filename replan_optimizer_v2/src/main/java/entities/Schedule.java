@@ -51,7 +51,7 @@ public class Schedule implements Iterable<WeekSchedule> {
     /**
      * Tries to schedule a PlannedFeature in the first available week
      * @param pf the PlannedFeature to be scheduled
-     * @return a boolean indicating whether the PlannedFeature could be scheduled or not
+     * @return a boolean indicating whether the PlannedFeature could be scheduled
      */
     public boolean scheduleFeature(PlannedFeature pf, boolean adjustHours) {
 
@@ -113,6 +113,12 @@ public class Schedule implements Iterable<WeekSchedule> {
         return true;
     }
 
+
+    /**
+     * Schedules the given PlannedFeature forcing a time skip if necessary.
+     * To be used only in postprocessing (and maybe in frozen features if you see it fits).
+     * For regular, proper scheduling use {@link Schedule#scheduleFeature(PlannedFeature)}
+     */
     public void forceSchedule(PlannedFeature pf) {
         WeekSchedule week = getCurrentWeek();
 

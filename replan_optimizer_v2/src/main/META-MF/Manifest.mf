@@ -1,2 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: io.swagger.Swagger2SpringBoot
+Main-Class: io.swagger.configuration.Swagger2SpringBoot

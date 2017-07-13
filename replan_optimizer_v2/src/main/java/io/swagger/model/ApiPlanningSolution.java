@@ -8,7 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kredes on 06/06/2017.
+ * Convenience data class for returning data from the API call.
+ * Don't try to use {@link PlanningSolution} as it extends a class implementing Serializable,
+ * which makes it hard to serialize only the fields relevant to the API.
+ *
+ * @author kredes
  */
 public class ApiPlanningSolution {
 

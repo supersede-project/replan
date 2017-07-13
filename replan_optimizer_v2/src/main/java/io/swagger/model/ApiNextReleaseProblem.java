@@ -4,7 +4,7 @@ import com.google.gson.JsonSyntaxException;
 import entities.Employee;
 import entities.Feature;
 import entities.parameters.AlgorithmParameters;
-import io.swagger.ReplanGson;
+import io.swagger.api.ReplanGson;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.io.IOException;
@@ -18,7 +18,10 @@ import java.util.stream.Collectors;
 
 /**
  * Convenience data class for receiving data from the API call.
- * Just because the one in model is pretty crowded and complex.
+ * Don't try to use {@link logic.NextReleaseProblem} as it extends a class implementing Serializable,
+ * which makes it hard to serialize only the fields relevant to the API.
+ *
+ * @author kredes
  */
 public class ApiNextReleaseProblem {
 

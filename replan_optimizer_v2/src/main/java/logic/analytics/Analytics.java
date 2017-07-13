@@ -10,7 +10,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Created by kredes on 26/06/2017.
+ * This class is constructed from a {@link PlanningSolution} and generates a series of information messages
+ * with useful information. It currently generates messages for:
+ * <ul>
+ *     <li>Unplanned features due to missing dependencies</li>
+ *     <li>Unplanned features due to the lack of a skilled employee</li>
+ *     <li>Workload of the employees</li>
+ *     <li>Very long releases</li>
+ * </ul>
+ *
+ * Usage is very simple, you only need to call the constructor with a solution to automatically get it analyzed:
+ * {@code Analytics a = new Analytics(solution);}
+ *
+ * @author kredes
+ * @see EmployeeAnalytics
+ * @see FeatureAnalytics
  */
 public class Analytics {
     private NextReleaseProblem problem;
@@ -19,18 +33,15 @@ public class Analytics {
     private List<Feature> features;
     private List<Employee> employees;
     private List<PlannedFeature> plannedFeatures;
-    private List<Feature> doneFeatures;
+    private List<Feature> doneFeatures = new ArrayList<>();
     private List<Feature> undoneFeatures;
 
-    private Map<Employee, EmployeeAnalytics> employeesInfo;
-    private Map<Feature, FeatureAnalytics> featuresInfo;
+    private Map<Employee, EmployeeAnalytics> employeesInfo = new HashMap<>();
+    private Map<Feature, FeatureAnalytics> featuresInfo = new HashMap<>();
 
-    private List<String> info;
+    private List<String> info = new ArrayList<>();
 
     private Utils utils;
-
-    /* --- FLAGS --- */
-    boolean postprocessed;
 
 
     /* --- CONSTRUCTORS --- */
@@ -41,17 +52,9 @@ public class Analytics {
         features = problem.getFeatures();
         employees = problem.getEmployees();
         plannedFeatures = solution.getPlannedFeatures();
-        doneFeatures = new ArrayList<>();
         for (PlannedFeature pf : plannedFeatures)
             doneFeatures.add(pf.getFeature());
         undoneFeatures = solution.getUndoneFeatures();
-
-        info = new ArrayList<>();
-
-        postprocessed = false;
-
-        employeesInfo = new HashMap<>();
-        featuresInfo = new HashMap<>();
 
         utils = new Utils(solution);
 
@@ -68,19 +71,27 @@ public class Analytics {
             employeesInfo.put(e, new EmployeeAnalytics(e, solution));
     }
 
-    /* --- GETTERS --- */
-    public boolean isPostprocessed() { return postprocessed; }
 
     /* --- PRIVATE --- */
     private void evaluateFeatures() {
-        String depMessage = "Feature %s couldn't be planned because dependencie(s) %s haven't been planned";
-        String skillMessage = "The isn't any employee with the required skills to do Feature %s";
+        String depMessage = "Feature '%s' couldn't be planned because dependencie(s) [%s] haven't been planned";
+        String skillMessage = "There isn't any employee with the required skills to do Feature '%s'";
+        String doableMessage = "Feature '%s' could have been done by employee(s) [%s], but wasn't planned";
         for (Feature f : undoneFeatures) {
             if (!utils.allPrecedencesArePlanned(f)) {
                 String unplannedDependencies = utils.unplannedDependenciesOf(f).stream()
                         .map(Feature::getName).collect(Collectors.joining(", "));
                 if (!unplannedDependencies.equals(""))
                     info.add(String.format(Locale.ENGLISH, depMessage, f.getName(), unplannedDependencies));
+            } else {
+                String doableBy = featuresInfo.get(f).doableBy.stream()
+                        .filter(e -> utils.hadEnoughTime(e, f))
+                        .filter(e -> utils.couldRespectPrecedences(e, f))
+                        .map(Employee::getName)
+                        .collect(Collectors.joining(", "));
+
+                if (doableBy != null)
+                    info.add(String.format(doableMessage, f.getName(), doableBy));
             }
 
             if (problem.getSkilledEmployees(f.getRequiredSkills()).isEmpty())
@@ -109,6 +120,6 @@ public class Analytics {
 
     @Override
     public String toString() {
-        return info.size() + " issues";
+        return info.size() + " messages";
     }
 }

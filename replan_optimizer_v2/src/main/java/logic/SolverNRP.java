@@ -7,7 +7,6 @@ import entities.Schedule;
 import entities.parameters.AlgorithmParameters;
 import logic.analytics.Analytics;
 import logic.analytics.EmployeeAnalytics;
-import logic.analytics.FeatureAnalytics;
 import logic.analytics.Utils;
 import logic.comparators.PlanningSolutionDominanceComparator;
 import logic.operators.PlanningCrossoverOperator;
@@ -32,7 +31,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+/**
+ * The class that
+ */
 public class SolverNRP {
 
     public enum AlgorithmType {
@@ -69,11 +70,17 @@ public class SolverNRP {
     private AlgorithmType algorithmType;
 
 
+    /**
+     * The empty construtor defaults the algorithm to NSGA-II
+     */
     public SolverNRP() {
         algorithm = null;
         algorithmType = AlgorithmType.NSGAII;
     }
 
+    /**
+     * Constructor with an arbitrary {@link AlgorithmType}
+     */
     public SolverNRP(AlgorithmType algorithmType) {
         this();
         this.algorithmType = algorithmType;
@@ -134,7 +141,10 @@ public class SolverNRP {
     }
 
 
-
+    /**
+     * Executes the algorithm on the given problem
+     * @return A valid solution. Note that an empty solution is a valid one too.
+     */
     public PlanningSolution executeNRP(NextReleaseProblem problem) {
         if (problem.getAlgorithmParameters() == null)
             problem.setAlgorithmParameters(new AlgorithmParameters(algorithmType));
@@ -149,29 +159,32 @@ public class SolverNRP {
 
         clearSolutionIfNotValid(solution);
 
-        System.out.println(String.format(" %d/%d after postprocessing)",
+        System.out.println(String.format("%d/%d after postprocessing)",
                 solution.getPlannedFeatures().size(), problem.getFeatures().size()));
 
         return solution;
     }
 
-    /*
-        Tries to schedule undone features to the least busy employee if there is enough time
-     */
+    // Tries to schedule undone features to the least busy employee if there is enough time
     private void postprocess(PlanningSolution solution) {
         Utils utils = new Utils(solution);
-
+        NextReleaseProblem problem = solution.getProblem();
         Map<Employee, EmployeeAnalytics> employeesInfo = new HashMap<>();
-        Map<Feature, FeatureAnalytics> featuresInfo = new HashMap<>();
 
-        for (Feature f : solution.getProblem().getFeatures())
-            featuresInfo.put(f, new FeatureAnalytics(f, solution));
         for (Employee e : solution.getProblem().getEmployees())
             employeesInfo.put(e, new EmployeeAnalytics(e, solution));
 
         for (Feature f : solution.getUndoneFeatures()) {
+
+            // Skip any frozen feature left unplanned because it would likely generate an invalid solution
+            if (problem.getPreviousSolution() != null) {
+                PlannedFeature pf = problem.getPreviousSolution().findJobOf(f);
+                if (pf != null && pf.isFrozen())
+                    continue;
+            }
+
             if (utils.allPrecedencesArePlanned(f)) {
-                List<Employee> doableBy = featuresInfo.get(f).doableBy.stream()
+                List<Employee> doableBy = utils.doableBy(f).stream()
                         .filter(e -> utils.hadEnoughTime(e, f))
                         .filter(e -> utils.couldRespectPrecedences(e, f))
                         .collect(Collectors.toList());
@@ -181,17 +194,12 @@ public class SolverNRP {
 
                     // Let's assign it to the least busy employee
                     for (Employee e2 : doableBy)
-                        if (employeesInfo.get(e2).workload < employeesInfo.get(e).workload)
+                        if (employeesInfo.get(e2).getWorkload() < employeesInfo.get(e).getWorkload())
                             e = e2;
 
                     PlannedFeature pf = new PlannedFeature(f, e);
                     utils.computeHours(pf);
                     Schedule s = solution.getEmployeesPlanning().get(e);
-
-                    boolean adjustHours = false;
-                    if (s.size() > 0)
-                        adjustHours = pf.getBeginHour() < s.getPlannedFeatures().get(s.size() - 1).getEndHour();
-
 
                     s.forceSchedule(pf);
 
@@ -244,10 +252,10 @@ public class SolverNRP {
 
         int nbFeatures = solutions.get(0).getProblem().getFeatures().size();
 
-        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %d/%d, ";
+        String message = "Average solution quality: %f. Average planned features: %d/%d (best solution: %f, %d/%d, ";
         System.out.print(
                 String.format(Locale.ENGLISH, message,
                         averageQuality, averagePlannedFeatures, nbFeatures,
-                        best.getPlannedFeatures().size(), nbFeatures));
+                        solutionQuality.getAttribute(best), best.getPlannedFeatures().size(), nbFeatures));
     }
 }

@@ -19,7 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- * Created by kredes on 27/03/2017.
+ * Tests a variety of situations on {@link SolverNRP}
  */
 public class SolverNRPTest {
     private static SolverNRP solver;
@@ -32,22 +32,6 @@ public class SolverNRPTest {
      */
     private <T> List<T> asList(T... elements) {
         return Arrays.asList(elements);
-    }
-
-    private void removeNullSkillsFromEmployees(List<Employee> employees) {
-        Skill nil = new Skill("null");
-        for (Employee e : employees) {
-            if (e.getSkills().contains(nil))
-                e.getSkills().remove(nil);
-        }
-    }
-
-    private void removeNullSkillsFromFeatures(List<Feature> features) {
-        Skill nil = new Skill("null");
-        for (Feature f : features) {
-            if (f.getRequiredSkills().contains(nil))
-                f.getRequiredSkills().remove(nil);
-        }
     }
 
     private void solutionToDataFile(PlanningSolution solution) {
@@ -75,10 +59,10 @@ public class SolverNRPTest {
         validator = new Validator();
     }
 
-    /**
-     *  - Situation: We need to plan only one Feature that requires two Skills and we have
-     * a Resource that only has one of them.
-     *  - Expected: The generated solution should not have any PlannedFeature.
+
+    /*   -------
+        | TESTS |
+         -------
      */
     @Test
     public void featureIsNotPlannedIfThereIsNoSkilledResource() {
@@ -96,10 +80,6 @@ public class SolverNRPTest {
         validator.validateSkills(solution);
     }
 
-    /**
-     * Validate that precedences between features are respected even if there are enough employees
-     * to work on them at the same time.
-     */
     @Test
     public void featurePrecedencesAreRespected() {
         Skill s1 = random.skill();
@@ -121,7 +101,7 @@ public class SolverNRPTest {
         validator.validateDependencies(solution);
     }
 
-    @Test // Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
+    @Test
     public void featureDependingOnItselfIsNotPlanned() {
         Skill s1 = random.skill();
         Feature f1 = random.feature();
@@ -139,7 +119,7 @@ public class SolverNRPTest {
         Assert.assertTrue(solution.getPlannedFeatures().isEmpty());
     }
 
-    @Test // Fails with computeHoursRecursive() in NextReleaseProblem.evaluate()
+    @Test
     public void featuresCausingDependencyDeadlockAreNotPlanned() {
         Skill s1 = random.skill();
         List<Feature> features = random.featureList(2);
@@ -227,27 +207,7 @@ public class SolverNRPTest {
 
             validator.validateAll(solution);
 
-            Analytics analytics = new Analytics(solution);
-
-            validator.validateAll(solution);
-
             solutionToDataFile(solution);
-        }
-    }
-
-    //@Test
-    public void manyRandomProblemsToSeeIfICatchAnOverlappingErrorBecauseItDoesntSeemToHappen() {
-        for (int i = 0; i < 100; ++i) {
-            List<Skill> skills = random.skillList(7);
-            List<Feature> features = random.featureList(20);
-            List<Employee> employees = random.employeeList(6);
-
-            random.mix(features, skills, employees);
-
-            NextReleaseProblem problem = new NextReleaseProblem(features, employees, 5, 40.0);
-            PlanningSolution solution = solver.executeNRP(problem);
-
-            validator.validateAll(solution);
         }
     }
 
@@ -265,8 +225,6 @@ public class SolverNRPTest {
         PlanningSolution s1 = solver.executeNRP(problem);
 
         random.freeze(s1);
-        removeNullSkillsFromFeatures(features);
-        removeNullSkillsFromEmployees(employees);
 
         problem = new NextReleaseProblem(features, employees, 5, 40.0);
         problem.setPreviousSolution(new ApiPlanningSolution(s1));
@@ -430,10 +388,6 @@ public class SolverNRPTest {
             Analytics analytics = new Analytics(solution);
 
             solutionToDataFile(solution);
-
-            if (analytics.isPostprocessed()) {
-                String s = "test";
-            }
         }
     }
 
