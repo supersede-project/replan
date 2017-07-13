@@ -144,6 +144,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 											addPropertiesTOPlanJqxgrid();
 											$scope.initFeaturesJqxgrid();
 											
+											
+											//google chart
+											
+											
 										},
 										function(response) {
 											$scope.showReleasePlan = false;
@@ -300,11 +304,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			      	buttonclick: function (row) {
 			      		
 			      		//if($scope.planJqxgrid.jobs[row].my_scheduled){
-			      		
 			      			//update grid
 			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.planJqxgrid.jobs[row].id);
-							
-			      			//add feature id to remove
+							//add feature id to remove
 			      			$scope.featuresTORemove.push($scope.planJqxgrid.jobs[row].feature.id);
 			      			
 			      			//remove from scope
@@ -316,7 +318,6 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 							
 							//refresh the table
 							$("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
-							
 					 	//}
 			      		
 		            }
@@ -1006,6 +1007,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		return arr; 
 	}
 
+	$scope.showReleaseDetails2 = function (release) {
+		$location.path("/release-planner-app/release_details2").search({releaseId: ''+release.id});
+	}
+	
 	/**
 	 * start point function
 	 */
