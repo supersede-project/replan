@@ -126,6 +126,9 @@ renderSelectedResource <- function(output, d, rID) {
 }
 
 renderDepGraph <- function(output, d) {
+  
+  if(nrow(d$depGraphEdges) == 0) return()
+  
   output$depGraph <- renderPlot({
     dG <- graph.data.frame(d$depGraphEdges)
     V(dG)$color <- ifelse(d$features$scheduled[match(V(dG)$name, d$features$id)] == "Yes", "lightgreen", "lightcoral")
@@ -154,6 +157,9 @@ renderDepGraph <- function(output, d) {
 }
 
 renderSkillsGraph <- function(output, d) {
+  
+  if(nrow(d$skillsGraphEdges) == 0) return()
+  
   output$skillsGraph <- renderPlot({
     dG <- graph.data.frame(d$skillsGraphEdges)
     V(dG)$color <- ifelse(V(dG)$name %in% d$skillsGraphEdges$node1, "cornflowerblue", "lightblue")
