@@ -148,3 +148,15 @@
 .my-buttonJqxgrid-disabled{
 	opacity: .55;
 }
+
+
+
+.tooltip_table{
+	width: 200px; 	
+}
+.tooltip_table, th, td {
+    /*border: 1px solid black;*/
+	padding: 5px;
+	text-align: left;	
+}
+.tooltip_table, th { border-bottom: 1px solid #c0c0c0; }
