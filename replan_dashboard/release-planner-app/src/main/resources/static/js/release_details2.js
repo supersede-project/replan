@@ -673,12 +673,13 @@ app.controllerProvider.register('release-details2', ['$scope', '$location', '$ht
 			if(hours>10){
 				hourLabel = "hours";
 			}
+			
 			var depends_on = "";
 			for(var z=0; z<job.depends_on.length; z++){
 				if(z==0){
-					depends_on = job.depends_on[z].id;	
+					depends_on = findIdFeatureFromJobId(job.depends_on[z].id);	
 				}else{
-					depends_on = depends_on + ", " + job.depends_on[z].id;
+					depends_on = depends_on + ", " + findIdFeatureFromJobId(job.depends_on[z].id);
 				}
 
 			}
@@ -746,10 +747,20 @@ app.controllerProvider.register('release-details2', ['$scope', '$location', '$ht
 
 	}
 	
+	function findIdFeatureFromJobId(jobId) {
+		var jobs = $scope.plan.jobs;
+		for(var i = jobs.length-1; i>=0; i--){
+			var job = jobs[i];
+			if(job.id == jobId){
+				return job.feature.id
+			}
+		}
+		return -1;
+	}
 	function getDateASString(dateAsString) {
 		var res = dateAsString.split("T");
 		var time = res[1].split(":");
-		var my_date= time[0] +":" + time[1];
+		var my_date= res[0] + " " + time[0] +":" + time[1];
 		return my_date;
 	}
 
