@@ -47,12 +47,12 @@ class ValentinPlanner
     def self.build_payload(release)
       project = release.project
       nrp = Hash.new
-      nrp[:nbWeeks] = ((release.deadline - release.starts_at)/(7*24*60*60)).round
+      nrp[:nbWeeks] = release.num_weeks
       nrp[:hoursPerWeek] = project.hours_per_week_and_full_time_resource
       nrp[:features] = release.features.map {|f| self.build_feature(f) }
       nrp[:resources] = release.resources.map do |r|
         { name: r.id.to_s, 
-          availability: r.availability*0.01*nrp[:hoursPerWeek],
+          availability: r.available_hours_per_week,
           skills: r.skills.map {|s| {name: s.id.to_s} } }
       end
       nrp.to_json
