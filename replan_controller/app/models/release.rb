@@ -12,6 +12,10 @@ class Release < ApplicationRecord
     self.plan.deprecate unless self.plan.nil?
   end
   
+  def num_weeks
+    ((deadline - starts_at)/(7*24*60*60)).round
+  end
+  
   private
 
   def start_must_be_before_deadline

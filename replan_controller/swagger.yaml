@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
-  version: "2.1.0"
+  version: "2.1.2"
 # the domain of the service
 host: 62.14.219.13:8280
 # array of all schemes that your API supports
@@ -1494,6 +1494,20 @@ definitions:
         description: array of jobs
         items:
           $ref: '#/definitions/Job'
+      resource_usage:
+        type: array
+        description: usage of each release resource
+        items:
+          type: object
+          properties:
+            resource_id: 
+              type: integer
+            resource_name:
+              type: string
+            total_available_hours:
+              type: number
+            total_used_hours:
+              type: number
   CompletedJob:
     type: object
     required:
