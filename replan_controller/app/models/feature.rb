@@ -14,4 +14,8 @@ class Feature < ApplicationRecord
               foreign_key: :feature_id, 
               association_foreign_key: :skill_id
   validates :project_id, presence: true
+  
+  def effort_hours
+    effort * project.hours_per_effort_unit
+  end
 end

@@ -60,7 +60,7 @@ class ValentinPlanner
     
     def self.build_feature(feature)
       { name: feature.id.to_s,
-        duration: feature.effort * feature.project.hours_per_effort_unit,
+        duration: feature.effort_hours,
         priority: { level: feature.priority, score: feature.priority },
         required_skills: feature.required_skills.map {|s| {name: s.id.to_s} },
         depends_on: feature.depends_on.map {|d| self.build_feature(d) unless d.release.nil? || d.release != feature.release}.compact
