@@ -1,5 +1,4 @@
 #!/bin/sh
-rvm --default use ruby-2.4.1
 bundle update
 rake db:migrate
 #rake db:seed
