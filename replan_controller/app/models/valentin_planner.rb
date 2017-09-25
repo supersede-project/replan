@@ -23,10 +23,16 @@ class ValentinPlanner
       ttime = 0
       it = 0
       until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
+        jobArray = Array.new
         time = Benchmark.realtime do
-          response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+          begin
+            response = RestClient::Request.execute(method: :post, url: uri, payload: payload,  timeout: MAX_TIME, headers: {content_type: :json, accept: :json})
+            #response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+            jobArray = JSON.parse(response.body)["jobs"]
+          rescue RestClient::Exceptions::ReadTimeout
+          rescue RestClient::InternalServerError
+          end
         end
-        jobArray = JSON.parse(response.body)["jobs"]
         jobCount = jobArray.count
         puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
         if numJobs < jobCount
