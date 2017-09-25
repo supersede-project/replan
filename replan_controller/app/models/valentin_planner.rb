@@ -9,8 +9,9 @@ class ValentinPlanner
     uri_P = "http://platform.supersede.eu:8280/replan_optimizer/replan"
     # uri_P = "http://localhost:8280/replan_optimizer/replan"
     uri_D = "http://62.14.219.13:8280/replan_optimizer/replan"
+    uri_D2 = "http://62.14.219.13:8280/replan_optimizer_v2/replan"
     
-    uris = [uri_P, uri_D]
+    uris = [uri_P, uri_D, uri_D2]
     
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer with payload = #{payload}\n"
@@ -19,31 +20,40 @@ class ValentinPlanner
     response = "";
     sol = Array.new
     ftime = 0
+    mutex = Mutex.new
+    threads = []
     uris.each do |uri|
-      ttime = 0
-      it = 0
-      until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
-        jobArray = Array.new
-        time = Benchmark.realtime do
-          begin
-            response = RestClient::Request.execute(method: :post, url: uri, payload: payload,  timeout: MAX_TIME, headers: {content_type: :json, accept: :json})
-            #response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
-            jobArray = JSON.parse(response.body)["jobs"]
-          rescue RestClient::Exceptions::ReadTimeout
-          rescue RestClient::InternalServerError
+      threads << Thread.new do
+        ttime = 0
+        it = 0
+        until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
+          jobArray = Array.new
+          time = Benchmark.realtime do
+            begin
+              response = RestClient::Request.execute(method: :post, url: uri, payload: payload,  timeout: MAX_TIME, headers: {content_type: :json, accept: :json})
+              #response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+              jobArray = JSON.parse(response.body)["jobs"]
+            rescue RestClient::Exceptions::ReadTimeout
+            rescue RestClient::InternalServerError
+            end
           end
+          jobCount = jobArray.count
+          puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
+          if numJobs < jobCount
+            mutex.synchronize do
+              sol = jobArray
+              numJobs = jobCount
+            end
+          end
+          it += 1
+          ttime += time
         end
-        jobCount = jobArray.count
-        puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
-        if numJobs < jobCount
-          sol = jobArray
-          numJobs = jobCount
+        mutex.synchronize do
+          ftime += ttime
         end
-        it += 1
-        ttime += time
       end
-      ftime += ttime
     end
+    threads.map(&:join)
     puts "FINAL -> Num jobs/Num features: #{numJobs}/#{numFeatures} in #{ftime} seconds"
     self.build_plan(release, sol)
   end
