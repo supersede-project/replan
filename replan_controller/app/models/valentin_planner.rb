@@ -8,10 +8,10 @@ class ValentinPlanner
     
     uri_P = "http://platform.supersede.eu:8280/replan_optimizer/replan"
     # uri_P = "http://localhost:8280/replan_optimizer/replan"
-    uri_D = "http://62.14.219.13:8280/replan_optimizer/replan"
-    uri_D2 = "http://62.14.219.13:8280/replan_optimizer_v2/replan"
+    uri_D = "http://supersede.es.atos.net:8280/replan_optimizer/replan"
+    #uri_D2 = "http://62.14.219.13:8280/replan_optimizer_v2/replan"
     
-    uris = [uri_P, uri_D, uri_D2]
+    uris = [uri_P, uri_D]
     
     payload = self.build_payload(release)
     puts "\nCalling replan_optimizer with payload = #{payload}\n"
@@ -34,13 +34,14 @@ class ValentinPlanner
               #response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
               jobArray = JSON.parse(response.body)["jobs"]
             rescue RestClient::Exceptions::ReadTimeout
+            rescue RestClient::Exceptions::OpenTimeout
             rescue RestClient::InternalServerError
             end
           end
           jobCount = jobArray.count
           puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
-          if numJobs < jobCount
-            mutex.synchronize do
+          mutex.synchronize do
+            if numJobs < jobCount
               sol = jobArray
               numJobs = jobCount
             end
