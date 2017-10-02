@@ -1,15 +1,18 @@
 
 
-endpoint = "http://platform.supersede.eu:8280/replan"
+#endpoint = "http://replan-api.herokuapp.com/replan"
+#endpoint = "http://platform.supersede.eu:8280/replan"
+endpoint = "http://supersede.es.atos.net:8280/replan"
 
 skids = Hash.new
 rsids = Hash.new
 ftids = Hash.new
 rlids = Hash.new
-   
+
+#[35].each do |i|   
 [1,2,3].each do |i|
 
-   endpoint = "http://62.14.219.13:8280/replan" if i == 3
+   #endpoint = "http://62.14.219.13:8280/replan" if i == 3
    
    ## Project
    pjson= JSON.parse(RestClient.get("#{endpoint}/projects/#{i}").body)

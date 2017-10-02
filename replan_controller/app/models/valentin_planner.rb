@@ -19,25 +19,41 @@ class ValentinPlanner
     response = "";
     sol = Array.new
     ftime = 0
+    mutex = Mutex.new
+    threads = []
     uris.each do |uri|
-      ttime = 0
-      it = 0
-      until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
-        time = Benchmark.realtime do
-          response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+      threads << Thread.new do
+        ttime = 0
+        it = 0
+        until it == MAX_ITERATIONS || ttime > MAX_TIME || numJobs == numFeatures
+          jobArray = Array.new
+          time = Benchmark.realtime do
+            begin
+              response = RestClient::Request.execute(method: :post, url: uri, payload: payload,  timeout: MAX_TIME, headers: {content_type: :json, accept: :json})
+              #response = RestClient.post uri, payload,  {content_type: :json, accept: :json}
+              jobArray = JSON.parse(response.body)["jobs"]
+            rescue RestClient::Exceptions::ReadTimeout
+            rescue RestClient::Exceptions::OpenTimeout
+            rescue RestClient::InternalServerError
+            end
+          end
+          jobCount = jobArray.count
+          puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
+          mutex.synchronize do
+            if numJobs < jobCount
+              sol = jobArray
+              numJobs = jobCount
+            end
+          end
+          it += 1
+          ttime += time
         end
-        jobArray = JSON.parse(response.body)["jobs"]
-        jobCount = jobArray.count
-        puts "#{it+1}# #{uri} -> Num jobs/Num features: #{jobCount}/#{numFeatures} in #{time} seconds"
-        if numJobs < jobCount
-          sol = jobArray
-          numJobs = jobCount
+        mutex.synchronize do
+          ftime += ttime
         end
-        it += 1
-        ttime += time
       end
-      ftime += ttime
     end
+    threads.map(&:join)
     puts "FINAL -> Num jobs/Num features: #{numJobs}/#{numFeatures} in #{ftime} seconds"
     self.build_plan(release, sol)
   end
