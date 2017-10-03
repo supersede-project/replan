@@ -1,8 +1,8 @@
 
 
 #endpoint = "http://replan-api.herokuapp.com/replan"
-#endpoint = "http://platform.supersede.eu:8280/replan"
-endpoint = "http://supersede.es.atos.net:8280/replan"
+endpoint = "http://platform.supersede.eu:8280/replan"
+#endpoint = "http://supersede.es.atos.net:8280/replan"
 
 skids = Hash.new
 rsids = Hash.new
