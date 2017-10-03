@@ -20,96 +20,96 @@ ActiveRecord::Schema.define(version: 20170427141239) do
   end
 
   create_table "features", force: :cascade do |t|
-    t.integer  "code"
-    t.string   "name"
-    t.string   "description"
-    t.decimal  "effort"
-    t.date     "deadline"
-    t.integer  "priority"
-    t.integer  "project_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.integer  "release_id"
+    t.integer "code"
+    t.string "name"
+    t.string "description"
+    t.decimal "effort"
+    t.date "deadline"
+    t.integer "priority"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "release_id"
     t.index ["project_id"], name: "index_features_on_project_id"
     t.index ["release_id"], name: "index_features_on_release_id"
   end
 
   create_table "features_skills", id: false, force: :cascade do |t|
     t.integer "feature_id", null: false
-    t.integer "skill_id",   null: false
+    t.integer "skill_id", null: false
   end
 
   create_table "jobs", force: :cascade do |t|
     t.datetime "starts"
     t.datetime "ends"
-    t.integer  "resource_id"
-    t.integer  "feature_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.integer  "plan_id"
+    t.integer "resource_id"
+    t.integer "feature_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "plan_id"
     t.index ["feature_id"], name: "index_jobs_on_feature_id"
     t.index ["plan_id"], name: "index_jobs_on_plan_id"
     t.index ["resource_id"], name: "index_jobs_on_resource_id"
   end
 
   create_table "plans", force: :cascade do |t|
-    t.integer  "release_id"
+    t.integer "release_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer  "plan_id"
+    t.integer "plan_id"
     t.index ["plan_id"], name: "index_plans_on_plan_id"
     t.index ["release_id"], name: "index_plans_on_release_id"
   end
 
   create_table "projects", force: :cascade do |t|
-    t.string   "name"
-    t.string   "description"
-    t.string   "effort_unit"
-    t.decimal  "hours_per_effort_unit"
-    t.decimal  "hours_per_week_and_full_time_resource"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.string "name"
+    t.string "description"
+    t.string "effort_unit"
+    t.decimal "hours_per_effort_unit"
+    t.decimal "hours_per_week_and_full_time_resource"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "releases", force: :cascade do |t|
-    t.string   "name"
-    t.string   "description"
-    t.integer  "project_id"
+    t.string "name"
+    t.string "description"
+    t.integer "project_id"
     t.datetime "deadline"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.datetime "starts_at"
     t.index ["project_id"], name: "index_releases_on_project_id"
   end
 
   create_table "releases_resources", id: false, force: :cascade do |t|
-    t.integer "release_id",  null: false
+    t.integer "release_id", null: false
     t.integer "resource_id", null: false
     t.index ["release_id", "resource_id"], name: "index_releases_resources_on_release_id_and_resource_id"
     t.index ["resource_id", "release_id"], name: "index_releases_resources_on_resource_id_and_release_id"
   end
 
   create_table "resources", force: :cascade do |t|
-    t.string   "name"
-    t.string   "description"
-    t.decimal  "availability"
-    t.integer  "project_id"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.string "name"
+    t.string "description"
+    t.decimal "availability"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_resources_on_project_id"
   end
 
   create_table "resources_skills", id: false, force: :cascade do |t|
-    t.integer "skill_id",    null: false
+    t.integer "skill_id", null: false
     t.integer "resource_id", null: false
   end
 
   create_table "skills", force: :cascade do |t|
-    t.string   "name"
-    t.string   "description"
-    t.integer  "project_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.string "name"
+    t.string "description"
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_skills_on_project_id"
   end
 
