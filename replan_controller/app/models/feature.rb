@@ -2,7 +2,6 @@ class Feature < ApplicationRecord
   belongs_to :project
   belongs_to :release, optional: true
   has_many :jobs
-  has_one :plan, through: :job
   has_and_belongs_to_many :depends_on, 
               class_name: "Feature", 
               join_table: :dependencies, 
@@ -17,5 +16,9 @@ class Feature < ApplicationRecord
   
   def effort_hours
     effort * project.hours_per_effort_unit
+  end
+  
+  def current_job
+    jobs.select{ |j| !j.plan.release.nil?}.first
   end
 end

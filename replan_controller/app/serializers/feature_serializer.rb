@@ -15,7 +15,17 @@ class FeatureSerializer < ActiveModel::Serializer
   
   def release
     if not object.release.nil?
-      {"release_id" => object.release.id}.as_json
+      release_info = {"release_id" => object.release.id}
+      if not object.current_job.nil?
+        job = object.current_job
+        aux = Hash.new
+        aux["resource_id"] = job.resource_id
+        aux["resource_name"] = job.resource.name
+        aux["starts_at"] = job.starts
+        aux["ends_at"] = job.ends
+        release_info["assigned_to"] = aux
+      end
+      release_info.as_json
     else
       "pending"
     end
