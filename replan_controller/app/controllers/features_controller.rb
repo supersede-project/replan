@@ -56,19 +56,24 @@ class FeaturesController < ApplicationController
 
   def get_features
     filter = params[:status]
+    unless params[:code].nil?
+      feature_list = @project.features.where(code: params[:code].split(','))
+    else
+      feature_list = @project.features
+    end
     if not filter.nil?
       case filter
       when "any"
-        @features = @project.features
+        @features = feature_list
       when "pending" 
-         @features = @project.features.select{|f| f.release.nil?}
+         @features = feature_list.select{|f| f.current_job.nil?}
       when "scheduled" 
-        @features = @project.features.select{|f| !f.release.nil?}
+        @features = feature_list.select{|f| !f.current_job.nil?}
       else
         render(status: :bad_request) and return
       end
     else
-      @features = @project.features
+      @features = feature_list
     end
     render json: @features
   end
