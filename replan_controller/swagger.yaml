@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: SUPERSEDE ReleasePlanner API to UI
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
-  version: "2.1.2"
+  version: "2.1.3"
 # the domain of the service
 host: 62.14.219.13:8280
 # array of all schemes that your API supports
@@ -157,6 +157,15 @@ paths:
              - any
              - pending
              - scheduled
+        - name: code
+          in: query
+          description: comma-separated feature codes
+          required: false
+          type: array
+          uniqueItems: true
+          collectionFormat: csv
+          items:
+            type: integer
       tags:
         - Features
       responses:
