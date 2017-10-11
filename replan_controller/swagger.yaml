@@ -4,7 +4,7 @@ info:
   description: This API defines the operations that the Replan Controller component exposes to the Replan Dashboard (UI) component.
   version: "2.1.3"
 # the domain of the service
-host: 62.14.219.13:8280
+host: supersede.es.atos.net:8280
 # array of all schemes that your API supports
 schemes:
   - http
