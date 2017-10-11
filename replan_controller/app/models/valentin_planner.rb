@@ -7,8 +7,8 @@ class ValentinPlanner
   def self.plan(release)
     
     uri_P = "http://platform.supersede.eu:8280/replan_optimizer/replan"
-    #uri_D = "http://localhost:8280/replan_optimizer/replan"
-    uri_D = "http://supersede.es.atos.net:8280/replan_optimizer/replan"
+    uri_D = "http://localhost:8280/replan_optimizer/replan"
+    # uri_D = "http://supersede.es.atos.net:8280/replan_optimizer/replan"
     
     uris = [uri_P, uri_D]
     
