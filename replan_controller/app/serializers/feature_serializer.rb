@@ -1,5 +1,9 @@
 class FeatureSerializer < ActiveModel::Serializer
-  attributes :id, :code, :name, :description, :effort, :deadline, :priority, :required_skills, :depends_on, :release
+  attributes :id, :code, :name, :jira_url, :description, :effort, :deadline, :priority, :required_skills, :depends_on, :release
+  
+  def effort
+    object.effort.to_f
+  end
   
   def required_skills
     object
