@@ -11,14 +11,14 @@ class PlanSerializer < ActiveModel::Serializer
   
   def jobs
     object
-      .jobs
+      .jobs.joins(:resource).order('resources.name')
       .map { |x| JobSerializer.new(x).as_json  }
   end
   
   def resource_usage
     nbwks = object.release.num_weeks
     object
-      .release.resources
+      .release.resources.order(:name)
       .map { |r| {"resource_id" => r.id,
                   "resource_name" => r.name,
                   "total_available_hours" => (r.available_hours_per_week * nbwks).to_f,

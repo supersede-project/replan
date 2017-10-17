@@ -55,12 +55,13 @@ class Wp3ApiController < ApplicationController
       # The 'id' from WP3 becomes 'code'
       jf[:code] = jf.delete :id
       
-      # Only two properties are taken into accound: 'description' & 'deadline'
+      # Only three properties are taken into accound: 'description' & 'deadline' & 'jira_url'
       jf[:properties].each do |p|
         jf[:description] = p[:value] if p[:key] == 'description'
         jf[:deadline] = p[:value] if p[:key] == 'deadline'
+        jf[:jira_url] = p[:value] if p[:key] == 'jira_url'
       end
       
-      jf.permit(:code, :name, :effort, :priority, :description, :deadline)
+      jf.permit(:code, :name, :effort, :priority, :description, :deadline, :jira_url)
     end
 end
