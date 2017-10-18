@@ -1,6 +1,6 @@
 var app = angular.module('w5app');
 app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile', '$rootScope',
-                                   function ($scope, $location, $http,  $compile, $rootScope) {
+                                    function ($scope, $location, $http,  $compile, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -30,7 +30,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			url: baseURL + '/releases/' + releaseId
 		});
 	};
-	
+
 	//remove feature to release
 	$scope.removeFeatureFromRelease = function (releaseId, featureIds){
 
@@ -50,7 +50,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		});	 
 
 	};
-	
+
 	$scope.removeReleasePlan = function (releaseId){
 
 		var url = baseURL + '/releases/' + releaseId + '/plan';
@@ -63,14 +63,14 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	$scope.forceReleasePlan = function (releaseId, force) {
 
 		var strForce = force.toString();
-		
+
 		var url = baseURL + '/releases/' + releaseId + '/plan?force_new='+strForce;
 		return $http({
 			method: 'GET',
 			url: url
 		});
 	};
-	
+
 
 	/*
 	 * All methods
@@ -85,47 +85,19 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	//contains array of feature object.
 	$scope.releaseFeatures = [];
 
-	var CONSTANT = {
-			
-			"xStart": 90,
-			"xEnd": 630,
-			"xStartAsString": "90",
-			"xEndAsString": "630",
-
-			"yStart": 5,
-			"yEnd": 430,
-			"yStartAsString": "5",
-			"yEndAsString": "430",
-
-			"plusNumberVerticalGrid": 2,
-			"plusNumberHorizontallGrid": 1,
-
-			"yOffsetLabel": 30,
-			"xOffsetLabel": 5,
-
-			"fontsize": 11,
-			"fontfamily": "Helvetica Neue",
-	};
-
-
-	var mappingXDateJSONObject = {};
-	mappingXDateJSONObject["Xinterval"] = 0;
-	mappingXDateJSONObject["Yinterval"] = 0;
-	
+	function isEven(n) {
+		return n % 2 == 0;
+	}
 	//name -> y
 	//1472688000000 -> x
 	$scope.startPoint = function (releaseId) {
-		
+
 		$scope.getReleaseFeatures(releaseId)
 		.then(
 				function(response) {
-					
-					//var myFeatures = '[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[],"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[],"release":{"release_id":16}},{"id":120,"code":5067,"name":"ahp requirement 3","description":"","effort":"9.0","deadline":"2017-05-18","priority":2,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}},{"id":121,"code":5068,"name":"ahp requirement 4","description":"","effort":"1.0","deadline":"2017-05-25","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}},{"id":200,"code":5068,"name":"barbara","description":"","effort":"1.0","deadline":"2017-05-25","priority":5,"required_skills":[{"id":21,"name":"Java","description":"Object oriented programming"}],"depends_on":[{"id":118,"code":5065,"name":"ahp requirement 1","description":"","effort":"5.0","deadline":"2017-05-01","priority":5,"release":{"release_id":16}},{"id":119,"code":5066,"name":"ahp requirement 2","description":"","effort":"10.0","deadline":"2017-05-17","priority":2,"release":{"release_id":16}}],"release":{"release_id":16}}]';
-					//var obj = JSON.parse(myFeatures);
-					//$scope.releaseFeatures = obj;
-					
+
 					$scope.releaseFeatures = response.data;
-					
+
 					$scope.getRelease(releaseId)
 					.then(
 							function(response) {
@@ -134,21 +106,32 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 								$scope.getReleasePlan(releaseId)
 								.then(
 										function(response) {
-										
+
 											var responseData = response.data;
 											$scope.plan = responseData;
-											$scope.showReleasePlan = true;
-											$scope.draw();
+											//add % of resource usage
+											for(var i = 0; i< $scope.plan.resource_usage.length; i++){
+												var resource = $scope.plan.resource_usage[i];
+												var total_available_hours = Number(resource.total_available_hours);
+												var total_used_hours = Number(resource.total_used_hours);
+												var total_used_percent = (total_used_hours/total_available_hours)*100;
+												resource.total_used_percent = total_used_percent;
+											}	
 											
+											$scope.showReleasePlan = true;
+										
 											$scope.planJqxgrid = JSON.parse(JSON.stringify(responseData)); 
 											addPropertiesTOPlanJqxgrid();
 											$scope.initFeaturesJqxgrid();
-											
-											
-											//google chart
-											
-											
+
+											//google charts
+											google.charts.setOnLoadCallback(drawTimelineChart);
+
+											//visjs chart
+											drawFeatureDependencies();
+
 										},
+										
 										function(response) {
 											$scope.showReleasePlan = false;
 											$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
@@ -168,13 +151,33 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				}
 		);
 	}
-	
+
+
+	//2017-05-17T11:00:00.000Z
+	function getDate(supersedeDateAsString){
+		var res = supersedeDateAsString.split("T");
+		var dateAsString = res[0];
+		var dateAsStrings = dateAsString.split("-");
+		var year = dateAsStrings[0];
+		var mounth = dateAsStrings[1];
+		var day = dateAsStrings[2];
+
+		var timeStampAsString = res[1];
+		var timeStampAsStrings = res[1].split(".");
+		var timeAsString = timeStampAsStrings[0];
+		var timeAsStrings = timeAsString.split(":");
+		var hours = timeAsStrings[0];
+		var minutes = timeAsStrings[1];
+		var startDate = new Date(parseInt(year),parseInt(mounth),parseInt(day),parseInt(hours),parseInt(minutes));
+		return startDate;
+	}
+
 	function addPropertiesTOPlanJqxgrid() {
-		
+
 		for(var i = 0; i<$scope.planJqxgrid.jobs.length; ++i){ 
 			//add my_dependencies to plan
 			var dependencies = '';
-			
+
 			for(var j = 0; j<$scope.planJqxgrid.jobs[i].depends_on.length; ++j){
 				if(j==0){
 					dependencies = dependencies + $scope.planJqxgrid.jobs[i].depends_on[j].feature_id;
@@ -185,21 +188,21 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			}
 			var job = $scope.planJqxgrid.jobs[i];
 			job.my_dependencies = dependencies;
-			
-			
+
+
 			//add my_starts
 			var res = $scope.planJqxgrid.jobs[i].starts.split("T");
 			var time = res[1].split(":");
 			job.my_starts=res[0] + " " + time[0] +":" + time[1];
-			
+
 			//add my_ends
 			res = $scope.planJqxgrid.jobs[i].ends.split("T");
 			time = res[1].split(":");
 			job.my_ends=res[0] + " " + time[0] +":" + time[1];
-			
+
 			//add scheduled
 			job.my_scheduled = true;
-			
+
 		}
 		//add features not scheduled as job 
 		for(var i = 0; i<$scope.releaseFeatures.length; ++i){
@@ -215,13 +218,13 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				job.my_starts = '';
 				job.my_ends = '';
 				job.my_scheduled = false;
-				
+
 				$scope.planJqxgrid.jobs.push(job);
 			}
 		}
-		
+
 	}
-	
+
 	function is_in_scheduled_jobs(id) {
 		for(var i = 0; i<$scope.planJqxgrid.jobs.length; ++i){ 
 			if($scope.planJqxgrid.jobs[i].feature.id == id){
@@ -231,529 +234,133 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		return false;
 	}
 
-
-	
 	$scope.initFeaturesJqxgrid = function(){
-		
+
 		$scope.blncreateFeaturesJqxgrid = false;
-		
+
 		// prepare the data
 		var source =
 		{
-			datatype: "json",
-			datafields: [
-			    { name: 'id', map : 'feature>id', type: 'number' },
-				{ name: 'name', map : 'feature>name', type: 'string'},
-				{ name: 'effort', map : 'feature>effort', type: 'string'},
-				{ name: 'priority', map : 'feature>priority', type: 'number'},
-			    { name: 'my_starts', type: 'string'},
-			    { name: 'my_ends', type: 'string' },
-			    { name: 'my_dependencies', type: 'string' }
-			],
-			id: 'id',
-			localdata: $scope.planJqxgrid.jobs
+				datatype: "json",
+				datafields: [
+				             { name: 'id', map : 'feature>id', type: 'number' },
+				             { name: 'name', map : 'feature>name', type: 'string'},
+				             { name: 'effort', map : 'feature>effort', type: 'number'},
+				             { name: 'priority', map : 'feature>priority', type: 'number'},
+				             { name: 'my_starts', type: 'string'},
+				             { name: 'my_ends', type: 'string' },
+				             { name: 'my_dependencies', type: 'string' }
+				             ],
+				             id: 'id',
+				             localdata: $scope.planJqxgrid.jobs
 		};
-		
-		
+
+
 		var dataAdapter = new $.jqx.dataAdapter(source);
-		
+
 		//tooltip header
 		var tooltipHeaderRenderer = function (element) {
-            $(element).parent().jqxTooltip({ position: 'mouse', content: $(element).text() });
-        }
+			$(element).parent().jqxTooltip({ position: 'mouse', content: $(element).text() });
+		}
 		//css style cell 
 		var cellclass = function (row, columnfield, value) {
 			if ($scope.planJqxgrid.jobs[row].my_scheduled) {
 				return 'scheduledFeature';
 			}
-        }
-			
+		}
+
 		// create tooltip.
-        $("#featuresJqxgrid").jqxTooltip();
-       
-        
+		$("#featuresJqxgrid").jqxTooltip();
+
 		$scope.featuresJqxgridSettings =
 		{
-			width: '100%',
-			autoheight: true,
-			source: dataAdapter,
-			enabletooltips: true,
-		
-			//trigger cell hover.(only for the body table)
-            cellhover: function (element, pageX, pageY)
-            {
-                // update tooltip.
-                $("#featuresJqxgrid").jqxTooltip({ content: element.innerHTML });
-                // open tooltip.
-                $("#featuresJqxgrid").jqxTooltip('open', pageX + 15, pageY + 15);
-            },
-            enablehover: true,
-			columns: [
-			          //width: 40 
-			    { text: 'Id', datafield: 'id', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
-			    { text: 'Name', datafield: 'name', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
-			    { text: 'Effort', datafield: 'effort', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
-			    { text: 'Priority', datafield: 'priority', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40 },
-			    { text: 'Start', datafield: 'my_starts', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
-			    { text: 'End', datafield: 'my_ends', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
-			    { text: 'Dependencies', datafield: 'my_dependencies' , rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 60},
-			    { text: '', columntype: 'button', cellclassname: cellclass, width: 60,
-			    	cellsrenderer: function () {
-			    		return "Remove";
-			    	},
-			      	buttonclick: function (row) {
-			      		
-			      		//if($scope.planJqxgrid.jobs[row].my_scheduled){
-			      			//update grid
-			      			$('#featuresJqxgrid').jqxGrid('deleterow', $scope.planJqxgrid.jobs[row].id);
-							//add feature id to remove
-			      			$scope.featuresTORemove.push($scope.planJqxgrid.jobs[row].feature.id);
-			      			
-			      			//remove from scope
-							$scope.planJqxgrid.jobs.splice(row, 1);
-							$scope.plan.jobs.splice(row, 1);
-							
-							//redraw the chart
-							$scope.draw();
-							
-							//refresh the table
-							$("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
-					 	//}
-			      		
-		            }
+				width: '100%',
+				autoheight: true,
+				source: dataAdapter,
+				enabletooltips: true,
+
+				//trigger cell hover.(only for the body table)
+				cellhover: function (element, pageX, pageY)
+				{
+					// update tooltip.
+					$("#featuresJqxgrid").jqxTooltip({ content: element.innerHTML });
+					// open tooltip.
+					$("#featuresJqxgrid").jqxTooltip('open', pageX + 15, pageY + 15);
 				},
-				{ text: '', datafield: 'Edit', columntype: 'button', cellclassname: cellclass, width: 60, 
-			    	cellsrenderer: function () {
-			    		return "Edit";
-			    	},
-			      	buttonclick: function (row) {
-		                
-			      		if(row != -1){
-			      			var featureId = $scope.planJqxgrid.jobs[row].feature.id
-			      			
-			      			$rootScope.$apply(function() {
-			      				$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
-					      		console.log($location.path());
-			      		    });
-			      		}
-		            }
-				},
-				
-			]
+				enablehover: true,
+				columns: [
+				          //width: 40 
+				          { text: 'Id', datafield: 'id', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
+				          { text: 'Name', datafield: 'name', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+				          { text: 'Effort', datafield: 'effort', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40},
+				          { text: 'Priority', datafield: 'priority', rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 40 },
+				          { text: 'Start', datafield: 'my_starts', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+				          { text: 'End', datafield: 'my_ends', rendered: tooltipHeaderRenderer, cellclassname: cellclass},
+				          { text: 'Dependencies', datafield: 'my_dependencies' , rendered: tooltipHeaderRenderer, cellclassname: cellclass, width: 60},
+				          { text: '', columntype: 'button', cellclassname: cellclass, width: 60,
+				        	  cellsrenderer: function () {
+				        		  return "Remove";
+				        	  },
+				        	  buttonclick: function (row) {
+
+				        		  //if($scope.planJqxgrid.jobs[row].my_scheduled){
+				        		  //update grid
+				        		  $('#featuresJqxgrid').jqxGrid('deleterow', $scope.planJqxgrid.jobs[row].id);
+				        		  //add feature id to remove
+				        		  $scope.featuresTORemove.push($scope.planJqxgrid.jobs[row].feature.id);
+
+				        		  //remove from scope
+				        		  $scope.planJqxgrid.jobs.splice(row, 1);
+				        		  $scope.plan.jobs.splice(row, 1);
+
+				        		  //redraw the chart
+				        		  
+				        		  //google charts
+				        		  drawTimelineChart();
+				        		  
+				        		  //visjs chart
+				        		  drawFeatureDependencies();
+
+				        		  //refresh the table
+				        		  $("#featuresJqxgrid").jqxGrid("updatebounddata", "cells");
+				        		  //}
+
+				        	  }
+				          },
+				          { text: '', datafield: 'Edit', columntype: 'button', cellclassname: cellclass, width: 60, 
+				        	  cellsrenderer: function () {
+				        		  return "Edit";
+				        	  },
+				        	  buttonclick: function (row) {
+
+				        		  if(row != -1){
+				        			  var featureId = $scope.planJqxgrid.jobs[row].feature.id
+
+				        			  $rootScope.$apply(function() {
+				        				  $location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
+				        				  console.log($location.path());
+				        			  });
+				        		  }
+				        	  }
+				          },
+
+				          ]
 		};
-		
+
 		$scope.blncreateFeaturesJqxgrid = true;
-	
+
 	};
 
+	function isFeature(textContent){
 
-
-	$scope.draw = function(){
-
-		//adapt CONSTANT by chart element
-		var chart = document.getElementById("chart");
-		var xEnd = chart.parentNode.clientWidth - CONSTANT.xStart;
-		CONSTANT["xEnd"] = xEnd;
-		CONSTANT["xEndAsString"] = ""+xEnd;
-		
-		//clear the svg elements
-		var ids = ["yGrid", "ydxGrid", "xGrid", "verticalLineGrid", "verticalDeadLineLineGrid", "verticalLabelLineGrid", "horizontalLineGrid", "horizontalLabelLineGrid", "data", "dependencies"];
-		for(var i = 0; i< ids.length; i++){
-
-			var element = document.getElementById(ids[i]);
-			while (element.firstChild) {
-				element.removeChild(element.firstChild);
+		for(var i=0; i< $scope.plan.jobs.length; i++){
+			if(""+$scope.plan.jobs[i].feature.id ==  textContent){
+				return true;
 			}
 		}
-
-		drawAxis();
-
-		var deadLineRelease = new Date($scope.release.deadline);
-		//calculate min Day  
-		var dates = [];
-		var resourceNames = [];
-		var resourceIds = [];
-		var jobs = $scope.plan.jobs;
-		dates.push(deadLineRelease)
-		for (var i = 0; i < jobs.length; i++) {
-			dates.push(new Date(jobs[i].starts));
-			dates.push(new Date(jobs[i].ends));
-			resourceNames.push(jobs[i].resource.name);
-			resourceIds.push(jobs[i].resource.id);
-		}
-		dates.sort();
-		//get IndexDeadLine
-		var indexDeadLine = 0;
-		for (var i = 0; i < dates.length; i++) {
-			if(dates[i].getTime() == deadLineRelease.getTime()){
-				indexDeadLine = i;
-			}
-		}
-		//calculate diff Days
-		var minDate = new Date(Math.min.apply(null,dates));
-		var maxDate = new Date(Math.max.apply(null,dates));
-
-		var timeDiff = Math.abs(maxDate.getTime() - minDate.getTime());
-		var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-		var numberOfInterval = diffDays + CONSTANT.plusNumberVerticalGrid;
-		var xinterval =  (CONSTANT.xEnd - CONSTANT.xStart) / numberOfInterval;
-		mappingXDateJSONObject["Xinterval"] = xinterval;
-
-		var timeDiffDeadLine = Math.abs(deadLineRelease.getTime() - minDate.getTime());
-		var diffDaysDeadLine = Math.ceil(timeDiffDeadLine / (1000 * 3600 * 24));
-
-
-		//draw vertical lines
-		drawVerticalGridLines(xinterval, numberOfInterval, diffDaysDeadLine);
-		//draw vertical days
-		var nextMaxDayPlus1 = new Date(maxDate.getTime());
-		nextMaxDayPlus1.setDate(maxDate.getDate()+1);
-
-		var dateArray = getDates(minDate, nextMaxDayPlus1); 
-		drawLabelVerticalGridLines(xinterval, numberOfInterval, dateArray);
-
-		//draw horizontal lines
-		var uniqueResourceNames = resourceNames.unique();
-
-		numberOfInterval = uniqueResourceNames.length + CONSTANT.plusNumberHorizontallGrid;
-		var yinterval =  (CONSTANT.yEnd - CONSTANT.yStart) / numberOfInterval;
-		mappingXDateJSONObject["Yinterval"] = yinterval;
-		drawHorizontalGridLines(yinterval, numberOfInterval);
-		drawLabelHorizontalGridLines(yinterval,numberOfInterval,uniqueResourceNames);
-		
-		drawData(jobs);
-
-	}
-	
-	
-	/**
-	 * draw methods
-	 */
-	function drawAxis() {
-		/*
-		 * draw y 
-		 */
-		var element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-		element.setAttribute("x1", CONSTANT.xStartAsString);
-		element.setAttribute("y1", CONSTANT.yStartAsString);
-		element.setAttribute("x2", CONSTANT.xStartAsString);
-		element.setAttribute("y2", CONSTANT.yEndAsString);
-
-		var yGrid = document.getElementById("yGrid");
-		yGrid.appendChild(element); 	
-
-		/*
-		 * draw x 
-		 */
-		element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-		element.setAttribute("x1", CONSTANT.xStartAsString);
-		element.setAttribute("y1", CONSTANT.yEndAsString);
-		element.setAttribute("x2", CONSTANT.xEndAsString);
-		element.setAttribute("y2", CONSTANT.yEndAsString);
-
-		var xGrid = document.getElementById("xGrid");
-		xGrid.appendChild(element); 	
-	
+		return false;
 	}
 
-	function drawHorizontalGridLines(interval, numberOfInterval) {
-
-		var y = CONSTANT.yStart;
-
-		for(var i = 0; i< numberOfInterval; i++){
-			y = y + interval;
-			/*
-			 * draw verticalLineGrid
-			 */
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			element.setAttribute("x1", CONSTANT.xStartAsString);
-			element.setAttribute("y1", ""+y);
-			element.setAttribute("x2", CONSTANT.xEndAsString);
-			element.setAttribute("y2", ""+y);
-
-			var horizontalLineGrid = document.getElementById("horizontalLineGrid");
-			horizontalLineGrid.appendChild(element); 	
-		}
-	}
-
-	function drawLabelHorizontalGridLines(interval, numberOfInterval, uniqueResourceNames) {
-		var y = CONSTANT.yStart;
-
-		for(var i = 0; i< numberOfInterval-1; i++){
-
-			y = y + interval;
-
-			/*
-			 * draw verticalLineGrid
-			 */
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			var x = CONSTANT.xStart - CONSTANT.xOffsetLabel;
-			element.setAttribute("x", ""+x);
-			element.setAttribute("y", ""+y);
-
-			var result = font_size_to_fit(uniqueResourceNames[i], CONSTANT.fontfamily, CONSTANT.xStart);
-			if(result < CONSTANT.fontsize){
-				element.setAttribute("style", "font-size: " + result + "px");
-			}
-
-			element.textContent  = uniqueResourceNames[i];
-
-			mappingXDateJSONObject[uniqueResourceNames[i]] = y;
-
-			var horizontalLineGrid = document.getElementById("horizontalLabelLineGrid");
-			horizontalLineGrid.appendChild(element); 	
-
-		}
-	}
-
-
-	function drawVerticalGridLines(interval, numberOfInterval, indexDeadLine) {
-
-		var x = CONSTANT.xStart;
-
-		for(var i = 0; i< numberOfInterval; i++){
-
-			x = x + interval;
-
-			/*
-			 * draw verticalLineGrid
-			 */
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-			element.setAttribute("x1", ""+x);
-			element.setAttribute("y1", CONSTANT.yStartAsString);
-			element.setAttribute("x2", ""+x);
-			element.setAttribute("y2", CONSTANT.yEndAsString);
-
-			var verticalLineGrid;
-
-			//draw the deadLine
-			if(i == indexDeadLine){
-				verticalLineGrid = document.getElementById("verticalDeadLineLineGrid");
-			}
-			else if(i == numberOfInterval - 1){
-				verticalLineGrid = document.getElementById("ydxGrid");
-			}
-			else{
-				verticalLineGrid = document.getElementById("verticalLineGrid");
-			}
-
-			verticalLineGrid.appendChild(element); 	
-		}
-	}
-
-	function drawLabelVerticalGridLines(interval, numberOfInterval, dateArray) {
-
-		var x = CONSTANT.xStart;
-
-		for(var i = 0; i< numberOfInterval-1; i++){
-
-			x = x + interval;
-
-			/*
-			 * draw verticalLineGrid
-			 */
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			element.setAttribute("x", ""+x);
-			var y = CONSTANT.yEnd + CONSTANT.yOffsetLabel;
-			element.setAttribute("y", ""+y);
-
-			var day = dateArray[i].getDate();
-			var month =  dateArray[i].getMonth() +1;
-			var text = "" + day + "/" + month;
-			element.textContent  = text;
-
-
-			var result = font_size_to_fit("01/01", CONSTANT.fontfamily, interval);
-			if(result < CONSTANT.fontsize){
-				element.setAttribute("style", "font-size: " + result + "px");
-			}else{
-				element.setAttribute("style", "font-size: " + CONSTANT.fontsize + "px");
-			}
-
-			var date = new Date(""+ dateArray[i]);
-
-			mappingXDateJSONObject[""+date.getTime()] = x;
-
-			var verticalLabelLineGrid = document.getElementById("verticalLabelLineGrid");
-			verticalLabelLineGrid.appendChild(element); 	
-		}
-	}
-	//http://stackoverflow.com/questions/18019886/calculate-font-size-required-for-text-to-fill-desired-space
-	var font_size_to_fit = (function() {
-		var $test = $("<span id='test'/>").appendTo("body").css({
-			visibility: "hidden", 
-			border: 0, 
-			padding: 0, 
-			whiteSpace: "pre"
-		});
-		var minFont = 10, maxFont = 100; 
-		return function(txt, fontFamily, size) {
-			$test.appendTo("body").css({fontFamily: fontFamily})
-			.text(txt);
-			$test.css({fontSize: maxFont + "px"});
-			var maxWidth = $test.width();
-			$test.css({fontSize: minFont + "px"});
-			var minWidth = $test.width();
-			var width = (size - minWidth) * (maxFont - minFont) /
-			(maxWidth - minWidth) + minFont;
-			$test.detach();
-			return width;
-		};
-	}());
-
-
-	// Given a polygon/polyline, create intermediary points along the
-	// "straightaways" spaced no closer than `spacing` distance apart.
-	// Intermediary points along each section are always evenly spaced.
-	// Modifies the polygon/polyline in place.
-	function midMarkers(poly,spacing){
-		var svg = poly.ownerSVGElement;
-		for (var pts=poly.points,i=1;i<pts.numberOfItems;++i){
-			var p0=pts.getItem(i-1), p1=pts.getItem(i);
-			var dx=p1.x-p0.x, dy=p1.y-p0.y;
-			var d = Math.sqrt(dx*dx+dy*dy);
-			var numPoints = Math.floor( d/spacing );
-			dx /= numPoints;
-			dy /= numPoints;
-			for (var j=numPoints-1;j>0;--j){
-				var pt = svg.createSVGPoint();
-				pt.x = p0.x+dx*j;
-				pt.y = p0.y+dy*j;
-				pts.insertItemBefore(pt,i);
-			}
-			if (numPoints>0) i += numPoints-1;
-		}
-	}
-
-	function drawData(jobs) {
-		
-		var data = document.getElementById("data");
-
-		for(var i = jobs.length-1; i>=0; i--){
-
-			//rectangle
-			
-			var startDate = new Date(jobs[i].starts);
-			var timeSpentPercStartDate = ((startDate.getHours() + 1)/24);
-			
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-			
-			var date0000 = new Date(jobs[i].starts);
-			date0000.setHours(0,0,0,0);
-			
-			var newX = mappingXDateJSONObject[""+date0000.getTime()];
-			var newX2 = newX + timeSpentPercStartDate * mappingXDateJSONObject.Xinterval;
-			
-			var newY = mappingXDateJSONObject[""+jobs[i].resource.name]-(mappingXDateJSONObject.Yinterval/2);
-			element.setAttribute("id", ""+ jobs[i].feature.id);
-			element.setAttribute("x", "" + newX2);
-			element.setAttribute("y", "" + newY);
-			
-			
-			
-			var endDate = new Date(jobs[i].ends);
-			timeSpentPercEndDate = ((endDate.getHours() + 1)/24);
-			var timeDiff = Math.abs(endDate.getTime() - startDate.getTime());
-			var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
-
-			var width = 0;
-			var width2 = 0;
-		
-			width = ((mappingXDateJSONObject.Xinterval * diffDays));
-			width2 = width - (timeSpentPercEndDate * mappingXDateJSONObject.Xinterval);
-			element.setAttribute("width", "" + width2);
-			
-			var height = (2 * (mappingXDateJSONObject.Yinterval/2));
-			
-			element.setAttribute("height", "" + height );
-			element.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			element.setAttribute("ng-mousedown", "selectElement($event)");
-			element.setAttribute("style", "cursor: move;stroke:rgb(135,206,235)");
-			//var name = jobs[i].feature.name;
-			mappingXDateJSONObject["x1"+ jobs[i].feature.id] = newX2;
-			mappingXDateJSONObject["y1"+ jobs[i].feature.id] = newY +(height/2);
-			mappingXDateJSONObject["x2"+ jobs[i].feature.id] = newX2 + width2;
-			mappingXDateJSONObject["y2"+ jobs[i].feature.id] = newY+ (height/2);
-			//console.log("name: " + jobs[i].feature.name + " id: "+ jobs[i].feature.id + " x1: " + newX2  + " y1: "+ newY + " width: " + width + " height: "+ height + " x2: " + mappingXDateJSONObject["x2"+ jobs[i].feature.id]  + " y2: "+ mappingXDateJSONObject["y2"+ jobs[i].feature.id] );
-			
-			
-			
-			data.appendChild(element);
-			$compile(element)($scope);
-
-			//text
-			var element = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-			var newXText = newX2 + (width2/2);
-			var newYText = newY + (mappingXDateJSONObject.Yinterval/2);
-			element.setAttribute("id", "text_"+jobs[i].feature.id);
-			element.setAttribute("x", newXText);
-			element.setAttribute("y", newYText);
-			element.setAttribute("alignment-baseline", "middle");
-			element.setAttribute("text-anchor", "middle");
-			element.setAttribute("fill", "black");
-			element.setAttribute("transform", "matrix(1 0 0 1 0 0)");
-			element.setAttribute("style", "word-break: keep-all;");
-			element.setAttribute("ondblclick", "showReplanRelease(event)");
-			element.textContent  = jobs[i].feature.id;
-			
-			data.appendChild(element);
-			$compile(element)($scope);
-		}
-
-		var dependenciesTag = document.getElementById("dependencies");
-		//draw dependency after
-		for(var i = jobs.length-1; i>=0; i--){
-			
-			//dependencies
-			//check if the job feature has dependencies
-			for (var z = 0; z < $scope.releaseFeatures.length; z++) {
-				var releaseFeature = $scope.releaseFeatures[z];
-				//if has dependency
-				if(jobs[i].feature.id == releaseFeature.id && releaseFeature.depends_on.length > 0){
-			
-					for (var a = 0; a < releaseFeature.depends_on.length; a++) {
-						
-						for(var p = jobs.length-1; p>=0; p--){
-							var jobEnd = jobs[p];
-							if(jobEnd.feature.id == releaseFeature.depends_on[a].id && !is_in_featuresTORemove(releaseFeature.depends_on[a].id)){
-								
-								var lineXstart = mappingXDateJSONObject["x1"+ jobs[i].feature.id];
-								var lineYstart = mappingXDateJSONObject["y1"+ jobs[i].feature.id];
-								var element = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-								element.setAttribute("x1", ""+lineXstart);
-								element.setAttribute("y1", ""+lineYstart);
-
-
-								//draw line
-								var lineXend = mappingXDateJSONObject["x2"+ releaseFeature.depends_on[a].id];
-								var lineYend = mappingXDateJSONObject["y2"+ releaseFeature.depends_on[a].id];
-
-								element.setAttribute("x2", ""+lineXend);
-								element.setAttribute("y2", ""+lineYend);
-								//element.setAttribute("style", "stroke:rgb(255,0,0);stroke-linecap:round;stroke-dasharray='5,10,5'");
-								element.setAttribute("stroke", "rgb(255,0,0)");
-								element.setAttribute("stroke-dasharray", "5,5,5");
-							
-								//console.log("name: "+ name + " x1d: " + lineXstart  + " y1d: "+lineYstart + " x2d: " + lineXend + " y2d: "+ lineYend );
-								
-								dependenciesTag.appendChild(element);
-								$compile(element)($scope);
-							}
-						}
-
-
-					}
-					break;
-				}
-			}
-
-		}
-		
-		
-		
-	}
-	
-	
 	function is_in_featuresTORemove(id) {
 		for(var i = 0; i<$scope.featuresTORemove.length; ++i){ 
 			if($scope.featuresTORemove[i]== id){
@@ -762,156 +369,6 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		}
 		return false;
 	}
-	
-
-	/**
-	 *  add drag and drop in chart
-	 */
-	//How to drag and drop
-	//http://www.petercollingridge.co.uk/interactive-svg-components/draggable-svg-element
-
-	var selectedElement = 0;
-	var currentX = 0;
-	var currentY = 0;
-	var currentMatrix = 0;
-	var currentMatrixText = 0;
-
-	$scope.selectElement = function($evt){
-		selectedElement = $evt.target;
-		currentX = $evt.clientX;
-		currentY = $evt.clientY;
-
-		currentMatrix = selectedElement.getAttributeNS(null, "transform").slice(7,-1).split(' ');
-
-		for(var i=0; i<currentMatrix.length; i++) {
-			currentMatrix[i] = parseFloat(currentMatrix[i]);
-		}
-
-		selectedElement.setAttributeNS(null, "ng-mousemove", "moveElement($event)");
-		selectedElement.setAttributeNS(null, "ng-mouseup", "deselectElement($event)");
-		$compile(selectedElement)($scope);
-	}
-
-	showReplanRelease = function(evt){
-
-		var selectedElement = evt.target;
-		var idStr=selectedElement.id;
-		var featureId = idStr.replace("text_", "").trim();
-		$location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
-	}
-
-	$scope.moveElement = function($evt){
-
-		dx = $evt.clientX - currentX;
-		dy = $evt.clientY - currentY;
-		currentMatrix[4] += dx;
-		currentMatrix[5] += dy;
-
-		newMatrix = "matrix(" + currentMatrix.join(' ') + ")";
-		selectedElement.setAttributeNS(null, "transform", newMatrix);
-		//text
-		selectedElement.nextSibling.setAttributeNS(null, "transform", newMatrix);
-
-		// end text
-		currentX = $evt.clientX;
-		currentY = $evt.clientY;
-
-	}
-
-	$scope.deselectElement = function($evt){
-
-//		if(selectedElement != 0){
-//
-//			if(!isRemovable($evt)){
-//
-//				$scope.draw();
-//			}
-//			else{
-//
-//				var jobs = $scope.plan.jobs;
-//
-//				//get index to remove
-//				var index = -1;
-//				for(var i = 0; i < jobs.length; i++)
-//				{
-//					if(jobs[i].feature.id == parseInt(selectedElement.id) ){
-//						index = i;
-//						$scope.featuresTORemove.push(jobs[i].feature.id);
-//						break;
-//					}
-//				}
-//
-//				//remove index
-//				if(index != -1){
-//					$scope.plan.jobs.splice(index, 1);
-//
-//					selectedElement.removeAttributeNS(null, "ng-mousemove");
-//					selectedElement.removeAttributeNS(null, "ng-mousedown");
-//					selectedElement.removeAttributeNS(null, "ng-mouseup");
-//					$compile(selectedElement)($scope);
-//					selectedElement = 0;
-//
-//					$scope.draw();
-//				}
-//
-//			}				
-//		}
-		
-		if(selectedElement != 0){
-			$scope.draw();
-		}
-	}
-
-	function isRemovable(evt){
-
-		//console.log("evt.clientX " + evt.clientX + " evt.clientY " + evt.clientY );
-
-		var xGrid = document.getElementById("xGrid");
-		var rectXGrid = xGrid.getBoundingClientRect();
-		//console.log(rectXGrid.top, rectXGrid.right, rectXGrid.bottom, rectXGrid.left);
-		//if under the x axis  -> true
-		if(evt.clientY > rectXGrid.top){
-			return true;
-		}
-
-		//if on the left of y axis -> true
-		var yGrid = document.getElementById("yGrid");
-		var rectYGrid = yGrid.getBoundingClientRect();
-		//console.log(rectYGrid.top, rectYGrid.right, rectYGrid.bottom, rectYGrid.left);
-		if(evt.clientX < rectXGrid.left){
-			return true;
-		}
-
-		//if on the right of ydx axis -> true
-		var ydxGrid = document.getElementById("ydxGrid");
-		var rectYdxGrid = ydxGrid.getBoundingClientRect();
-		//console.log(rectYdxGrid.top, rectYdxGrid.right, rectYdxGrid.bottom, rectYdxGrid.left);
-		if(evt.clientX > rectXGrid.right){
-			return true;
-		}
-
-		return false;
-	}
-
-//	$scope.cancel = function() {
-//
-//		$scope.getReleasePlan($scope.release.id)
-//		.then(
-//				function(response) {
-//					$scope.featuresTORemove = [];
-//					addDependenciesTOPlan(response.data);
-//					$scope.plan = response.data;
-//					$scope.showReleasePlan = true;
-//
-//					$scope.draw();
-//				},
-//				function(response) {
-//					$scope.showReleasePlan = false;
-//					$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
-//				}
-//		);
-//
-//	};
 
 	$scope.accept = function() {
 
@@ -920,7 +377,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			$scope.removeFeatureFromRelease($scope.release.id, $scope.featuresTORemove)
 			.then(
 					function(response) {
-						
+
 						$scope.featuresTORemove = [];
 						$location.path("/release-planner-app/main");
 
@@ -933,11 +390,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		else{
 			$location.path("/release-planner-app/main");   
 		}
-
 	};
-	
+
 	$scope.forceTOReplan = function(bln) {
-		
+
 		if(bln){
 			$scope.forceReleasePlan($scope.release.id, bln)
 			.then(
@@ -950,7 +406,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 			); 
 		}
 		else{
-			
+
 			$scope.removeReleasePlan($scope.release.id)
 			.then(
 					function(response) {
@@ -960,9 +416,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 						alert("Error: "+response.status + " " + response.statusText);
 					}
 			);
-		
+
 		}
-		  
+
 	};
 
 	/**
@@ -1007,14 +463,249 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		return arr; 
 	}
 
-	$scope.showReleaseDetails2 = function (release) {
-		$location.path("/release-planner-app/release_details2").search({releaseId: ''+release.id});
+
+	/**
+	 * Google and visjs chart functions
+	 */
+
+	var arrayColors = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#000000","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#8B008B","#556B2F","#FF8C00","#9932CC","#8B0000","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#808080","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#FFFFE0","#00FF00","#32CD32","#800000","#FAF0E6","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#800080","#663399","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#FFFFFF","#F5F5F5","#FFFF00","#9ACD32"];
+
+	function getHTMLToolTip(job) {
+		
+		var startDate = getDate(job.starts);
+		var endDate = getDate(job.ends);
+
+		var hours = Math.abs(startDate - endDate) / 3600000;
+		var hourLabel = "hour"; 
+		if(hours>10){
+			hourLabel = "hours";
+		}
+
+		var depends_on = "";
+		for(var z=0; z<job.depends_on.length; z++){
+			if(z==0){
+				depends_on = findIdFeatureFromJobId(job.depends_on[z].id);	
+			}else{
+				depends_on = depends_on + ", " + findIdFeatureFromJobId(job.depends_on[z].id);
+			}
+
+		}
+		//tooltip
+		var result = "<div>" +
+		"<table class='tooltip_table'>" +
+		"<tr>" +
+		"<th>" +
+		"<b>" + job.feature.name + "<b>" +
+		"</th>" +
+		"</tr>" +
+		"<tr>" +
+		"<td>" +
+		"<b>Id:</b> "+ job.feature.id + "<br>" +
+		"<b>Start:</b> "+ getDateASString(job.starts) + "<br>" +
+		"<b>End:</b> "+getDateASString(job.ends) + "<br>" +
+		"<b>Duration:</b> " + hours+ " " + hourLabel + "<br>" +
+		"<b>Effort:</b> " + job.feature.effort + "<br>" +
+		"<b>Priority:</b> "+ job.feature.priority + "<br>" +
+		"<b>Depends on:</b> "+ depends_on + "<br>" +
+		"</td>" +
+		"</tr>" +
+		"</table>" +
+		"</div>";
+		
+		return result;
 	}
 	
+	function drawTimelineChart() {
+
+		//1.create dataTable
+		var dataTable = new google.visualization.DataTable();
+
+		dataTable.addColumn({ type: 'string', id: 'Developer' });
+		dataTable.addColumn({ type: 'string', id: 'TaskName' });
+		dataTable.addColumn({'type': 'string', 'role': 'tooltip', 'p': {'html': true}});
+		dataTable.addColumn({ type: 'date', id: 'Start' });
+		dataTable.addColumn({ type: 'date', id: 'End' });
+
+		var numberOfRows =  dataTable.getNumberOfRows();
+		if(numberOfRows > 0){
+			dataTable.removeRows(0, numberOfRows);
+		}
+
+		//2.add rows in dataTable
+		var arrays = [];
+		var jobs = $scope.plan.jobs;
+		//for(var i = jobs.length-1; i>=0; i--){
+		for(var i = 0; i< jobs.length; i++){
+		
+			var job = jobs[i];
+			var array = [];
+
+
+			array[0] = job.resource.name;
+			array[1] = ""+job.feature.id;
+			
+			//tooltip
+			array[2] = getHTMLToolTip(job);
+			
+			
+			array[3] = getDate(job.starts);
+			array[4] = getDate(job.ends);
+
+			arrays.push(array);
+
+		}
+		dataTable.addRows(arrays);
+
+		//3 initialize
+		var container = document.getElementById('timeline_chart');
+		var timelineChart = new google.visualization.Timeline(container);
+
+		var trackHeight = 50;
+		var numberOfRows = dataTable.getNumberOfRows();
+		var height = dataTable.getNumberOfRows() * trackHeight;
+		var options = {
+				height: height,
+				timeline: {
+					colorByRowLabel: true
+				}
+		,
+		tooltip: { isHtml: true },
+		colors: arrayColors
+		};
+
+		//3.1 draw
+		timelineChart.draw(dataTable, options);
+
+	}
+	
+	function drawFeatureDependencies(){
+        var indexColorResource = 0;
+        var lastIdResource = -1;
+        
+		var indexNode = 0;
+		var indexEdge = 0;
+
+		var nodeDataSet = [];
+		var edgeDataSet = [];
+		var jobs = $scope.plan.jobs;
+
+		//for(var i = jobs.length-1; i>=0; i--){
+		for(var i = 0; i< jobs.length; i++){	
+			//add node into the array
+			var job =  jobs[i];
+	
+			var node = {};
+			node.id  = job.feature.id;
+			node.label = job.feature.id;
+			node.title = getHTMLToolTip(job);
+			
+			if(lastIdResource == -1){
+				lastIdResource = job.resource.id;
+			}
+			
+			if(lastIdResource != job.resource.id){
+				indexColorResource ++;
+				lastIdResource = job.resource.id;
+			}
+			
+			node.color = arrayColors[indexColorResource];
+			
+			nodeDataSet[indexNode] = node;
+
+
+			for(var j =0; j< job.depends_on.length; j++){
+				//add edge into the array
+				var edge = {};
+				edge.from = job.depends_on[j].feature_id;
+				edge.to = job.feature.id;
+				edge.color = 'gray';
+				edgeDataSet[indexEdge] = edge;
+				indexEdge ++;
+			}
+
+			indexNode ++;
+
+		}
+		//1. add arrays
+		var nodes = new vis.DataSet(nodeDataSet);
+		var edges = new vis.DataSet(edgeDataSet);
+
+		//2. create network feature dependencies
+		var container = document.getElementById('mynetwork');
+
+		//3. provide the data in the vis format
+		var data = {
+				nodes: nodes
+				,
+				edges: edges
+		};
+
+		//4. provide options
+		var options = {
+				physics: false,
+				autoResize: true,
+				edges: {
+					arrows: {
+						from: {
+							enabled: true
+						}
+					}
+				},
+//if use the property layout in supersede the chart has problem
+				//				layout: {
+//				improvedLayout: true
+//				,		
+//				hierarchical: {
+//				enabled: true,
+//				levelSeparation: 50
+//				}
+//				},
+
+				interaction: {
+					dragView:false,	
+					zoomView: false
+				}
+
+		};
+
+		//5.initialize your network!
+		var network = new vis.Network(container, data, options);
+	}
+
+	function findIdFeatureFromJobId(jobId) {
+		var jobs = $scope.plan.jobs;
+		
+		//for(var i = jobs.length-1; i>=0; i--){
+		for(var i = 0; i< jobs.length; i++){
+			var job = jobs[i];
+			if(job.id == jobId){
+				return job.feature.id
+			}
+		}
+		return -1;
+	}
+	
+	function getDateASString(dateAsString) {
+		var res = dateAsString.split("T");
+		var time = res[1].split(":");
+		var my_date= res[0] + " " + time[0] +":" + time[1];
+		return my_date;
+	}
+
+	function array_unique(arr) {
+		var result = [];
+		for (var i = 0; i < arr.length; i++) {
+			if (result.indexOf(arr[i]) == -1) {
+				result.push(arr[i]);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * start point function
 	 */
+	google.charts.load('current', {'packages':['timeline', 'gantt']});
 	$scope.startPoint($location.search().releaseId);
-
 
 }]);

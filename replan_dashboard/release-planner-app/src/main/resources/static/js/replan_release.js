@@ -156,7 +156,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	 */
 	$scope.showFeature = false;
 	$scope.messageFeature = "Loading ...";
-	$scope.feature = {code: -1, deadline:"", description:"", effort:"", id: -1, name:"", priority: -1, release:{}};
+	$scope.feature = {code: -1, deadline:"", description:"", effort: s-1, id: -1, name:"", priority: -1, release:{}};
 
 	$scope.release = {};
 	//contains array of feature object.
@@ -349,7 +349,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 							addRemoveSkills();
 						},
 						function(response) {
-							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+							appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 						}
 				);
 			
@@ -403,7 +403,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 						
 						},
 						function(response) {
-							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+							appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 						}
 				);
 			});
@@ -421,7 +421,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 
 			// only for message
 		default:
-			var checkDefaultWindow = document.getElementById("defaultWindow");
+		var checkDefaultWindow = document.getElementById("defaultWindow");
 		if(checkDefaultWindow == null){
 			$(document.body).append('<div id="defaultWindow">'+
 					'<div>Re-plan Status</div>'+
@@ -514,7 +514,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 						addRemoveSkills();
 					},
 					function(response) {
-						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+						appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 					}
 			);
 		}
@@ -539,7 +539,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 									internalUpdate();
 								},
 								function(response) {
-									appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+									appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 								}
 						);
 					}else{
@@ -548,7 +548,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 				
 				},
 				function(response) {
-					appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+					appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 				}
 		);
 		
@@ -582,12 +582,12 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 													$location.path("/release-planner-app/main");
 												},
 												function(response) {
-													appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+													appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 												}
 										);
 									},
 									function(response) {
-										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+										appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 									}
 							);
 						}else{
@@ -599,14 +599,14 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 										$location.path("/release-planner-app/main");
 									},
 									function(response) {
-										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+										appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 									}
 							);
 						
 						}
 					},
 					function(response) {
-						appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+						appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 					}
 			);
 		}
@@ -630,12 +630,12 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 										$location.path("/release-planner-app/main");
 									},
 									function(response) {
-										appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+										appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 									}
 							);
 						},
 						function(response) {
-							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+							appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 						}
 				);
 			}
@@ -654,7 +654,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 							$location.path("/release-planner-app/main");
 						},
 						function(response) {
-							appendReplaneWindows("default", "Error: "+response.status + " " + response.statusText);
+							appendReplaneWindows("default", /*"Error: "+response.data.code + " " + */response.data.message);
 						}
 				);
 			}

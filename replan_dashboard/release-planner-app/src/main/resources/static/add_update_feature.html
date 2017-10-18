@@ -1,0 +1,89 @@
+<link href="release-planner-app/css/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+<link href="release-planner-app/js/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="release-planner-app/js/bootstrap-3.3.5-dist/js/bootstrap.min.js" type="text/javascript"></script>
+
+<link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
+
+<script src="release-planner-app/js/add_update_feature.js"></script>
+
+<div class="well" ng-controller="add-update-feature">
+	  <div class="container-fluid">
+		 <div class="row" ng-show="!showFeature">
+	        <div class="col-xs-12">
+	            <h4>{{messageFeature}}</h4>
+	        </div>
+	    </div>
+        <div class="row" ng-show="showFeature">
+<!--         	<h4>{{feature.name + '-' + feature.id +'(Id)'}}</h4> -->
+	 		<div class="col-xs-12">
+				<form id="featureForm" name="featureForm" class="form-horizontal" ng-submit="addUpdateFeature()" novalidate>
+					<!-- Id -->
+					<div class="form-group margin-bottom-5px">
+				      <label class="control-label col-sm-2 my-label" for="id">Id:</label>
+				      <div class="col-sm-10">
+<!-- 				        <jqx-input id="idInput" name="id" class="form-control myHeightSmall" ng-model="feature.id" ng-disabled="true"></jqx-input> -->
+				         <input type="number" name="id" style="height: 25px; width:96.5%" class="form-control" ng-model="feature.id" ng-disabled="true">
+				      </div>
+				    </div>
+				    <!-- Code -->
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.code.$error.required && !featureForm.code.$pristine}">
+				      <label class="control-label col-sm-2 my-label" for="code">Code:</label>
+				      <div class="col-sm-10">
+				        <input type="number" name="code" style="height: 25px; width:96.5%" class="form-control" ng-model="feature.code" ng-change="oninputFunction()" ng-disabled="!isAddFeature" required>
+				        <span ng-show="featureForm.code.$error.required && !featureForm.code.$pristine" class="help-block">Code is required.</span>
+				      </div>
+				    </div>
+				    <!-- Name -->
+				 	<div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.name.$error.required && !featureForm.name.$pristine}">
+				      <label class="control-label col-sm-2 my-label" for="name">Name:</label>
+				      <div class="col-sm-10">
+				        <jqx-input id="nameInput" name="name" class="form-control myHeightSmall" ng-model="feature.name" required></jqx-input>
+				        <span ng-show="featureForm.name.$error.required &&  !featureForm.name.$pristine" class="help-block">Name is required.</span>
+				      </div>
+				    </div>
+					<!-- Description -->
+					<div class="form-group margin-bottom-5px">
+				      <label class="control-label col-sm-2 my-label" for="description">Description:</label>
+				      <div class="col-sm-10">
+				        <jqx-input id="descriptionInput" name="description" class="form-control myHeightSmall" ng-model="feature.description"></jqx-input>
+				      </div>
+				    </div>
+				    <!-- Effort -->
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.effort.$error.required && !featureForm.effort.$pristine}">
+				      <label class="control-label col-sm-2 my-label" for="effort">Effort:</label>
+				      <div class="col-sm-10">
+				        <input type="number" name="effort" style="height: 25px; width:96.5%" class="form-control" ng-model="feature.effort" min="1" required>
+				        <span ng-show="featureForm.effort.$error.required && !featureForm.effort.$pristine" class="help-block">Effort is required.</span>
+				      </div>
+				    </div>
+				    <!-- Deadline -->
+				    <div class="form-group margin-bottom-5px required" ng-class="{ 'has-error' : featureForm.deadline.$error.required}">
+				      <label class="control-label col-sm-2 my-label" for="deadline">DeadLine:</label>
+				      <div class="col-sm-10">
+<!-- 				        <jqx-input id="deadlineInput" name="deadline" class="form-control myHeightSmall" ng-model="feature.deadline" required></jqx-input> -->
+				        <div id='dateInputDeadline'>
+						</div>
+				        <span ng-show="featureForm.deadline.$error.required" class="help-block">Deadline is required.</span>
+				      </div>
+				    </div>
+				    <!-- Priority -->
+			  	  	<div class="form-group margin-bottom-5px required">
+				      <label class="control-label col-sm-2 my-label" for="priority">Priority:</label>
+				      <div class="col-sm-10">
+				     	<jqx-drop-down-list  id="priorityDropDownList" name="priorityDropDownList" class="form-control" jqx-settings="dropDownListSettingsPriority"></jqx-drop-down-list>
+				      </div>
+				    </div>
+				    <!-- Buttons -->
+				    <div class="form-group margin-bottom-5px">
+				      <div class="col-sm-offset-2 col-sm-10">
+				        <jqx-button type="submit" class="margin-bottom-5px my-button myHeight" ng-disabled="featureForm.$invalid">{{addUpdateFeatureLabel}}</jqx-button>
+				      </div>
+				    </div>
+			  	</form>
+	        </div>
+        </div>
+      </div>
+</div>
+
+

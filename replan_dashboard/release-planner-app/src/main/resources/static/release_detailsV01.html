@@ -1,0 +1,98 @@
+<link href="release-planner-app/css/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+<link href="release-planner-app/js/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="release-planner-app/js/bootstrap-3.3.5-dist/js/bootstrap.min.js" type="text/javascript"></script>
+
+<link href="release-planner-app/css/release-planner-app.css" rel="stylesheet">
+
+<script src="release-planner-app/js/release_details.js"></script>
+
+<div class="well" ng-controller="release-details">
+
+	<div class="container-fluid">
+<!--  	   	<a class="btn btn-default margin-bottom-5px my-button" href="#/release-planner-app/main"> -->
+<!-- 			<i class="fa fa-home fa-lg"></i> &nbsp; Main. &nbsp; -->
+<!-- 		</a> -->
+	    <div class="row">
+	      <div class="col-xs-12" ng-show="!showReleasePlan">
+	            <h4>{{messageReleasePlan}}</h4>
+	        </div>
+	    </div>
+        <div class="row">
+       	 <h4 ng-show="showReleasePlan">{{release.name + '-' + release.id +'(Id)'}}</h4>
+       	 <a ng-click="showReleaseDetails2(release)">show release details v2 </a> 
+	    </div>
+	    <div class="row">
+             <div class="col-xs-12" >
+            		<svg id ="chart" version="1.2" class="graph" aria-labelledby="title">
+		
+<!-- 					<defs> -->
+<!-- 					    <marker id="markerCircle" markerWidth="8" markerHeight="8" refX="5" refY="5"> -->
+<!-- 					        <circle cx="5" cy="5" r="3" style="stroke: none; fill:#000000;"/> -->
+<!-- 					    </marker> -->
+			
+<!-- 					    <marker id="markerArrow" markerWidth="13" markerHeight="13" refX="10" refY="6" -->
+<!-- 					           orient="auto"> -->
+<!-- 					        <path d="M2,2 L2,11 L10,6 L2,2" style="fill: rgb(255,0,0);" /> -->
+<!-- 					    </marker> -->
+<!-- 					</defs> -->
+		
+					<text id ="myText" x="0" y="0" style="diplay: none; !important"></text>
+					<!--  axis -->
+					<g id="yGrid" class="grid">
+					</g>
+					
+					<g id="ydxGrid" class="grid">
+					</g>
+				
+					<g id="xGrid" class="grid">
+					</g>
+				
+					<!--  vertical grid lines -->
+					<g id="verticalLineGrid" class="grid">
+					
+					</g>
+					<g id="verticalDeadLineLineGrid" class="grid-dead-line">
+					<!-- 		<line x1="726.5" x2="726.5" y1="5" y2="430"></line> -->
+					</g>
+					<!--  labels vertical grid line		 -->
+					<g id="verticalLabelLineGrid" class="graph-labels x-graph-labels"> 
+					
+					</g>
+					<!-- horizontal grid line-->
+					<g id ="horizontalLineGrid" class="grid">
+					
+					</g>		
+					<!--  graph-labels horizontal grid line		 -->		
+					<g id="horizontalLabelLineGrid" class="graph-labels y-graph-labels">
+					</g>
+					
+					<g id="data" class="graph-data">
+				 	</g>
+				 	<g id="dependencies" class="graph-data">
+				 	</g>
+				 	<g id="legend">
+				 	</g>
+				 	
+				</svg>
+            </div>
+<!--             <div class="row legend"><b>Legend:</b> -->
+            
+<!-- 		   		<ul class="col-xs-12" ng-repeat="job in plan.jobs"> -->
+<!-- 	       			<li>{{job.feature.id + ' = ' + job.feature.name}}</li> -->
+<!-- 	        	</ul> -->
+<!-- 	        </div> -->
+			<div class="col-xs-12 margin-bottom-5px" >
+				<jqx-grid id="featuresJqxgrid" jqx-create="blncreateFeaturesJqxgrid" jqx-settings="featuresJqxgridSettings"></jqx-grid>
+			</div>     
+	     	<div class="col-xs-12">
+			     <div class="text-right" ng-show="showReleasePlan">
+			     	<jqx-button id="acceptJqxButton" type="submit" class="my-button margin-left-5px" ng-click="accept()">Accept</jqx-button>
+			     	<jqx-button id="forceTOReplanJqxButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(true)">Force replan</jqx-button>
+			     	<jqx-button id="previousPlanButton" type="submit" class="my-button margin-left-5px" ng-click="forceTOReplan(false)">Previous plan</jqx-button>
+<!-- 			     	<jqx-button id="cancelJqxButton" type="reset" class="my-button" ng-click="cancel()">Cancel</jqx-button> -->
+			    </div>  
+			</div>
+        </div>
+	</div>
+</div>

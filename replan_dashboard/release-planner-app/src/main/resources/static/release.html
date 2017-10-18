@@ -21,17 +21,14 @@
            <div class="col-xs-4">
 	       	   	<jqx-list-box id ="resourcesListBox" jqx-settings="settingsResourcesListBox"  jqx-on-select="selectItemResourcesListBox(event)" ng-class="addClassHasErrorResourcesAreRequired"></jqx-list-box>
 	       	   	<span ng-show="showResourcesAreRequired" class="help-block" ng-class="addClassHasErrorResourcesAreRequired">Resources are required.</span>
-<!-- 	           	{{log}} -->
 		   </div>
 	       <div class="col-xs-4">
 			   	<div class="btn-group-vertical">
 				  <jqx-toggle-button id="addResouceToggleBtn" class="margin-bottom-5px my-button myHeight" ng-click="addSpecificResources($event)">Add</jqx-toggle-button>
-<!-- 				  <jqx-button id="addDefaultResouceBtn" type="button" class="margin-bottom-5px my-button myHeight" ng-click="addDefaultResources($event)">Add default</jqx-button>			   -->
 				</div>
            </div>
            <div class="col-xs-4" ng-show="showResourcesAddListBox">
 				<jqx-list-box id ="resourcesAddListBox" jqx-settings="settingsResourcesAddListBox" jqx-on-select="selectItemResourcesAddListBox(event)" ></jqx-list-box>
-<!-- 	           	{{log1}} -->
            </div>
           
           <div class="row">

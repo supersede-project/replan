@@ -16,8 +16,19 @@
             </div>
  			<div class="col-xs-6" ng-show="showFeatures">
  				<jqx-list-box id ="featureListBox" jqx-settings="featureListBoxSettings" jqx-on-select="selectItem(event)"></jqx-list-box>
+            	<div class="col-xs-7 col-xs-offset-5">
+					<div class="text-right">
+						<jqx-button type="button" class="margin-top-5px margin-bottom-5px my-button myHeight" ng-click="addFeature()"><i class="fa fa-plus fa-lg"></i> Add feature</jqx-button>
+	      		    </div>
+				</div>
+				<div class="col-xs-7 col-xs-offset-5">
+					<div class="text-right">
+						<jqx-button type="button" class="margin-bottom-5px my-button myHeight" ng-click="updateFeature()" ng-disabled="isAddFeature"><i class="fa fa-pencil fa-lg"></i> Modify feature</jqx-button>
+	      		    </div>
+				</div>
             </div>
-            
+
+ 				
             <!-- releases -->
             <div class="col-xs-6" ng-show="!showReleases">
             	<h4>{{messageReleases}}</h4>
@@ -50,7 +61,7 @@
  				</div>
 		        <div class="col-xs-7 col-xs-offset-5">
 					<div class="text-right">
-						<jqx-button type="button" class="margin-bottom-5px my-button myHeight" ng-click="showEditProjectConfig()"><i class="fa fa-pencil fa-lg"></i>Edit project config.</jqx-button>
+						<jqx-button type="button" class="margin-bottom-5px my-button myHeight" ng-click="showEditProjectConfig()"><i class="fa fa-pencil fa-lg"></i> Modify project config.</jqx-button>
         		    </div>
                 </div>
             </div> 

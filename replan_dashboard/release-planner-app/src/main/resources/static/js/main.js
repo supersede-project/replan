@@ -1,5 +1,5 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http','$rootScope',
+app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http', '$rootScope',
 
 
 function ($scope, $location, $http, $rootScope) {
@@ -33,7 +33,9 @@ function ($scope, $location, $http, $rootScope) {
 	/*
 	 * FEATURES
 	 */
-
+	$scope.featureIdToModify = -1;
+	$scope.isAddFeature = true;
+	
 	$scope.showFeatures = false;
 	$scope.messageFeatures = "Loading ...";
 	$scope.features = [];
@@ -93,6 +95,22 @@ function ($scope, $location, $http, $rootScope) {
 			}
 		}
 	};
+	
+	$("#featureListBox").on('select', function (event) {
+		var index = event.args.index;
+		
+		var datarecord = $scope.features[index];
+		
+		if (datarecord.id) {
+			$scope.featureIdToModify = datarecord.id;
+			$scope.isAddFeature = false;
+			
+		}else{
+			$scope.featureIdToModify = -1;
+			$scope.isAddFeature = true;
+			
+		}
+	});
 
 	$("#featureListBox").on('dragEnd', function (event) {
 		if (event.args.label) {
@@ -238,7 +256,18 @@ function ($scope, $location, $http, $rootScope) {
 	$scope.showRelease = function (release) {
 		$location.path("/release-planner-app/release").search({releaseId: ''+release.id});
 	}
+	
+	$scope.addFeature = function () {
+		$location.path("/release-planner-app/add_update_feature");
+		console.log($location.path());
+	}
 
+	$scope.updateFeature = function () {
+		$scope.featureIdToModify
+		$location.path("/release-planner-app/add_update_feature").search({featureId: ''+$scope.featureIdToModify});
+		console.log($location.path());
+	}
+	
 	$scope.releaseFeatures = [];
 
 
