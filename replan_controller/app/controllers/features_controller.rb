@@ -66,7 +66,9 @@ class FeaturesController < ApplicationController
       when "any"
         @features = feature_list
       when "pending" 
-         @features = feature_list.select{|f| f.current_job.nil?}
+        @features = feature_list.select{|f| f.release.nil?}
+      when "in_release"
+        @features = feature_list.select{|f| !f.release.nil?}
       when "scheduled" 
         @features = feature_list.select{|f| !f.current_job.nil?}
       else
