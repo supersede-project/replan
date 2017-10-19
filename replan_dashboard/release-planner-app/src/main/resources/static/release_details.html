@@ -23,7 +23,8 @@
 	    <div class="row">
              <div class="col-xs-12" >
 				<h4>Over time use of resources</h4>
-				<div id="timeline_chart"></div> 
+				<div id="timeline_chart" ng-show="showTimeline_chart"></div> 
+				<h5 ng-show="!showTimeline_chart">No resources are available</h5> 
              </div>
 <!--              <div class="col-xs-12" > -->
 <!--              	<h4>Feature dependencies</h4>	 -->
@@ -35,20 +36,21 @@
 					<tr>
 						<th>Name</th>
 					    <th>Used %</th>
-					    <th>Total available hours</th>
+					    <th>Used hours</th>
 					</tr>
 					<tr ng-repeat="resource in plan.resource_usage">
 						<td class="padding-bottom-5px">{{resource.resource_name}}</td>
 						<td class="padding-bottom-5px">
 			  				<jqx-progress-bar  ng-model="resource.total_used_percent" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
 			  			</td>
-			  			<td class="padding-bottom-5px">{{resource.total_available_hours}}</td>
+			  			<td class="padding-bottom-5px">{{resource.total_used_hours  + " out of " + resource.total_available_hours }}</td>
 					</tr>	
 				</table>
 			 </div>
 			 <div class="col-xs-12" >
 				<h4>Feature dependencies</h4>	
-				<div id="mynetwork"></div> 
+				<div id="mynetwork" ng-show="showMynetwork"></div> 
+				<h5 ng-show="!showMynetwork">No dependencies are available</h5> 
              </div>
 			 <div class="col-xs-12">
 				<h4>Table view</h4>	

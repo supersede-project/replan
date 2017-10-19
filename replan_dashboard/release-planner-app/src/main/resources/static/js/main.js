@@ -1,5 +1,5 @@
 var app = angular.module('w5app');
-app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http', '$rootScope',
+app.controllerProvider.register('main-utilities', ['$scope', '$location', '$http','$rootScope',
 
 
 function ($scope, $location, $http, $rootScope) {
@@ -258,6 +258,7 @@ function ($scope, $location, $http, $rootScope) {
 	}
 	
 	$scope.addFeature = function () {
+		$location.search({});
 		$location.path("/release-planner-app/add_update_feature");
 		console.log($location.path());
 	}

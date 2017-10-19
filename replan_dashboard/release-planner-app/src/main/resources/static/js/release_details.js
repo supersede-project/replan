@@ -1,6 +1,6 @@
 var app = angular.module('w5app');
 app.controllerProvider.register('release-details', ['$scope', '$location', '$http', '$compile', '$rootScope',
-                                    function ($scope, $location, $http,  $compile, $rootScope) {
+                                   function ($scope, $location, $http,  $compile, $rootScope) {
 	/*
 	 * REST methods
 	 */
@@ -84,6 +84,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 	//contains array of feature object.
 	$scope.releaseFeatures = [];
+	
+	$scope.showTimeline_chart = true;
+	$scope.showMynetwork = true;
 
 	function isEven(n) {
 		return n % 2 == 0;
@@ -96,6 +99,11 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		.then(
 				function(response) {
 
+					//for security reassons
+					$scope.showTimeline_chart = true;
+					$scope.showMynetwork = true;
+					
+					
 					$scope.releaseFeatures = response.data;
 
 					$scope.getRelease(releaseId)
@@ -117,9 +125,9 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 												var total_used_percent = (total_used_hours/total_available_hours)*100;
 												resource.total_used_percent = total_used_percent;
 											}	
-											
+
 											$scope.showReleasePlan = true;
-										
+
 											$scope.planJqxgrid = JSON.parse(JSON.stringify(responseData)); 
 											addPropertiesTOPlanJqxgrid();
 											$scope.initFeaturesJqxgrid();
@@ -131,7 +139,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 											drawFeatureDependencies();
 
 										},
-										
+
 										function(response) {
 											$scope.showReleasePlan = false;
 											$scope.messageReleasePlan = "Error: "+response.status + " " + response.statusText;
@@ -314,10 +322,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				        		  $scope.plan.jobs.splice(row, 1);
 
 				        		  //redraw the chart
-				        		  
+
 				        		  //google charts
 				        		  drawTimelineChart();
-				        		  
+
 				        		  //visjs chart
 				        		  drawFeatureDependencies();
 
@@ -337,7 +345,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 				        			  var featureId = $scope.planJqxgrid.jobs[row].feature.id
 
 				        			  $rootScope.$apply(function() {
-				        				  $location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: ''+$scope.release.id });
+				        				  $location.path("/release-planner-app/replan_release").search({featureId: featureId, releaseId: $scope.release.id });
 				        				  console.log($location.path());
 				        			  });
 				        		  }
@@ -471,7 +479,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 	var arrayColors = ["#F0F8FF","#FAEBD7","#00FFFF","#7FFFD4","#F0FFFF","#F5F5DC","#FFE4C4","#000000","#FFEBCD","#0000FF","#8A2BE2","#A52A2A","#DEB887","#5F9EA0","#7FFF00","#D2691E","#FF7F50","#6495ED","#FFF8DC","#DC143C","#00008B","#008B8B","#B8860B","#A9A9A9","#006400","#BDB76B","#8B008B","#556B2F","#FF8C00","#9932CC","#8B0000","#E9967A","#8FBC8F","#483D8B","#2F4F4F","#00CED1","#9400D3","#FF1493","#00BFFF","#696969","#1E90FF","#B22222","#FFFAF0","#228B22","#FF00FF","#DCDCDC","#F8F8FF","#FFD700","#DAA520","#808080","#008000","#ADFF2F","#F0FFF0","#FF69B4","#CD5C5C","#4B0082","#FFFFF0","#F0E68C","#E6E6FA","#FFF0F5","#7CFC00","#FFFACD","#ADD8E6","#F08080","#E0FFFF","#FAFAD2","#D3D3D3","#90EE90","#FFB6C1","#FFA07A","#20B2AA","#87CEFA","#778899","#B0C4DE","#FFFFE0","#00FF00","#32CD32","#800000","#FAF0E6","#66CDAA","#0000CD","#BA55D3","#9370DB","#3CB371","#7B68EE","#00FA9A","#48D1CC","#C71585","#191970","#F5FFFA","#FFE4E1","#FFE4B5","#FFDEAD","#000080","#FDF5E6","#808000","#6B8E23","#FFA500","#FF4500","#DA70D6","#EEE8AA","#98FB98","#AFEEEE","#DB7093","#FFEFD5","#FFDAB9","#CD853F","#FFC0CB","#DDA0DD","#B0E0E6","#800080","#663399","#FF0000","#BC8F8F","#4169E1","#8B4513","#FA8072","#F4A460","#2E8B57","#FFF5EE","#A0522D","#C0C0C0","#87CEEB","#6A5ACD","#708090","#FFFAFA","#00FF7F","#4682B4","#D2B48C","#008080","#D8BFD8","#FF6347","#40E0D0","#EE82EE","#F5DEB3","#FFFFFF","#F5F5F5","#FFFF00","#9ACD32"];
 
 	function getHTMLToolTip(job) {
-		
+
 		var startDate = getDate(job.starts);
 		var endDate = getDate(job.ends);
 
@@ -511,10 +519,10 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		"</tr>" +
 		"</table>" +
 		"</div>";
-		
+
 		return result;
 	}
-	
+
 	function drawTimelineChart() {
 
 		//1.create dataTable
@@ -536,18 +544,18 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var jobs = $scope.plan.jobs;
 		//for(var i = jobs.length-1; i>=0; i--){
 		for(var i = 0; i< jobs.length; i++){
-		
+
 			var job = jobs[i];
 			var array = [];
 
 
 			array[0] = job.resource.name;
 			array[1] = ""+job.feature.id;
-			
+
 			//tooltip
 			array[2] = getHTMLToolTip(job);
-			
-			
+
+
 			array[3] = getDate(job.starts);
 			array[4] = getDate(job.ends);
 
@@ -561,8 +569,17 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var timelineChart = new google.visualization.Timeline(container);
 
 		var trackHeight = 50;
-		var numberOfRows = dataTable.getNumberOfRows();
-		var height = dataTable.getNumberOfRows() * trackHeight + trackHeight;
+		var numberOfResources = $scope.plan.resource_usage.length;
+		var arrayNumberOfResources = [];
+		var index=0;
+		for(var i=0; i< $scope.plan.jobs.length; i++){
+			arrayNumberOfResources[index] =$scope.plan.jobs[i].resource.id;
+			index ++;
+		}
+		var arrayNumberOfResourceUnique = array_unique(arrayNumberOfResources);
+
+
+		var height = arrayNumberOfResourceUnique.length * trackHeight + trackHeight ;
 		var options = {
 				height: height,
 				timeline: {
@@ -573,15 +590,20 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		colors: arrayColors
 		};
 
-		//3.1 draw
-		timelineChart.draw(dataTable, options);
-
+		
+		if(arrays.length>0){
+			$scope.showTimeline_chart = true;
+			//3.1 draw
+			timelineChart.draw(dataTable, options);
+		}else{
+			$scope.showTimeline_chart = false;
+		}
 	}
-	
+
 	function drawFeatureDependencies(){
-        var indexColorResource = 0;
-        var lastIdResource = -1;
-        
+		var indexColorResource = 0;
+		var lastIdResource = -1;
+
 		var indexNode = 0;
 		var indexEdge = 0;
 
@@ -589,43 +611,60 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		var edgeDataSet = [];
 		var jobs = $scope.plan.jobs;
 
+
+		var arrayFeaturesIds =[];
+		var index = 0;
+		for(var i = 0; i< jobs.length; i++){
+			var job =  jobs[i];
+			if(job.depends_on.length>0){
+				arrayFeaturesIds[index] = job.feature.id;
+				index++;
+					for(var j = 0; j< job.depends_on.length; j++){
+						var feature =  job.depends_on[j];
+						arrayFeaturesIds[index] = feature.feature_id;
+						index++;
+					}
+			}
+		}	
+
+		var arrayUniqueFeaturesIds = array_unique(arrayFeaturesIds);
+
 		//for(var i = jobs.length-1; i>=0; i--){
 		for(var i = 0; i< jobs.length; i++){	
 			//add node into the array
 			var job =  jobs[i];
-	
-			var node = {};
-			node.id  = job.feature.id;
-			node.label = job.feature.id;
-			node.title = getHTMLToolTip(job);
-			
-			if(lastIdResource == -1){
-				lastIdResource = job.resource.id;
+			if(isContains(arrayUniqueFeaturesIds,job.feature.id)){
+				var node = {};
+				node.id  = job.feature.id;
+				node.label = job.feature.id;
+				node.title = getHTMLToolTip(job);
+
+				if(lastIdResource == -1){
+					lastIdResource = job.resource.id;
+				}
+
+				if(lastIdResource != job.resource.id){
+					indexColorResource ++;
+					lastIdResource = job.resource.id;
+				}
+
+				node.color = arrayColors[indexColorResource];
+				nodeDataSet[indexNode] = node;
+
+				for(var j =0; j< job.depends_on.length; j++){
+					//add edge into the array
+					var edge = {};
+					edge.from = job.depends_on[j].feature_id;
+					edge.to = job.feature.id;
+					edge.color = 'gray';
+					edgeDataSet[indexEdge] = edge;
+					indexEdge ++;
+				}
+
+				indexNode ++;
 			}
-			
-			if(lastIdResource != job.resource.id){
-				indexColorResource ++;
-				lastIdResource = job.resource.id;
-			}
-			
-			node.color = arrayColors[indexColorResource];
-			
-			nodeDataSet[indexNode] = node;
-
-
-			for(var j =0; j< job.depends_on.length; j++){
-				//add edge into the array
-				var edge = {};
-				edge.from = job.depends_on[j].feature_id;
-				edge.to = job.feature.id;
-				edge.color = 'gray';
-				edgeDataSet[indexEdge] = edge;
-				indexEdge ++;
-			}
-
-			indexNode ++;
-
 		}
+
 		//1. add arrays
 		var nodes = new vis.DataSet(nodeDataSet);
 		var edges = new vis.DataSet(edgeDataSet);
@@ -651,7 +690,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 						}
 					}
 				},
-//if use the property layout in supersede the chart has problem
+//				if use the property layout in supersede the chart has problem
 				//				layout: {
 //				improvedLayout: true
 //				,		
@@ -668,13 +707,22 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 		};
 
-		//5.initialize your network!
-		var network = new vis.Network(container, data, options);
+		
+		if(nodeDataSet.length>0){
+			$scope.showMynetwork = true;
+			//5.initialize your network!
+			var network = new vis.Network(container, data, options);
+			
+		}else{
+			$scope.showMynetwork = false;
+		}
+		
 	}
+	
 
 	function findIdFeatureFromJobId(jobId) {
 		var jobs = $scope.plan.jobs;
-		
+
 		//for(var i = jobs.length-1; i>=0; i--){
 		for(var i = 0; i< jobs.length; i++){
 			var job = jobs[i];
@@ -684,7 +732,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		}
 		return -1;
 	}
-	
+
 	function getDateASString(dateAsString) {
 		var res = dateAsString.split("T");
 		var time = res[1].split(":");
@@ -702,6 +750,15 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 		return result;
 	}
 
+	function  isContains(arr, id){
+		for (var i = 0; i < arr.length; i++) {
+			if (arr[i] == id) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	/**
 	 * start point function
 	 */
