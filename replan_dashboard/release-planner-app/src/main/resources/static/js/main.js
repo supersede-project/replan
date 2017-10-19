@@ -180,7 +180,7 @@ function ($scope, $location, $http, $rootScope) {
 					
 	      			$rootScope.$apply(function() {
 	      				$location.path("/release-planner-app/replan_release").search({featureId: ''+idFeature, releaseId: '' + idRelease });
-						console.log($location.path());
+						
 	      		    });
 	      			
 	      			

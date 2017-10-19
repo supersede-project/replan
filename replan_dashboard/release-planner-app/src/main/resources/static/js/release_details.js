@@ -562,7 +562,7 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 
 		var trackHeight = 50;
 		var numberOfRows = dataTable.getNumberOfRows();
-		var height = dataTable.getNumberOfRows() * trackHeight;
+		var height = dataTable.getNumberOfRows() * trackHeight + trackHeight;
 		var options = {
 				height: height,
 				timeline: {

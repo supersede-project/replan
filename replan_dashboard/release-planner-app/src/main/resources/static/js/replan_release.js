@@ -156,7 +156,7 @@ app.controllerProvider.register('replan-release', ['$scope', '$location', '$http
 	 */
 	$scope.showFeature = false;
 	$scope.messageFeature = "Loading ...";
-	$scope.feature = {code: -1, deadline:"", description:"", effort: s-1, id: -1, name:"", priority: -1, release:{}};
+	$scope.feature = {code: -1, deadline:"", description:"", effort: -1, id: -1, name:"", priority: -1, release:{}};
 
 	$scope.release = {};
 	//contains array of feature object.
