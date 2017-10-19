@@ -150,12 +150,13 @@ paths:
           required: true
         - name: status
           in: query
-          description: any | pending | scheduled
+          description: any | pending | in_release | scheduled
           required: false
           type: string
           enum:
              - any
              - pending
+             - in_release
              - scheduled
         - name: code
           in: query

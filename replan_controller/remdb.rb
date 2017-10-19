@@ -1,8 +1,8 @@
 
 
 #endpoint = "http://replan-api.herokuapp.com/replan"
-endpoint = "http://platform.supersede.eu:8280/replan"
-#endpoint = "http://supersede.es.atos.net:8280/replan"
+#endpoint = "http://platform.supersede.eu:8280/replan"
+endpoint = "http://supersede.es.atos.net:8280/replan"
 
 skids = Hash.new
 rsids = Hash.new
@@ -45,7 +45,7 @@ rlids = Hash.new
    features.each do |f|
       nf = p.features.create(code: f["code"], name: f["name"], description: f["description"], \
                           deadline: f["deadline"], priority: f["priority"], \
-                          effort: f["effort"].to_f)
+                          effort: f["effort"].to_f, jira_url: f["jira_url"])
       ftids[f["id"]] = nf.id
       f["required_skills"].each do |rs|
         nf.required_skills << Skill.find(skids[rs["id"]])
@@ -78,6 +78,7 @@ rlids = Hash.new
         nl.features << Feature.find(ftids[f["id"]])
       end
       nl.plan.destroy unless nl.plan.nil?
+      
    end
-
+   puts p.name
 end
