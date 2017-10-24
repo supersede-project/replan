@@ -77,13 +77,21 @@ class ValentinPlanner
     end
     
     def self.build_feature(feature)
+      self.build_plain_feature(feature).merge(
+        { 
+          depends_on: feature.depends_on.map {|d| self.build_plain_feature(d) unless d.release.nil? || d.release != feature.release}.compact
+        }
+      )
+    end
+    
+    def self.build_plain_feature(feature)
       { name: feature.id.to_s,
         duration: feature.effort_hours,
         priority: { level: feature.priority, score: feature.priority },
-        required_skills: feature.required_skills.map {|s| {name: s.id.to_s} },
-        depends_on: feature.depends_on.map {|d| self.build_feature(d) unless d.release.nil? || d.release != feature.release}.compact
+        required_skills: feature.required_skills.map {|s| {name: s.id.to_s} }
       }
     end
+    
     
     def self.build_plan(release, vjobs)
       plan = Plan.replan(release)
