@@ -22,7 +22,8 @@ class PlanSerializer < ActiveModel::Serializer
       .map { |r| {"resource_id" => r.id,
                   "resource_name" => r.name,
                   "total_available_hours" => (r.available_hours_per_week * nbwks).to_f,
-                  "total_used_hours" => (object.jobs.map{ |j| j.resource.id == r.id ? j.feature.effort_hours : 0}.sum).to_f }
+                  "total_used_hours" => (object.jobs.map{ |j| j.resource.id == r.id ? j.feature.effort_hours : 0}.sum).to_f,
+                  "skills" => r.skills.map { |x| SkillSerializer.new(x) }}
       }.as_json
   end
 end
