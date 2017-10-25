@@ -37,6 +37,7 @@
 						<th>Name</th>
 					    <th>Used %</th>
 					    <th>Used hours</th>
+					    <th>Skills</th>
 					</tr>
 					<tr ng-repeat="resource in plan.resource_usage">
 						<td class="padding-bottom-5px">{{resource.resource_name}}</td>
@@ -44,6 +45,7 @@
 			  				<jqx-progress-bar  ng-model="resource.total_used_percent" jqx-height="30" jqx-show-text="true" jqx-animation-duration="0" jqx-width="300"></jqx-progress-bar>
 			  			</td>
 			  			<td class="padding-bottom-5px">{{resource.total_used_hours  + " out of " + resource.total_available_hours }}</td>
+			  			<td class="padding-bottom-5px" >{{resource.skillsAsString}}</td>
 					</tr>	
 				</table>
 			 </div>

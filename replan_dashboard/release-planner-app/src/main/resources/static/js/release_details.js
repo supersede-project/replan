@@ -124,8 +124,21 @@ app.controllerProvider.register('release-details', ['$scope', '$location', '$htt
 												var total_used_hours = Number(resource.total_used_hours);
 												var total_used_percent = (total_used_hours/total_available_hours)*100;
 												resource.total_used_percent = total_used_percent;
-											}	
-
+												
+												//add skillsAsString
+												var skillsAsString = "";
+												for(var j = 0; j< resource.skills.length; j++){
+													var skill = resource.skills[j];
+													if(j==0){
+														skillsAsString = skillsAsString + skill.name; 
+													}
+													else{
+														skillsAsString = skillsAsString + "," + skill.name; 
+													}
+												}
+												resource.skillsAsString = skillsAsString;
+											}
+									
 											$scope.showReleasePlan = true;
 
 											$scope.planJqxgrid = JSON.parse(JSON.stringify(responseData)); 
